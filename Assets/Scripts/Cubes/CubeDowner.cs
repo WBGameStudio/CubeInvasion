@@ -1,26 +1,31 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+
 
 public class CubeDowner : MonoBehaviour
 {
     [SerializeField] Rigidbody rb;
+    Timer timer;
+    
 
-    // Start is called before the first frame update
+   
     void Start()
     {
-        
+        timer = FindObjectOfType<Timer>();
     }
 
-    // Update is called once per frame
+   
     void Update()
     {
-        
+        DownCube();
     }
 
     void DownCube() 
     {
+        if(timer.time > 0) { return; }
         rb.useGravity = true;
-        //this.gameObject.isStatic = false;
+        rb.isKinematic = false;
     }
 }
