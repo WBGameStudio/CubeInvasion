@@ -6,11 +6,12 @@ TagManager:
   tags:
   - Enemy
   - Bullet
+  - Gate
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Walkable
   - Water
   - UI
   - 
