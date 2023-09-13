@@ -8,7 +8,7 @@ public class CubeDowner : MonoBehaviour
 {
     [SerializeField] Rigidbody rb;
     Timer timer;
-    
+    public bool isActive;
 
    
     void Start()
@@ -19,6 +19,7 @@ public class CubeDowner : MonoBehaviour
    
     void Update()
     {
+        if (!isActive) return;
         DownCube();
     }
 
@@ -27,5 +28,6 @@ public class CubeDowner : MonoBehaviour
         if(timer.time > 0) { return; }
         rb.useGravity = true;
         rb.isKinematic = false;
+        FindObjectOfType<CubeSelector>().ChangeCube();
     }
 }

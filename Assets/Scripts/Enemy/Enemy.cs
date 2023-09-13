@@ -31,8 +31,8 @@ public class Enemy : MonoBehaviour
     {
         //For counting to died enemies on current cube, i used a system that finding the nearest gate on enemies.
         GameObject[] gates = GameObject.FindGameObjectsWithTag("Gate");
-
         GameObject nearestGate = null;
+        
         float nearestDistance = float.MaxValue;
 
         foreach (GameObject gate in gates)

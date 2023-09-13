@@ -27,4 +27,9 @@ public class Timer : MonoBehaviour
         int timeInt = (int)time;
         timerText.text = timeInt.ToString();
     }
+
+    public void ResetTimer()
+    {
+        time = 20;
+    }
 }
