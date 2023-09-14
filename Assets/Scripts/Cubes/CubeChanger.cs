@@ -22,5 +22,7 @@ public class CubeChanger : MonoBehaviour
         yield return new WaitForEndOfFrame();
         FindObjectOfType<CubeSelector>().ChangeCube();
         
+
+
     }
 }

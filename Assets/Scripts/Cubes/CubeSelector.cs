@@ -5,20 +5,24 @@ using UnityEngine;
 
 public class CubeSelector : MonoBehaviour
 {
-    private CubeDowner[] _cubeDowners;
-    private int cubeCount = 0;
+    public CubeDowner[] _cubeDowners;
+    public GameObject[] _cubes;
+    public int cubeCount = 0;
 
     private void Start()
     {
         //Start for the first cube
         GetCubeDowners();
         StartCubeTimer();
+        FindObjectOfType<CameraManager>().CameraChanger(cubeCount);
     }
 
     private void GetCubeDowners()
     {
         //Getting all the CubeDowners.
         _cubeDowners = transform.GetComponentsInChildren<CubeDowner>();
+        
+        
     }
 
     private void StartCubeTimer()
@@ -33,7 +37,9 @@ public class CubeSelector : MonoBehaviour
     {
         //Increase to cubeCount to change the active cube.
         cubeCount++;
+        FindObjectOfType<CameraManager>().CameraChanger(cubeCount);
         _cubeDowners[cubeCount].transform.GetComponentInChildren<GateController>().EnemyCountOnCube = 0;
         StartCubeTimer();
+        
     }
 }

@@ -29,5 +29,6 @@ public class CubeDowner : MonoBehaviour
         rb.useGravity = true;
         rb.isKinematic = false;
         FindObjectOfType<CubeSelector>().ChangeCube();
+        Destroy(this.gameObject, 5);
     }
 }
