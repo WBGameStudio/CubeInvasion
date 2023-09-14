@@ -8,6 +8,8 @@ public class Timer : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI timerText;
     public float time = 20;
+
+    private bool isShaked;
     // Start is called before the first frame update
     void Start()
     {
@@ -25,11 +27,22 @@ public class Timer : MonoBehaviour
         if(time <= 0) { return; }   
         time -= Time.deltaTime;
         int timeInt = (int)time;
+        
+        //Shaking the camera when the time hits 5
+        if (timeInt == 5 && !isShaked)
+        {
+            FindObjectOfType<CameraManager>().CameraShake();
+            isShaked = true;
+        }
+        
         timerText.text = timeInt.ToString();
     }
 
     public void ResetTimer()
     {
+        FindObjectOfType<CameraManager>().StopCameraShake();
         time = 20;
+        isShaked = false;
+        
     }
 }

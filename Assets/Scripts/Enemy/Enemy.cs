@@ -7,17 +7,19 @@ public class Enemy : MonoBehaviour
 {
     //We can create scriptable objects for the enemy types and we can get the enemy stats from them.
     //It will be same stats for all the enemies for now
-    [SerializeField] private int health = 100;
+    public int health = 100;
     GameObject gate;
     private void Start()
     {
         gate = FindNearestGate();
+        transform.GetComponent<EnemyColorChanger>().ChangeColor(health);
     }
 
     public void GetDamage(int _damage)
     {
         Debug.Log("Damage Taken");
         health -= _damage;
+        transform.GetComponent<EnemyColorChanger>().ChangeColor(health);
         if (health <= 0)
         {
             GateController gateController = gate.GetComponent<GateController>();

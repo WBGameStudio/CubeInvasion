@@ -28,9 +28,10 @@ public class CubeSelector : MonoBehaviour
     private void StartCubeTimer()
     {
         //Resetting timer, activate the next cube, spawn the enemies for activated cube
-        FindObjectOfType<Timer>().ResetTimer();
+        
         _cubeDowners[cubeCount].isActive = true;
         _cubeDowners[cubeCount].transform.GetComponentInChildren<EnemySpawner>().SpawnEnemies();
+        FindObjectOfType<Timer>().ResetTimer();
     }
 
     public void ChangeCube()

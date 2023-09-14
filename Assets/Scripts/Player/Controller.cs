@@ -17,7 +17,7 @@ public class Controller : MonoBehaviour
         ControlingCharacter();
     }
 
-    public void ControlingCharacter() 
+    private void ControlingCharacter() 
     {
         //Fixing that, while player not rotating the character still having a velocity with using joystick speeds.
         if(joystick.Horizontal == 0 ||  joystick.Vertical == 0) 
@@ -25,10 +25,26 @@ public class Controller : MonoBehaviour
             rb.velocity = new Vector3(0,rb.velocity.y,0); 
             return; 
         }
-        
+        //Getting the camera's forward
+        Vector3 cameraForward = Camera.main.transform.forward;
+        cameraForward.y = 0; 
+        cameraForward.Normalize();
 
-        Vector3 newPos = new Vector3((joystick.Horizontal * speed),rb.velocity.y, (joystick.Vertical * speed));
-        rb.velocity = newPos;
-        rb.transform.rotation = Quaternion.LookRotation(newPos);
+        //Getting inputDirection
+        Vector3 inputDirection = new Vector3(joystick.Horizontal, 0, joystick.Vertical);
+        
+        //Changing inputDirection according to camera's forward
+        Vector3 moveDirection = cameraForward * inputDirection.z + Camera.main.transform.right * inputDirection.x;
+        moveDirection.Normalize();
+        
+        rb.velocity = moveDirection * speed;
+        rb.transform.rotation = Quaternion.LookRotation(moveDirection);
+        
+        // Old movement code:
+        
+        // Vector3 newPos = new Vector3((joystick.Horizontal * speed),rb.velocity.y, (joystick.Vertical * speed));
+        // rb.velocity = newPos;
+        
+        
     }
 }
