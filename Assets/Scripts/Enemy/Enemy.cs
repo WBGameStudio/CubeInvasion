@@ -24,6 +24,8 @@ public class Enemy : MonoBehaviour
         {
             GateController gateController = gate.GetComponent<GateController>();
             gateController.EnemyCountOnCube--;
+            Controller controller = FindObjectOfType<Controller>();
+            controller.currentTarget = null;
             Debug.Log(gateController.EnemyCountOnCube);
             Destroy(gameObject);
         }

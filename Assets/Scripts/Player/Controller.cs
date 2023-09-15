@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.EventSystems;
 using UnityEngine.UIElements;
 
 public class Controller : MonoBehaviour
@@ -11,10 +12,17 @@ public class Controller : MonoBehaviour
 
     [SerializeField] float speed;
 
+
+    public Transform currentTarget = null;
+    Vector3 moveDirection;
+    private Quaternion targetRotation;
+    private Quaternion lookAt;
+
     // Update is called once per frame
     void Update()
     {
         ControlingCharacter();
+        CharacterRotator();
     }
 
     private void ControlingCharacter() 
@@ -34,17 +42,59 @@ public class Controller : MonoBehaviour
         Vector3 inputDirection = new Vector3(joystick.Horizontal, 0, joystick.Vertical);
         
         //Changing inputDirection according to camera's forward
-        Vector3 moveDirection = cameraForward * inputDirection.z + Camera.main.transform.right * inputDirection.x;
+        moveDirection = cameraForward * inputDirection.z + Camera.main.transform.right * inputDirection.x;
         moveDirection.Normalize();
         
         rb.velocity = moveDirection * speed;
-        rb.transform.rotation = Quaternion.LookRotation(moveDirection);
-        
-        // Old movement code:
-        
-        // Vector3 newPos = new Vector3((joystick.Horizontal * speed),rb.velocity.y, (joystick.Vertical * speed));
-        // rb.velocity = newPos;
+
         
         
+
+
+    }
+
+    void CharacterRotator() 
+    {
+
+        float lookSpeed = 150f;
+
+        if (EnemyOnFOV() || currentTarget != null) 
+        {
+            Vector3 direction = currentTarget.transform.position - transform.position;
+            targetRotation = Quaternion.LookRotation(direction);
+            lookAt = Quaternion.RotateTowards(transform.rotation, targetRotation, Time.deltaTime * lookSpeed);
+            transform.rotation = lookAt;
+        }
+        else if(currentTarget == null)
+        {
+            targetRotation = Quaternion.LookRotation(moveDirection);
+            transform.rotation = targetRotation;
+        }
+    }
+
+    bool EnemyOnFOV() 
+    {
+        bool check = true;
+        FOVManager fovManager = GetComponent<FOVManager>();
+        // Detect enemies within the FOV and detection range
+        Collider[] colliders = Physics.OverlapSphere(transform.position, fovManager.fov);
+        foreach (Collider collider in colliders)
+        {
+            if (collider.CompareTag("Enemy"))
+            {
+                currentTarget = collider.transform;
+                check = true;
+            }
+           
+        }
+
+        if(Physics.OverlapSphere(transform.position, fovManager.fov) == null)
+        {
+            currentTarget = null;
+            check = false;
+        }
+        return check;
+
+
     }
 }
