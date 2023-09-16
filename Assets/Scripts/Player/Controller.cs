@@ -17,6 +17,7 @@ public class Controller : MonoBehaviour
     Vector3 moveDirection;
     private Quaternion targetRotation;
     private Quaternion lookAt;
+    public bool check = false;
 
     // Update is called once per frame
     void Update()
@@ -74,7 +75,7 @@ public class Controller : MonoBehaviour
 
     bool EnemyOnFOV() 
     {
-        bool check = true;
+        check = false;
         FOVManager fovManager = GetComponent<FOVManager>();
         // Detect enemies within the FOV and detection range
         Collider[] colliders = Physics.OverlapSphere(transform.position, fovManager.fov);
@@ -86,12 +87,6 @@ public class Controller : MonoBehaviour
                 check = true;
             }
            
-        }
-
-        if(Physics.OverlapSphere(transform.position, fovManager.fov) == null)
-        {
-            currentTarget = null;
-            check = false;
         }
         return check;
 
