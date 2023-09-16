@@ -46,7 +46,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37c843c2dc9faf9439ede49f2f6ddeae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemy: {fileID: 3359689132659823935, guid: e7f1e252eac923042ab5e87458b477c4, type: 3}
+  enemyObject: {fileID: 3359689132659823935, guid: e7f1e252eac923042ab5e87458b477c4, type: 3}
+  enemySO: {fileID: 11400000, guid: c8cee8731a6fbd5418f86021d8a84046, type: 2}
   spawnPoints: {fileID: 7674540975517171516}
   enemies: {fileID: 7011051221487055032}
 --- !u!1 &5034395275032850083

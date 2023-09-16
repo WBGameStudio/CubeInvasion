@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEditor;
 using Unity.VisualScripting;
@@ -57,13 +58,14 @@ public class Shooter : MonoBehaviour
     void EnemyDetector()
     {
         // Detect enemies within the FOV and detection range
-        Collider[] colliders = Physics.OverlapSphere(transform.position, fovManager.fov);
-        foreach (Collider collider in colliders)
+        var colliders = Physics.OverlapSphere(transform.position, fovManager.fov);
+        
+        // I change that if because the older version was spawning bullets for every enemy in the sphere and that was causing a much faster shooting rate.
+        // Example: If there is 4 enemies in the player's fov SpawnBullet() will be executed 4 times in a row and that would cause to player shoot faster.
+        // Now the code works if there is "ANY" enemies in the fov the method will be executed only 1 time
+        if (colliders.Any(collider => collider.CompareTag("Enemy")))
         {
-            if (collider.CompareTag("Enemy"))
-            {
-                SpawnBullet();
-            }
+            SpawnBullet();
         }
     }
 }

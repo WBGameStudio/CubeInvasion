@@ -7,12 +7,24 @@ public class Enemy : MonoBehaviour
 {
     //We can create scriptable objects for the enemy types and we can get the enemy stats from them.
     //It will be same stats for all the enemies for now
-    public int health = 100;
+    public int health;
+    public int damagePower;
+    public float speed;
+    public float pushPower;
     GameObject gate;
     private void Start()
     {
         gate = FindNearestGate();
         transform.GetComponent<EnemyColorChanger>().ChangeColor(health);
+    }
+
+    //It gets the stats from the Enemy Scriptable Object
+    public void SetStats(EnemySO _enemySo)
+    {
+        health = _enemySo.health;
+        damagePower = _enemySo.damagePower;
+        speed = _enemySo.speed;
+        pushPower = _enemySo.pushPower;
     }
 
     public void GetDamage(int _damage)

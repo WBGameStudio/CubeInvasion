@@ -135,6 +135,8 @@ MonoBehaviour:
   joystick: {fileID: 0}
   rb: {fileID: 753068671383827281}
   speed: 5
+  currentTarget: {fileID: 0}
+  check: 0
 --- !u!54 &753068671383827281
 Rigidbody:
   m_ObjectHideFlags: 0
