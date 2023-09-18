@@ -29,9 +29,13 @@ public class Enemy : MonoBehaviour
 
     public void GetDamage(int _damage)
     {
+        FindObjectOfType<AudioManager>().Play("Hit");
         Debug.Log("Damage Taken");
         health -= _damage;
         transform.GetComponent<EnemyColorChanger>().ChangeColor(health);
+        
+        
+        
         if (health <= 0)
         {
             GateController gateController = gate.GetComponent<GateController>();
