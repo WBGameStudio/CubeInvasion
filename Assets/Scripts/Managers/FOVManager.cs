@@ -8,7 +8,7 @@ public class FOVManager : MonoBehaviour
     [Header("*** FOV ***")]
     [Space]
 
-    public float fov;
+    [SerializeField] public float fov;
 
 
     private void OnDrawGizmos()
