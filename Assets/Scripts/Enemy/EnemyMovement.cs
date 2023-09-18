@@ -46,7 +46,7 @@ public class EnemyMovement : MonoBehaviour
         desiredPosition.y = knockbackForce;
         Debug.Log("Force: " + desiredPosition);
         //col.transform.position = Vector3.Lerp(col.transform.position, desiredPosition, 0.2f);
-        col.rigidbody.velocity = desiredPosition * knockbackForce * Time.deltaTime;
+        col.rigidbody.velocity = desiredPosition * knockbackForce;
         
         
 

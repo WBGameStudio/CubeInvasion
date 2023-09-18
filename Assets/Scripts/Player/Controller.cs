@@ -33,7 +33,15 @@ public class Controller : MonoBehaviour
         {
             isThereKnockBack = true;
         }
+        if (collision.transform.CompareTag("Cube"))
+        {
+            isThereKnockBack = false;
+        }
     }
+
+    
+
+
 
     private void ControlingCharacter() 
     {
@@ -46,22 +54,31 @@ public class Controller : MonoBehaviour
             
             return; 
         }
-        //Getting the camera's forward
-        Vector3 cameraForward = Camera.main.transform.forward;
-        cameraForward.y = 0; 
-        cameraForward.Normalize();
+        else if (isThereKnockBack) 
+        {
+            new Vector3(rb.velocity.x, rb.velocity.y, rb.velocity.z);
+        }
+        else 
+        {
+            //Getting the camera's forward
+            Vector3 cameraForward = Camera.main.transform.forward;
+            cameraForward.y = 0;
+            cameraForward.Normalize();
 
-        //Getting inputDirection
-        Vector3 inputDirection = new Vector3(joystick.Horizontal,0, joystick.Vertical);
-        
-        //Changing inputDirection according to camera's forward
-        moveDirection = cameraForward * inputDirection.z + Camera.main.transform.right * inputDirection.x;
-        moveDirection.Normalize();
-        
-        rb.velocity = moveDirection * speed;
+            //Getting inputDirection
+            Vector3 inputDirection = new Vector3(joystick.Horizontal, 0, joystick.Vertical);
 
+            //Changing inputDirection according to camera's forward
+            moveDirection = cameraForward * inputDirection.z + Camera.main.transform.right * inputDirection.x;
+            moveDirection.Normalize();
+
+            rb.velocity = moveDirection * speed;
+        }
         
         
+
+
+
 
 
     }
