@@ -9,6 +9,7 @@ public class Controller : MonoBehaviour
 {
     [SerializeField] DynamicJoystick joystick;
     [SerializeField] Rigidbody rb;
+    bool isThereKnockBack;
 
     [SerializeField] float speed;
 
@@ -26,12 +27,23 @@ public class Controller : MonoBehaviour
         CharacterRotator();
     }
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.transform.CompareTag("Enemy")) 
+        {
+            isThereKnockBack = true;
+        }
+    }
+
     private void ControlingCharacter() 
     {
+       
         //Fixing that, while player not rotating the character still having a velocity with using joystick speeds.
-        if(joystick.Horizontal == 0 ||  joystick.Vertical == 0) 
-        { 
-            rb.velocity = new Vector3(0,rb.velocity.y,0); 
+        if (joystick.Horizontal == 0 ||  joystick.Vertical == 0) 
+        {
+            if(isThereKnockBack) { rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y, rb.velocity.z); }
+            else { rb.velocity = new Vector3(0, rb.velocity.y, 0); }
+            
             return; 
         }
         //Getting the camera's forward
@@ -40,7 +52,7 @@ public class Controller : MonoBehaviour
         cameraForward.Normalize();
 
         //Getting inputDirection
-        Vector3 inputDirection = new Vector3(joystick.Horizontal, 0, joystick.Vertical);
+        Vector3 inputDirection = new Vector3(joystick.Horizontal,0, joystick.Vertical);
         
         //Changing inputDirection according to camera's forward
         moveDirection = cameraForward * inputDirection.z + Camera.main.transform.right * inputDirection.x;

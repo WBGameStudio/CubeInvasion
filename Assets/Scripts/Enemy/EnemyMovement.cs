@@ -39,15 +39,17 @@ public class EnemyMovement : MonoBehaviour
      {
         Debug.Log("ADD FORCE");
         float knockbackForce = GetComponent<Enemy>().pushPower;
+        
         Vector3 pushDirection = transform.forward;
         pushDirection.Normalize();
         Vector3 desiredPosition = col.transform.position + pushDirection;
-        desiredPosition.y = 0f;
+        desiredPosition.y = knockbackForce;
         Debug.Log("Force: " + desiredPosition);
         //col.transform.position = Vector3.Lerp(col.transform.position, desiredPosition, 0.2f);
-        col.rigidbody.velocity = new Vector3 (0,0,0);
-        col.rigidbody.AddForce(desiredPosition * knockbackForce *Time.deltaTime ,ForceMode.Impulse);
-       
+        col.rigidbody.velocity = desiredPosition * knockbackForce * Time.deltaTime;
+        
+        
+
     }
 
     private void Movement() 

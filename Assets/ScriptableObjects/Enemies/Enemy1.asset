@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 100
   damagePower: 20
-  pushPower: 125
+  pushPower: 30
   speed: 5
