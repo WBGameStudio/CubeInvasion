@@ -667,10 +667,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2367839963496230864, guid: 9046f3a24933d7944bdf00e5f57ba70f, type: 3}
+      propertyPath: enemyType
+      value: 
+      objectReference: {fileID: 11400000, guid: c8cee8731a6fbd5418f86021d8a84046, type: 2}
+    - target: {fileID: 2433336089193279507, guid: 9046f3a24933d7944bdf00e5f57ba70f, type: 3}
+      propertyPath: enemyType
+      value: 
+      objectReference: {fileID: 11400000, guid: c8cee8731a6fbd5418f86021d8a84046, type: 2}
+    - target: {fileID: 5875148390369877630, guid: 9046f3a24933d7944bdf00e5f57ba70f, type: 3}
+      propertyPath: enemyType
+      value: 
+      objectReference: {fileID: 11400000, guid: c8cee8731a6fbd5418f86021d8a84046, type: 2}
     - target: {fileID: 6578509780014403795, guid: 9046f3a24933d7944bdf00e5f57ba70f, type: 3}
       propertyPath: EnemyCountOnCube
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8633092108530826106, guid: 9046f3a24933d7944bdf00e5f57ba70f, type: 3}
+      propertyPath: enemyType
+      value: 
+      objectReference: {fileID: 11400000, guid: c8cee8731a6fbd5418f86021d8a84046, type: 2}
     - target: {fileID: 8847519080945528889, guid: 9046f3a24933d7944bdf00e5f57ba70f, type: 3}
       propertyPath: m_Name
       value: Cubes (1)
@@ -1056,10 +1072,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2367839963496230864, guid: 9046f3a24933d7944bdf00e5f57ba70f, type: 3}
+      propertyPath: enemyType
+      value: 
+      objectReference: {fileID: 11400000, guid: c8cee8731a6fbd5418f86021d8a84046, type: 2}
+    - target: {fileID: 2433336089193279507, guid: 9046f3a24933d7944bdf00e5f57ba70f, type: 3}
+      propertyPath: enemyType
+      value: 
+      objectReference: {fileID: 11400000, guid: c8cee8731a6fbd5418f86021d8a84046, type: 2}
+    - target: {fileID: 5875148390369877630, guid: 9046f3a24933d7944bdf00e5f57ba70f, type: 3}
+      propertyPath: enemyType
+      value: 
+      objectReference: {fileID: 11400000, guid: c8cee8731a6fbd5418f86021d8a84046, type: 2}
     - target: {fileID: 6578509780014403795, guid: 9046f3a24933d7944bdf00e5f57ba70f, type: 3}
       propertyPath: EnemyCountOnCube
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8633092108530826106, guid: 9046f3a24933d7944bdf00e5f57ba70f, type: 3}
+      propertyPath: enemyType
+      value: 
+      objectReference: {fileID: 11400000, guid: c8cee8731a6fbd5418f86021d8a84046, type: 2}
     - target: {fileID: 8847519080945528889, guid: 9046f3a24933d7944bdf00e5f57ba70f, type: 3}
       propertyPath: m_Name
       value: Cubes (2)
@@ -1142,7 +1174,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2124156917}
-  - component: {fileID: 2124156916}
   - component: {fileID: 2124156915}
   m_Layer: 0
   m_Name: MANAGER_Level
@@ -1164,27 +1195,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LevelNum: 0
---- !u!65 &2124156916
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2124156914}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1000, y: 1, z: 1000}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!4 &2124156917
 Transform:
   m_ObjectHideFlags: 0
@@ -1194,7 +1204,7 @@ Transform:
   m_GameObject: {fileID: 2124156914}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.566859, y: -12.01, z: 13.058813}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1330,42 +1340,6 @@ PrefabInstance:
       propertyPath: joystick
       value: 
       objectReference: {fileID: 1340909235}
-    - target: {fileID: 753068671383827281, guid: 417ce923fc30e8648927f212787af55b, type: 3}
-      propertyPath: m_Drag
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 753068671383827281, guid: 417ce923fc30e8648927f212787af55b, type: 3}
-      propertyPath: m_Mass
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 753068671383827281, guid: 417ce923fc30e8648927f212787af55b, type: 3}
-      propertyPath: m_AngularDrag
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 753068671383827281, guid: 417ce923fc30e8648927f212787af55b, type: 3}
-      propertyPath: m_Constraints
-      value: 112
-      objectReference: {fileID: 0}
-    - target: {fileID: 753068671383827281, guid: 417ce923fc30e8648927f212787af55b, type: 3}
-      propertyPath: m_ImplicitCom
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 753068671383827281, guid: 417ce923fc30e8648927f212787af55b, type: 3}
-      propertyPath: m_Interpolate
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 753068671383827281, guid: 417ce923fc30e8648927f212787af55b, type: 3}
-      propertyPath: m_CenterOfMass.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 753068671383827281, guid: 417ce923fc30e8648927f212787af55b, type: 3}
-      propertyPath: m_ImplicitTensor
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 753068671383827281, guid: 417ce923fc30e8648927f212787af55b, type: 3}
-      propertyPath: m_CollisionDetection
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 3841487340005374412, guid: 417ce923fc30e8648927f212787af55b, type: 3}
       propertyPath: m_Name
       value: Player
@@ -1468,10 +1442,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2367839963496230864, guid: 9046f3a24933d7944bdf00e5f57ba70f, type: 3}
+      propertyPath: enemyType
+      value: 
+      objectReference: {fileID: 11400000, guid: 6729dd46ab1516c4ca85563bd18cc7cc, type: 2}
+    - target: {fileID: 2433336089193279507, guid: 9046f3a24933d7944bdf00e5f57ba70f, type: 3}
+      propertyPath: enemyType
+      value: 
+      objectReference: {fileID: 11400000, guid: 6729dd46ab1516c4ca85563bd18cc7cc, type: 2}
     - target: {fileID: 3815854057237311989, guid: 9046f3a24933d7944bdf00e5f57ba70f, type: 3}
       propertyPath: enemyObject
       value: 
       objectReference: {fileID: 3359689132659823935, guid: e7f1e252eac923042ab5e87458b477c4, type: 3}
+    - target: {fileID: 5875148390369877630, guid: 9046f3a24933d7944bdf00e5f57ba70f, type: 3}
+      propertyPath: enemyType
+      value: 
+      objectReference: {fileID: 11400000, guid: 6729dd46ab1516c4ca85563bd18cc7cc, type: 2}
+    - target: {fileID: 8633092108530826106, guid: 9046f3a24933d7944bdf00e5f57ba70f, type: 3}
+      propertyPath: enemyType
+      value: 
+      objectReference: {fileID: 11400000, guid: 6729dd46ab1516c4ca85563bd18cc7cc, type: 2}
     - target: {fileID: 8847519080945528889, guid: 9046f3a24933d7944bdf00e5f57ba70f, type: 3}
       propertyPath: m_Name
       value: Cubes

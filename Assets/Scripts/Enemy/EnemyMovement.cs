@@ -1,9 +1,5 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.Rendering.Universal;
 
 public class EnemyMovement : MonoBehaviour
 {
@@ -54,14 +50,25 @@ public class EnemyMovement : MonoBehaviour
 
     private void Movement() 
     {
-        Collider[] colliders = Physics.OverlapSphere(transform.position, fovManager.fov);
+        var colliders = Physics.OverlapSphere(transform.position, fovManager.fov);
         foreach (Collider collider in colliders)
         {
+
+
             if (collider.CompareTag("Player"))
             {
-                _navMeshAgent.destination = playerTransform.position;
-            }
+                if (GetComponent<Enemy>().enemyType == "Shooter")
+                {
+                    Vector3 direction = (transform.position - collider.transform.position).normalized;
+                    Vector3 destination = transform.position + direction * 5f;
 
+                    _navMeshAgent.destination = destination;
+                }
+                else
+                {
+                    _navMeshAgent.destination = playerTransform.position;
+                }
+            }
         }
     }
     

@@ -11,6 +11,9 @@ public class Enemy : MonoBehaviour
     public int damagePower;
     public float speed;
     public float pushPower;
+    public float fov;
+    public string enemyType;
+    
     GameObject gate;
     private void Start()
     {
@@ -25,6 +28,8 @@ public class Enemy : MonoBehaviour
         damagePower = _enemySo.damagePower;
         speed = _enemySo.speed;
         pushPower = _enemySo.pushPower;
+        fov = _enemySo.fov;
+        enemyType = _enemySo.enemyTpye.ToString();
     }
 
     public void GetDamage(int _damage)
@@ -33,9 +38,7 @@ public class Enemy : MonoBehaviour
         Debug.Log("Damage Taken");
         health -= _damage;
         transform.GetComponent<EnemyColorChanger>().ChangeColor(health);
-        
-        
-        
+
         if (health <= 0)
         {
             GateController gateController = gate.GetComponent<GateController>();

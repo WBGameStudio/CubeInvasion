@@ -47,12 +47,9 @@ public class Controller : MonoBehaviour
     {
        
         //Fixing that, while player not rotating the character still having a velocity with using joystick speeds.
-        if (joystick.Horizontal == 0 ||  joystick.Vertical == 0) 
+        if (joystick.Horizontal == 0 ||  joystick.Vertical == 0)
         {
-            if(isThereKnockBack) { rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y, rb.velocity.z); }
-            else { rb.velocity = new Vector3(0, rb.velocity.y, 0); }
-            
-            return; 
+            rb.velocity = isThereKnockBack ? new Vector3(rb.velocity.x, rb.velocity.y, rb.velocity.z) : new Vector3(0, rb.velocity.y, 0);
         }
         else if (isThereKnockBack) 
         {
@@ -86,7 +83,7 @@ public class Controller : MonoBehaviour
     void CharacterRotator() 
     {
 
-        float lookSpeed = 150f;
+        float lookSpeed = 250f;
 
         if (EnemyOnFOV() || currentTarget != null) 
         {

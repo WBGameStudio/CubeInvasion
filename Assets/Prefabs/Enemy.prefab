@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 5173672573001410106}
   - component: {fileID: 3829021134933372480}
   - component: {fileID: 6277518863613543520}
+  - component: {fileID: 7084633769670206040}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Enemy
@@ -127,6 +128,8 @@ MonoBehaviour:
   damagePower: 0
   speed: 0
   pushPower: 0
+  fov: 0
+  enemyType: 
 --- !u!54 &3212545662631724117
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -213,3 +216,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fov: 6
+--- !u!114 &7084633769670206040
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3359689132659823935}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3713dcbb7d663cf49b8f33e0643b409b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bullet: {fileID: 642764356379927714, guid: 89bb230e64e366f49b0bcfba283323f2, type: 3}
+  bulletSpeed: 15
+  shootingTime: 0.5

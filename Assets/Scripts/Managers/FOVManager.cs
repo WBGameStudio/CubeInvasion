@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -10,6 +11,14 @@ public class FOVManager : MonoBehaviour
 
     [SerializeField] public float fov;
 
+
+    private void Start()
+    {
+        if (transform.CompareTag("Enemy"))
+        {
+            fov = GetComponent<Enemy>().fov;
+        }
+    }
 
     private void OnDrawGizmos()
     {
