@@ -28,6 +28,8 @@ public class CubeDowner : MonoBehaviour
         if(timer.time > 0) { return; }
         rb.useGravity = true;
         rb.isKinematic = false;
+        BoxCollider bc = rb.GetComponent<BoxCollider>();
+        bc.isTrigger = true;
         FindObjectOfType<CubeSelector>().ChangeCube();
         Destroy(this.gameObject, 5);
     }

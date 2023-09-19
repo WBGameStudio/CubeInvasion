@@ -36,11 +36,10 @@ public class CubeSelector : MonoBehaviour
 
     public void ChangeCube()
     {
-        //Increase to cubeCount to change the active cube.
-        cubeCount++;
-        FindObjectOfType<CameraManager>().CameraChanger(cubeCount);
-        _cubeDowners[cubeCount].transform.GetComponentInChildren<GateController>().EnemyCountOnCube = 0;
-        StartCubeTimer();
-        
+            //Increase to cubeCount to change the active cube.
+            cubeCount++;
+            FindObjectOfType<CameraManager>().CameraChanger(cubeCount);
+            _cubeDowners[cubeCount].transform.GetComponentInChildren<GateController>().EnemyCountOnCube = 0;
+            StartCubeTimer();
     }
 }

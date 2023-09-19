@@ -13,6 +13,4 @@ public class EnemySO : ScriptableObject
     [Space][Space]
     [Header("*** MOVEMENT ***")]
     public float speed;
-    
-    
 }
