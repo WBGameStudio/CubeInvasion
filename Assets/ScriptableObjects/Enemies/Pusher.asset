@@ -13,8 +13,10 @@ MonoBehaviour:
   m_Name: Pusher
   m_EditorClassIdentifier: 
   enemyObject: {fileID: 3359689132659823935, guid: e7f1e252eac923042ab5e87458b477c4, type: 3}
+  enemyTpye: 0
   health: 100
   damagePower: 20
   pushPower: 1
   speed: 5
   fov: 6
+  moneyWorth: 20

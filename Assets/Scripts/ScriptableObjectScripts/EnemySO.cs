@@ -9,7 +9,8 @@ public class EnemySO : ScriptableObject
     public enum EnemyTpye
     {
         Pusher,
-        Shooter
+        Shooter,
+        Bomber
     }
     [Header("*** OBJECT ***")] 
     public GameObject enemyObject;
@@ -25,4 +26,7 @@ public class EnemySO : ScriptableObject
     [Header("*** MOVEMENT ***")]
     public float speed;
     public float fov;
+    [Space][Space] 
+    [Header("*** ECONOMY ***")]
+    public int moneyWorth;
 }

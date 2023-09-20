@@ -13,6 +13,7 @@ public class Enemy : MonoBehaviour
     public float pushPower;
     public float fov;
     public string enemyType;
+    public int moneyWorth;
     
     GameObject gate;
     private void Start()
@@ -30,6 +31,7 @@ public class Enemy : MonoBehaviour
         pushPower = _enemySo.pushPower;
         fov = _enemySo.fov;
         enemyType = _enemySo.enemyTpye.ToString();
+        moneyWorth = _enemySo.moneyWorth;
     }
 
     public void GetDamage(int _damage)
@@ -47,6 +49,7 @@ public class Enemy : MonoBehaviour
             Controller controller = FindObjectOfType<Controller>();
             controller.currentTarget = null;
             Debug.Log(gateController.EnemyCountOnCube);
+            FindObjectOfType<MoneyManager>().GetMoney(moneyWorth);
             Destroy(gameObject);
         }
     }

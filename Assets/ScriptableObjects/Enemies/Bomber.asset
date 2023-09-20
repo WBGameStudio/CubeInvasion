@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: Bomber
   m_EditorClassIdentifier: 
   enemyObject: {fileID: 3359689132659823935, guid: e7f1e252eac923042ab5e87458b477c4, type: 3}
-  enemyTpye: 0
+  enemyTpye: 2
   health: 20
   damagePower: 20
   pushPower: 5
   speed: 20
   fov: 6
+  moneyWorth: 25
