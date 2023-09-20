@@ -41,7 +41,7 @@ public class EnemyShooter : MonoBehaviour
         if (timer >= shootingTime)
         {
             //Reset the timer
-            timer = 0.0f;
+            timer = 0f;
 
             //Spawning the bullet
             //Spawning position can be change later according to the weapon's firing position

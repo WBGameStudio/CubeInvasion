@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public int health = 100;
+    public int health = 100000000;
     public void GetDamage(int _damage)
     {
         FindObjectOfType<AudioManager>().Play("Hit");
@@ -14,6 +14,7 @@ public class Player : MonoBehaviour
         if (health <= 0)
         {
             Destroy(gameObject);
+            FindObjectOfType<GameOver>().Restart();
         }
     }
 }

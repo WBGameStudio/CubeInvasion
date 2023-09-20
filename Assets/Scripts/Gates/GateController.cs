@@ -40,22 +40,25 @@ public class GateController : MonoBehaviour
 
     private void GateOpening()
     {
+        
+
         if (GetComponentInParent<CubeSelector>().cubeCount >= GetComponentInParent<CubeSelector>()._cubeDowners.Length)
         {
             Debug.Log("Finish");
             //FindObjectOfType<GameOver>().LevelNum++;
             SceneManager.LoadScene(FindObjectOfType<GameOver>().LevelNum);
         }
-            //Checks if the gate is the active one.
-            if (!GetComponentInParent<CubeDowner>().isActive) { return; }
-            //If there is no enemies on our cube, gate is falling down and we can move on to the next cube.
-            if (EnemyCountOnCube != 0 || EnemyCountOnCube < 0)
-        {
-            BoxCollider boxCollider = GetComponent<BoxCollider>();
-            boxCollider.isTrigger = true;
-            rb.useGravity = true;
-            rb.isKinematic = false;
-        }
+
+        //Checks if the gate is the active one.
+        if (!GetComponentInParent<CubeDowner>().isActive) { return; }
+
+        //If there is no enemies on our cube, gate is falling down and we can move on to the next cube.
+        if (EnemyCountOnCube != 0) { return; }
+ 
+                BoxCollider boxCollider = GetComponent<BoxCollider>();
+                boxCollider.isTrigger = true;
+                rb.useGravity = true;
+                rb.isKinematic = false;
     }
 
    

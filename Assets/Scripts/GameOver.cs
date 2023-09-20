@@ -10,7 +10,12 @@ public class GameOver : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player")) 
         {
-            SceneManager.LoadScene(LevelNum);
+            Restart();
         }
+    }
+
+    public void Restart() 
+    {
+        SceneManager.LoadScene(LevelNum);
     }
 }
