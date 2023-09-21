@@ -8,7 +8,7 @@ public class UIManager : MonoBehaviour
     GameObject canvas;
     
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         isTimeSet = false;
         canvas = GameObject.FindGameObjectWithTag("Canvas");
@@ -25,6 +25,9 @@ public class UIManager : MonoBehaviour
         canvas.transform.Find("MainMenu").gameObject.SetActive(false);
         canvas.transform.Find("PlayMenu").gameObject.SetActive(true);
         isTimeSet =true;
+        
+        //Setting the made upgrades
+        FindObjectOfType<PlayerStats>().SetUpgrades();
     }
 
     public void SettingsMenuBtn()
@@ -40,27 +43,13 @@ public class UIManager : MonoBehaviour
             Transform child = canvas.transform.GetChild(i);
 
             // If childs name is not MainMenu, then make it false
-            if (child.name == "MainMenu")
-            {
-                child.gameObject.SetActive(true);
-            }
-            else
-            {
-                child.gameObject.SetActive(false);
-            }
+            child.gameObject.SetActive(child.name == "MainMenu");
         }
     }
 
-    void SetTime() 
+    void SetTime()
     {
-        if(isTimeSet) 
-        {
-            Time.timeScale = 1;
-        }
-        else 
-        {
-            Time.timeScale = 0;
-        }
+        Time.timeScale = isTimeSet ? 1 : 0;
     }
 
 

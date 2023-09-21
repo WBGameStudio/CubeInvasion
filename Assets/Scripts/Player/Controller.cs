@@ -63,13 +63,12 @@ public class Controller : MonoBehaviour
             cameraForward.Normalize();
 
             //Getting inputDirection
-            Vector3 inputDirection = new Vector3(joystick.Horizontal, 0, joystick.Vertical);
+            Vector3 inputDirection = new Vector3(joystick.Horizontal, rb.velocity.y, joystick.Vertical);
 
             //Changing inputDirection according to camera's forward
             moveDirection = cameraForward * inputDirection.z + Camera.main.transform.right * inputDirection.x;
             moveDirection.Normalize();
-
-            rb.velocity = moveDirection * speed;
+            rb.velocity = new Vector3(moveDirection.x * speed, rb.velocity.y, moveDirection.z * speed);
         }
         
         

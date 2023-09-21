@@ -1,10 +1,17 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public int health = 100000000;
+    public int health;
+
+    private void Update()
+    {
+        health = GetComponent<PlayerStats>().health;
+    }
+
     public void GetDamage(int _damage)
     {
         FindObjectOfType<AudioManager>().Play("Hit");

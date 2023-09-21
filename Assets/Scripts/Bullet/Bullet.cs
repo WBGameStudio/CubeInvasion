@@ -7,9 +7,17 @@ public class Bullet : MonoBehaviour
 {
     //The damage amount can be taken from the weapon script but it will be in here for now.
     //Weapons also can have scriptable objects to get the weapon stats.
-    private int damage = 20;
+    private bool isFirstDamageInfoTaken;
+    public int damage;
+
+    private void Update()
+    {
+        damage = FindObjectOfType<PlayerStats>().damage;
+    }
+
     private void OnTriggerEnter(Collider other)
     {
+       
         //If it is not touching the player it will destroy self when it touches any other object.
         //It will prevent to have too many bullets on the scene
         if (other.transform.CompareTag("Player")) return;

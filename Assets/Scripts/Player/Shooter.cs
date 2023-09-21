@@ -17,7 +17,7 @@ public class Shooter : MonoBehaviour
     [Header("*** DETECTION ***")]
     FOVManager fovManager;
 
-
+    private bool isFirstFireRateInfoTaken;
     private float timer = 0f;
 
     private void Start()
@@ -26,11 +26,16 @@ public class Shooter : MonoBehaviour
     }
     void Update()
     {
+        
+        shootingTime = GetComponent<PlayerStats>().fireTime;
+            
+        
         EnemyDetector();
     }
 
     private void SpawnBullet()
     {
+        
         //It spawns a bullet every (shootingTime) seconds.
         timer += Time.deltaTime;
         
@@ -65,6 +70,7 @@ public class Shooter : MonoBehaviour
         // Now the code works if there is "ANY" enemies in the fov the method will be executed only 1 time
         if (colliders.Any(collider => collider.CompareTag("Enemy")))
         {
+            
             SpawnBullet();
         }
     }
