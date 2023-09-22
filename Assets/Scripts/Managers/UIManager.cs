@@ -1,12 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
+using UnityEditor.SearchService;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
-    bool isTimeSet;
-    GameObject canvas;
-    
+    public bool isTimeSet;
+    public GameObject canvas;
+    AsyncOperation asyncLoad;
     // Start is called before the first frame update
     void Awake()
     {
@@ -22,6 +25,8 @@ public class UIManager : MonoBehaviour
 
     public void TapToPlayBtn()
     {
+        asyncLoad = SceneManager.LoadSceneAsync(FindObjectOfType<GameOver>().LevelNum);
+
         canvas.transform.Find("MainMenu").gameObject.SetActive(false);
         canvas.transform.Find("PlayMenu").gameObject.SetActive(true);
         isTimeSet =true;
@@ -41,7 +46,6 @@ public class UIManager : MonoBehaviour
         for (int i = 0; i < canvas.transform.childCount; i++)
         {
             Transform child = canvas.transform.GetChild(i);
-
             // If childs name is not MainMenu, then make it false
             child.gameObject.SetActive(child.name == "MainMenu");
         }
@@ -51,6 +55,13 @@ public class UIManager : MonoBehaviour
     {
         Time.timeScale = isTimeSet ? 1 : 0;
     }
+
+    public void RestartScene()
+    {
+        SceneManager.LoadScene(FindObjectOfType<GameOver>().LevelNum);
+    }
+
+    
 
 
 }

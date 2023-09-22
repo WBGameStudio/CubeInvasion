@@ -5,17 +5,25 @@ using UnityEngine.SceneManagement;
 
 public class GameOver : MonoBehaviour
 {
+    
     [SerializeField] public int LevelNum;
+
+
+    
+
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Player")) 
         {
-            Restart();
+            Died();
         }
     }
 
-    public void Restart() 
+    public void Died() 
     {
-        SceneManager.LoadScene(LevelNum);
+        UIManager uiManager = FindObjectOfType<UIManager>();    
+        uiManager.canvas.transform.Find("PlayMenu").gameObject.SetActive(false);
+        uiManager.canvas.transform.Find("GameOverMenu").gameObject.SetActive(true);
+        uiManager.isTimeSet = false;
     }
 }

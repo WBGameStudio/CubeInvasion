@@ -46,7 +46,10 @@ public class GateController : MonoBehaviour
         {
             Debug.Log("Finish");
             //FindObjectOfType<GameOver>().LevelNum++;
-            SceneManager.LoadScene(FindObjectOfType<GameOver>().LevelNum);
+            UIManager uiManager = FindObjectOfType<UIManager>();
+            uiManager.canvas.transform.Find("PlayMenu").gameObject.SetActive(false);
+            uiManager.canvas.transform.Find("FinishMenu").gameObject.SetActive(true);
+            uiManager.isTimeSet = false;
         }
 
         //Checks if the gate is the active one.
