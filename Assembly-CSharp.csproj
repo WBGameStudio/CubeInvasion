@@ -72,6 +72,7 @@
     <Compile Include="Assets\Scripts\Enemy\EnemyShooter.cs" />
     <Compile Include="Assets\Scripts\Player\Player.cs" />
     <Compile Include="Assets\Scripts\Bullet\Bullet.cs" />
+    <Compile Include="Assets\Scripts\Enemy\Bomb.cs" />
     <Compile Include="Assets\Scripts\Player\Shooter.cs" />
     <Compile Include="Assets\Scripts\Enemy\Enemy.cs" />
     <Compile Include="Assets\StatsManager.cs" />

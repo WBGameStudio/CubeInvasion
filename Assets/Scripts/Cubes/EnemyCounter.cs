@@ -23,6 +23,7 @@ public class EnemyCounter : MonoBehaviour
         {
             //Like player, enemies can fall from cube too. So we need also detect to enemies falled from cube.
             GateController gateController = gameObject.GetComponentInChildren<GateController>();
+            
             gateController.EnemyCountOnCube--;
             Debug.Log(gateController.EnemyCountOnCube.ToString());
         }

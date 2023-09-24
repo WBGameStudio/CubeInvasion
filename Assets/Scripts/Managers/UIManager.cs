@@ -25,8 +25,6 @@ public class UIManager : MonoBehaviour
 
     public void TapToPlayBtn()
     {
-        asyncLoad = SceneManager.LoadSceneAsync(FindObjectOfType<GameOver>().LevelNum);
-
         canvas.transform.Find("MainMenu").gameObject.SetActive(false);
         canvas.transform.Find("PlayMenu").gameObject.SetActive(true);
         isTimeSet =true;
