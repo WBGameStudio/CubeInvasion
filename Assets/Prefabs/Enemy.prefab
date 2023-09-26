@@ -48,7 +48,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3359689132659823935}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 4300010, guid: c5ad4b0a0f5ec0d479a9d07a75e05d23, type: 3}
 --- !u!23 &1276913450653292621
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -130,6 +130,7 @@ MonoBehaviour:
   pushPower: 0
   fov: 0
   enemyType: 
+  moneyWorth: 0
 --- !u!54 &3212545662631724117
 Rigidbody:
   m_ObjectHideFlags: 0
