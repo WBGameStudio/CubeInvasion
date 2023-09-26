@@ -82,7 +82,7 @@ public class Controller : MonoBehaviour
     void CharacterRotator() 
     {
 
-        float lookSpeed = 250f;
+        float lookSpeed = 360f;
 
         if (EnemyOnFOV() || currentTarget != null) 
         {

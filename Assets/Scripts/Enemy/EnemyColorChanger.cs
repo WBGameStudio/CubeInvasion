@@ -18,9 +18,11 @@ public class EnemyColorChanger : MonoBehaviour
         //Example:
         //100 >= health >= 80 Color is green
         //80 > health <= 60 Color is another color
-        int colorIndex = Mathf.Clamp((100 - health) / 20, 0, 4);
-        MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
-        meshRenderer.material.color = _enemyColorManger.enemyColors[colorIndex];
+        
+        
+        // int colorIndex = Mathf.Clamp((100 - health) / 20, 0, 4);
+        // MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
+        // meshRenderer.material.color = _enemyColorManger.enemyColors[colorIndex];
         
     }
 }
