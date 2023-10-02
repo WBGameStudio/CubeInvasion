@@ -29,8 +29,8 @@ Transform:
   m_GameObject: {fileID: 8386146175579814077}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 5, z: -12.5}
-  m_LocalScale: {x: 25, y: 10, z: 1}
+  m_LocalPosition: {x: 0, y: 0.9, z: -12.5}
+  m_LocalScale: {x: 0.2, y: 1, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -63,7 +63,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 2631a36f7c884e948be01d908eef6ab5, type: 2}
+  - {fileID: 2100000, guid: c74e1c3cdf1060c48b4b0f9d45639b60, type: 2}
+  - {fileID: 2100000, guid: d61eeb63d448dea4496eb21cfa27b2ea, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -104,7 +105,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
+  m_Size: {x: 0.3, y: 1, z: 2}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!208 &4635767270520630703
 NavMeshObstacle:
@@ -116,7 +117,7 @@ NavMeshObstacle:
   m_Enabled: 1
   serializedVersion: 3
   m_Shape: 1
-  m_Extents: {x: 0.5, y: 0.5, z: 0.5}
+  m_Extents: {x: 0.15, y: 0.5, z: 1}
   m_MoveThreshold: 0.1
   m_Carve: 1
   m_CarveOnlyStationary: 1
