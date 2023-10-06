@@ -70,6 +70,7 @@
      <Compile Include="Assets\Scripts\Managers\GameOver.cs" />
      <Compile Include="Assets\Scripts\Managers\UIManager.cs" />
      <Compile Include="Assets\Scripts\Player\Controller.cs" />
+     <Compile Include="Assets\CameraChanger.cs" />
      <Compile Include="Assets\Scripts\Timer.cs" />
      <Compile Include="Assets\Assets\Joystick Pack\Scripts\Joysticks\DynamicJoystick.cs" />
      <Compile Include="Assets\Scripts\Managers\EnemyColorManager.cs" />

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Cinemachine;
 using UnityEngine;
 
 public class CubeSelector : MonoBehaviour
@@ -15,8 +16,18 @@ public class CubeSelector : MonoBehaviour
         GetCubeDowners();
         StartCubeTimer();
         FindObjectOfType<CameraManager>().CameraChanger(cubeCount);
+        CameraChange();
     }
 
+    private void CameraChange()
+    {
+        if (cubeCount > 0)
+        {
+            _cubeDowners[cubeCount - 1].gameObject.transform.Find("CinemachineVerty").gameObject.SetActive(false);
+        }
+        _cubeDowners[cubeCount].gameObject.transform.Find("CinemachineVerty").gameObject.SetActive(true);
+    }
+    
     private void GetCubeDowners()
     {
         //Getting all the CubeDowners.
@@ -41,5 +52,6 @@ public class CubeSelector : MonoBehaviour
             FindObjectOfType<CameraManager>().CameraChanger(cubeCount);
             // _cubeDowners[cubeCount].transform.GetComponentInChildren<GateController>().EnemyCountOnCube = 0;
             StartCubeTimer();
+            CameraChange();
     }
 }
