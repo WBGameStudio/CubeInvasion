@@ -9,7 +9,8 @@ public class GateController : MonoBehaviour
 {
     [Header("*** GATE ***")]
     Rigidbody rb;
-    [Space][Space]
+
+    private GameObject gate;
     [Header("*** ENEMİES ***")]
     public int EnemyCountOnCube = 0;
 
@@ -22,6 +23,7 @@ public class GateController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        gate = transform.GetChild(0).gameObject;
     }
 
     // Update is called once per frame
@@ -37,6 +39,8 @@ public class GateController : MonoBehaviour
             GateOpening();
         }
     }
+
+    
 
     private void GateOpening()
     {
@@ -57,11 +61,14 @@ public class GateController : MonoBehaviour
 
         //If there is no enemies on our cube, gate is falling down and we can move on to the next cube.
         if (EnemyCountOnCube != 0) { return; }
- 
-                BoxCollider boxCollider = GetComponent<BoxCollider>();
-                boxCollider.isTrigger = true;
-                rb.useGravity = true;
-                rb.isKinematic = false;
+        
+        
+        transform.GetChild(0).transform.GetComponent<GateOpener>().OpenGate();
+        transform.GetChild(1).transform.GetComponent<GateOpener>().OpenGate();
+        // BoxCollider boxCollider = GetComponent<BoxCollider>();
+        // boxCollider.isTrigger = true;
+        // rb.useGravity = true;
+        // rb.isKinematic = false;
     }
 
    

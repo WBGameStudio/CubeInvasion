@@ -15,10 +15,9 @@ public class Enemy : MonoBehaviour
     public string enemyType;
     public int moneyWorth;
     
-    GameObject gate;
+    public GameObject gate;
     private void Start()
     {
-        
         transform.GetComponent<EnemyColorChanger>().ChangeColor(health);
     }
 
@@ -43,7 +42,7 @@ public class Enemy : MonoBehaviour
 
         if (health <= 0)
         {
-            gate = FindNearestGate();
+            // gate = FindNearestGate();
             GateController gateController = gate.GetComponent<GateController>();
             gateController.EnemyCountOnCube--;
             Controller controller = FindObjectOfType<Controller>();

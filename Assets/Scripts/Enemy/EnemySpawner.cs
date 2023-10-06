@@ -19,6 +19,8 @@ public class EnemySpawner : MonoBehaviour
             enemy.transform.parent = enemies;
             //It sends the stats to the spawned enemy
             enemy.GetComponent<Enemy>().SetStats(child.GetComponent<EnemySpawnerType>().enemyType);
+            enemy.GetComponent<Enemy>().gate =
+                enemies.parent.parent.GetComponentInChildren<GateController>().gameObject;
         }
     }
 }

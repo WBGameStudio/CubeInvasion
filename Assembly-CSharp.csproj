@@ -49,6 +49,8 @@
      <Compile Include="Assets\Scripts\Cubes\CubeDowner.cs" />
      <Compile Include="Assets\Scripts\Managers\AudioManager.cs" />
      <Compile Include="Assets\Scripts\Enemy\EnemyColorChanger.cs" />
+     <Compile Include="Assets\Scripts\Managers\StatsManager.cs" />
+     <Compile Include="Assets\Scripts\Enemy\EnemySpawnerType.cs" />
      <Compile Include="Assets\Scripts\Managers\FOVManager.cs" />
      <Compile Include="Assets\Scripts\Managers\CameraManager.cs" />
      <Compile Include="Assets\Scripts\Enemy\EnemySpawner.cs" />
@@ -60,19 +62,17 @@
      <Compile Include="Assets\Scripts\Player\Player.cs" />
      <Compile Include="Assets\Scripts\Bullet\Bullet.cs" />
      <Compile Include="Assets\Scripts\Enemy\Bomb.cs" />
+     <Compile Include="Assets\GateOpener.cs" />
      <Compile Include="Assets\Scripts\Player\Shooter.cs" />
      <Compile Include="Assets\Scripts\Enemy\Enemy.cs" />
-     <Compile Include="Assets\StatsManager.cs" />
      <Compile Include="Assets\Scripts\Cubes\CubeSelector.cs" />
      <Compile Include="Assets\Assets\Joystick Pack\Scripts\Joysticks\FixedJoystick.cs" />
      <Compile Include="Assets\Scripts\Managers\GameOver.cs" />
-     <Compile Include="Assets\EnemySpawnerType.cs" />
      <Compile Include="Assets\Scripts\Managers\UIManager.cs" />
      <Compile Include="Assets\Scripts\Player\Controller.cs" />
      <Compile Include="Assets\Scripts\Timer.cs" />
      <Compile Include="Assets\Assets\Joystick Pack\Scripts\Joysticks\DynamicJoystick.cs" />
      <Compile Include="Assets\Scripts\Managers\EnemyColorManager.cs" />
-     <Compile Include="Assets\PlayerStats.cs" />
      <Compile Include="Assets\Scripts\Managers\MoneyManager.cs" />
      <Compile Include="Assets\Assets\Joystick Pack\Examples\JoystickPlayerExample.cs" />
      <Compile Include="Assets\Scripts\Sound.cs" />
@@ -81,6 +81,7 @@
      <Compile Include="Assets\Assets\Joystick Pack\Scripts\Joysticks\VariableJoystick.cs" />
      <Compile Include="Assets\Scripts\ScriptableObjectScripts\EnemySO.cs" />
      <Compile Include="Assets\Assets\Joystick Pack\Examples\JoystickSetterExample.cs" />
+     <Compile Include="Assets\Scripts\Player\PlayerStats.cs" />
      <Folder Include="Assets" />
      <Folder Include="Assets\Assets\asoliddev - Low Poly Dynamic Fantasy Pack\Prefabs\Flowers" />
      <Folder Include="Assets\Assets\Joystick Pack\Scripts\Joysticks" />
