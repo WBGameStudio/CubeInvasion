@@ -45,15 +45,23 @@ public class Controller : MonoBehaviour
 
     private void ControlingCharacter() 
     {
-       
+        Animator animator = rb.GetComponentInChildren<Animator>();
         //Fixing that, while player not rotating the character still having a velocity with using joystick speeds.
         if (joystick.Horizontal == 0 ||  joystick.Vertical == 0)
         {
             rb.velocity = isThereKnockBack ? new Vector3(rb.velocity.x, rb.velocity.y, rb.velocity.z) : new Vector3(0, rb.velocity.y, 0);
+            
+            animator.SetFloat("Speed", 0);
+            //animator.SetFloat("SpeedX", rb.velocity.x);
+            //animator.SetFloat("SpeedZ", rb.velocity.z);
         }
         else if (isThereKnockBack) 
         {
             new Vector3(rb.velocity.x, rb.velocity.y, rb.velocity.z);
+            
+            animator.SetFloat("Speed", 0);
+            //animator.SetFloat("SpeedX", rb.velocity.x);
+            //animator.SetFloat("SpeedZ", rb.velocity.z);
         }
         else 
         {
@@ -69,6 +77,11 @@ public class Controller : MonoBehaviour
             moveDirection = cameraForward * inputDirection.z + Camera.main.transform.right * inputDirection.x;
             moveDirection.Normalize();
             rb.velocity = new Vector3(moveDirection.x * speed, rb.velocity.y, moveDirection.z * speed);
+
+           
+
+            animator.SetFloat("Speed", speed);
+            
         }
         
         
@@ -83,6 +96,7 @@ public class Controller : MonoBehaviour
     {
 
         float lookSpeed = 360f;
+        Animator animator = rb.GetComponentInChildren<Animator>();
 
         if (EnemyOnFOV() || currentTarget != null) 
         {
@@ -90,11 +104,19 @@ public class Controller : MonoBehaviour
             targetRotation = Quaternion.LookRotation(direction);
             lookAt = Quaternion.RotateTowards(transform.rotation, targetRotation, Time.deltaTime * lookSpeed);
             transform.rotation = lookAt;
+            
+            animator.SetBool("IsinRange", true);
+            animator.SetFloat("SpeedX", -direction.x);
+            animator.SetFloat("SpeedZ", -direction.z);
+
         }
         else if(currentTarget == null)
         {
             targetRotation = Quaternion.LookRotation(moveDirection);
             transform.rotation = targetRotation;
+            
+            animator.SetBool("IsinRange", false);
+
         }
     }
 
@@ -109,6 +131,7 @@ public class Controller : MonoBehaviour
             if (collider.CompareTag("Enemy"))
             {
                 currentTarget = collider.transform;
+                
                 check = true;
             }
            
