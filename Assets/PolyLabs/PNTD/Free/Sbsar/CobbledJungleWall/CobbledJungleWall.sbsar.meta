@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: b77d9897cb79d4474bf2d92e01818016
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 11500000, guid: dda12f74ff9116a42b23482252b2c482, type: 3}
+  _instancesCopy:
+  - {fileID: 11400000, guid: 7e9d3ea3f2f36489d94a75c3386185db, type: 2}
+  _fileAsset: {instanceID: 0}
+  _assetPath: Assets/PolyLabs/PNTD/Free/Sbsar/CobbledJungleWall/CobbledJungleWall.sbsar

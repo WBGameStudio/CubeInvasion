@@ -59,6 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Cubes\CubeChanger.cs" />
+    <Compile Include="Assets\PolyLabs\PNTD\Free\PNTDSampleConsts.cs" />
     <Compile Include="Assets\Scripts\Cubes\CubeDowner.cs" />
     <Compile Include="Assets\Scripts\Managers\AudioManager.cs" />
     <Compile Include="Assets\Scripts\Enemy\EnemyColorChanger.cs" />
@@ -94,6 +95,7 @@
     <Compile Include="Assets\Assets\Joystick Pack\Scripts\Joysticks\FloatingJoystick.cs" />
     <Compile Include="Assets\Assets\Joystick Pack\Scripts\Joysticks\VariableJoystick.cs" />
     <Compile Include="Assets\Scripts\ScriptableObjectScripts\EnemySO.cs" />
+    <Compile Include="Assets\PolyLabs\BonusAssets\Rotator.cs" />
     <Compile Include="Assets\Assets\Joystick Pack\Examples\JoystickSetterExample.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerStats.cs" />
   </ItemGroup>

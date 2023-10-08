@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: b72d47ba93f9d41c18a490aed7a09406
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 11500000, guid: dda12f74ff9116a42b23482252b2c482, type: 3}
+  _instancesCopy:
+  - {fileID: 11400000, guid: e351b3c86e0b1493d86ef591b82cd063, type: 2}
+  _fileAsset: {instanceID: 0}
+  _assetPath: Assets/PolyLabs/PNTD/Free/Sbsar/BeachSand/BeachSand.sbsar

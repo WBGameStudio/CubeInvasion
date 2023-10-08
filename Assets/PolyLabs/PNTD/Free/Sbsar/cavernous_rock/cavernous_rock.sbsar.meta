@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: e2c4be7da8f224b83813b0c9901b98e0
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 11500000, guid: dda12f74ff9116a42b23482252b2c482, type: 3}
+  _instancesCopy:
+  - {fileID: 11400000, guid: 564871d7d04214384bdba9ff5d317055, type: 2}
+  _fileAsset: {instanceID: 0}
+  _assetPath: Assets/PolyLabs/PNTD/Free/Sbsar/cavernous_rock/cavernous_rock.sbsar

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 34403179659104735b903dbd4df8248e
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 11500000, guid: dda12f74ff9116a42b23482252b2c482, type: 3}
+  _instancesCopy:
+  - {fileID: 11400000, guid: 0988ce122c05247e0b3ae625c78bd56a, type: 2}
+  _fileAsset: {instanceID: 0}
+  _assetPath: Assets/PolyLabs/PNTD/Free/Sbsar/FreshSnow/FreshSnow.sbsar
