@@ -13,6 +13,7 @@ public class StatsManager : MonoBehaviour
     private int currentDamage;
     private float currentFireRate;
 
+    private PlayerStats _playerStats;
     private void Awake()
     {
         // Load saved stats or use base stats if not found.
@@ -23,6 +24,7 @@ public class StatsManager : MonoBehaviour
 
     private void Start()
     {
+        _playerStats = FindObjectOfType<PlayerStats>();
         UpgradeHealth(0);
         UpgradeDamage(0);
         UpgradeFireRate(0);
@@ -48,6 +50,7 @@ public class StatsManager : MonoBehaviour
         currentHealth += upgradeAmount;
         PlayerPrefs.SetInt(HealthKey, currentHealth);
         PlayerPrefs.Save();
+        _playerStats.SetUpgrades();
     }
 
     public void UpgradeDamage(int upgradeAmount)
@@ -55,6 +58,7 @@ public class StatsManager : MonoBehaviour
         currentDamage += upgradeAmount;
         PlayerPrefs.SetInt(DamageKey, currentDamage);
         PlayerPrefs.Save();
+        _playerStats.SetUpgrades();
     }
 
     public void UpgradeFireRate(float upgradeAmount)
@@ -62,5 +66,6 @@ public class StatsManager : MonoBehaviour
         currentFireRate -= upgradeAmount;
         PlayerPrefs.SetFloat(FireRateKey, currentFireRate);
         PlayerPrefs.Save();
+        _playerStats.SetUpgrades();
     }
 }
