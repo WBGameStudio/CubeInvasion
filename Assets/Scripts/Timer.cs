@@ -17,12 +17,12 @@ public class Timer : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         timeUpdater();
     }
 
-    void timeUpdater()
+    private void timeUpdater()
     {
         if(time <= 0) { return; }   
         time -= Time.deltaTime;
