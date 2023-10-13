@@ -7,12 +7,13 @@ using UnityEngine;
 public class GateStats : MonoBehaviour
 {
     private TextMeshPro text;
-    private StatsManager _statsManager;
+    private PlayerStats _statsManager;
     public enum StatSelector
     {
         Health,
         Damage,
         FireRate,
+        Speed,
     }
 
     public StatSelector stat;
@@ -20,7 +21,7 @@ public class GateStats : MonoBehaviour
 
     private void Start()
     {
-        _statsManager = FindObjectOfType<StatsManager>();
+        _statsManager = FindObjectOfType<PlayerStats>();
         text = GetComponentInChildren<TextMeshPro>();
         SetText();
     }
@@ -28,18 +29,22 @@ public class GateStats : MonoBehaviour
 
     public void SetStats()
     {
-        if (stat == StatSelector.Health)
+        switch (stat)
         {
-            _statsManager.UpgradeHealth(int.Parse(statAmount.ToString()));
-        }
-        else if (stat == StatSelector.Damage)
-        {
-            Debug.Log("Zort");
-            _statsManager.UpgradeDamage(int.Parse(statAmount.ToString()));
-        }
-        else if (stat == StatSelector.FireRate)
-        {
-            _statsManager.UpgradeFireRate(statAmount);
+            case StatSelector.Health:
+                _statsManager.UpgradeHealth(int.Parse(statAmount.ToString()));
+                break;
+            case StatSelector.Damage:
+                _statsManager.UpgradeDamage(int.Parse(statAmount.ToString()));
+                break;
+            case StatSelector.FireRate:
+                _statsManager.UpgradeFireTime(statAmount);
+                break;
+            case StatSelector.Speed:
+                _statsManager.UpgradeSpeed(statAmount);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
         }
     }
 

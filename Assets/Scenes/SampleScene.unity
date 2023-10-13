@@ -2149,21 +2149,26 @@ PrefabInstance:
       objectReference: {fileID: 77125631449112597}
     - target: {fileID: 3525477160225487194, guid: 9046f3a24933d7944bdf00e5f57ba70f, type: 3}
       propertyPath: stat
-      value: 0
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3525477160225487194, guid: 9046f3a24933d7944bdf00e5f57ba70f, type: 3}
       propertyPath: statAmount
-      value: 20
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 7748203692512317796, guid: 9046f3a24933d7944bdf00e5f57ba70f, type: 3}
       propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8075702093050870182, guid: 9046f3a24933d7944bdf00e5f57ba70f, type: 3}
+      propertyPath: m_Convex
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8847519080945528889, guid: 9046f3a24933d7944bdf00e5f57ba70f, type: 3}
       propertyPath: m_Name
       value: Cubes
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5509263719383844248, guid: 9046f3a24933d7944bdf00e5f57ba70f, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:

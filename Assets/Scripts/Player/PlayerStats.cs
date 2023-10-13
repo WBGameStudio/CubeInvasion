@@ -8,6 +8,7 @@ public class PlayerStats : MonoBehaviour
     public int health;
     public int damage;
     public float fireTime;
+    public float speed;
 
     public void SetUpgrades()
     {
@@ -15,5 +16,24 @@ public class PlayerStats : MonoBehaviour
         health = PlayerPrefs.GetInt("PlayerHealth");
         damage = PlayerPrefs.GetInt("PlayerDamage");
         fireTime = PlayerPrefs.GetFloat("PlayerFireRate");
+        speed = PlayerPrefs.GetFloat("PlayerSpeed");
     }
+
+    public void UpgradeHealth(int upgradeAmount)
+    {
+        health += upgradeAmount;
+    }
+    public void UpgradeDamage(int upgradeAmount)
+    {
+        damage += upgradeAmount;
+    }
+    public void UpgradeFireTime(float upgradeAmount)
+    {
+        fireTime -= upgradeAmount;
+    }
+    public void UpgradeSpeed(float upgradeAmount)
+    {
+        speed += upgradeAmount;
+    }
+    
 }

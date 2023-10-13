@@ -11,8 +11,6 @@ public class Controller : MonoBehaviour
     [SerializeField] Rigidbody rb;
     bool isThereKnockBack;
 
-    [SerializeField] float speed;
-
 
     public Transform currentTarget = null;
     Vector3 moveDirection;
@@ -43,8 +41,9 @@ public class Controller : MonoBehaviour
 
 
 
-    private void ControlingCharacter() 
+    private void ControlingCharacter()
     {
+        float speed = GetComponent<PlayerStats>().speed;
         Animator animator = rb.GetComponentInChildren<Animator>();
         //Fixing that, while player not rotating the character still having a velocity with using joystick speeds.
         if (joystick.Horizontal == 0 ||  joystick.Vertical == 0)

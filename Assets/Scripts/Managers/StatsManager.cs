@@ -8,10 +8,12 @@ public class StatsManager : MonoBehaviour
     private const string HealthKey = "PlayerHealth";
     private const string DamageKey = "PlayerDamage";
     private const string FireRateKey = "PlayerFireRate";
+    private const string SpeedKey = "PlayerSpeed";
 
     private int currentHealth;
     private int currentDamage;
     private float currentFireRate;
+    private float currentSpeed;
 
     private PlayerStats _playerStats;
     private void Awake()
@@ -20,6 +22,7 @@ public class StatsManager : MonoBehaviour
         currentHealth = PlayerPrefs.GetInt(HealthKey, 100);
         currentDamage = PlayerPrefs.GetInt(DamageKey, 20);
         currentFireRate = PlayerPrefs.GetFloat(FireRateKey, 0.5f);
+        currentSpeed = PlayerPrefs.GetFloat(SpeedKey, 2.5f);
     }
 
     private void Start()
@@ -28,6 +31,7 @@ public class StatsManager : MonoBehaviour
         UpgradeHealth(0);
         UpgradeDamage(0);
         UpgradeFireRate(0);
+        UpgradeSpeed(0);
     }
 
     public float GetHealth()
@@ -43,6 +47,10 @@ public class StatsManager : MonoBehaviour
     public float GetFireRate()
     {
         return currentFireRate;
+    }
+    public float GetSpeed()
+    {
+        return currentSpeed;
     }
 
     public void UpgradeHealth(int upgradeAmount)
@@ -65,6 +73,13 @@ public class StatsManager : MonoBehaviour
     {
         currentFireRate -= upgradeAmount;
         PlayerPrefs.SetFloat(FireRateKey, currentFireRate);
+        PlayerPrefs.Save();
+        _playerStats.SetUpgrades();
+    }
+    public void UpgradeSpeed(float upgradeAmount)
+    {
+        currentSpeed += upgradeAmount;
+        PlayerPrefs.SetFloat(SpeedKey, currentSpeed);
         PlayerPrefs.Save();
         _playerStats.SetUpgrades();
     }

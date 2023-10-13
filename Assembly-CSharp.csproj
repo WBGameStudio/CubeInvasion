@@ -93,6 +93,7 @@
      <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
      <Folder Include="Assets\Assets\asoliddev - Low Poly Dynamic Fantasy Pack\Prefabs\Buildings\roofs" />
      <Folder Include="Assets\PolyLabs\PNTD\Free\Textures\BeachSand_Sahara" />
+     <Folder Include="Assets\PlayerPrefsEditor\Samples" />
      <Folder Include="Assets\Assets\Joystick Pack\Sprites\Vertical Backgrounds" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Overlay.shader" />
      <Folder Include="Assets\Assets\asoliddev - Low Poly Dynamic Fantasy Pack\Prefabs\Bushes" />
@@ -100,6 +101,7 @@
      <Folder Include="Assets\Materials" />
      <Folder Include="Assets\Assets\asoliddev - Low Poly Dynamic Fantasy Pack\Models\Props\Signs" />
      <Folder Include="Assets\Assets\BOXOPHOBIC\User" />
+     <Folder Include="Assets\PlayerPrefsEditor" />
      <Folder Include="Assets\Assets\asoliddev - Low Poly Dynamic Fantasy Pack\Models\Grass" />
      <Folder Include="Assets\Assets\asoliddev - Low Poly Dynamic Fantasy Pack\Prefabs\Props\Signs" />
      <Folder Include="Assets\Scripts\Managers" />
@@ -142,6 +144,7 @@
      <Folder Include="Assets\TextMesh Pro\Resources\Fonts &amp; Materials" />
      <Folder Include="Assets\Assets\asoliddev - Low Poly Dynamic Fantasy Pack\Models\buildings\roofs" />
      <Folder Include="Assets\Assets\BOXOPHOBIC\Skybox Cubemap Extended\Demo\Settings" />
+     <Folder Include="Assets\_Fog_Plane\Scene" />
      <None Include="Assets\TextMesh Pro\Shaders\TMPro_Mobile.cginc" />
      <Folder Include="Assets\Assets\BOXOPHOBIC\Skybox Cubemap Extended\Core\Shaders" />
      <Folder Include="Assets\Assets\asoliddev - Low Poly Dynamic Fantasy Pack\Prefabs\Branch" />
@@ -189,6 +192,7 @@
      <Folder Include="Assets\PolyLabs\PNTD\Free\Sbsar" />
      <Folder Include="Assets\Assets\asoliddev - Low Poly Dynamic Fantasy Pack\Models\Crystals" />
      <Folder Include="Assets\Assets\asoliddev - Low Poly Dynamic Fantasy Pack\Materials\Leather" />
+     <Folder Include="Assets\_Fog_Plane\Meshes" />
      <Folder Include="Assets\Assets\asoliddev - Low Poly Dynamic Fantasy Pack\Prefabs\Buildings\roofs\dynamic\tiles\a1" />
      <Folder Include="Assets\Prefabs" />
      <Folder Include="Assets\Assets\asoliddev - Low Poly Dynamic Fantasy Pack\Textures" />
@@ -201,6 +205,7 @@
      <Folder Include="Assets\Assets\asoliddev - Low Poly Dynamic Fantasy Pack\Prefabs\Buildings\walls\wood" />
      <Folder Include="Assets\Assets\asoliddev - Low Poly Dynamic Fantasy Pack\Models\Bushes" />
      <None Include="Assets\Assets\BOXOPHOBIC\Skybox Cubemap Extended\Core\Shaders\Skybox Cubemap Blend.shader" />
+     <Folder Include="Assets\_Fog_Plane" />
      <Folder Include="Assets\Assets\asoliddev - Low Poly Dynamic Fantasy Pack\Prefabs\Buildings\roofs\dynamic\tiles\b3" />
      <Folder Include="Assets\Sounds" />
      <Folder Include="Assets\Assets\asoliddev - Low Poly Dynamic Fantasy Pack\Models" />
@@ -217,6 +222,7 @@
      <Folder Include="Assets\Assets\asoliddev - Low Poly Dynamic Fantasy Pack\Prefabs\Buildings\windows" />
      <Folder Include="Assets\Assets\asoliddev - Low Poly Dynamic Fantasy Pack" />
      <Folder Include="Assets\Assets\BOXOPHOBIC\Utils" />
+     <Folder Include="Assets\_Fog_Plane\Settings" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile SSD.shader" />
      <Folder Include="Assets\Assets\asoliddev - Low Poly Dynamic Fantasy Pack\Models\buildings" />
      <None Include="Assets\TextMesh Pro\Resources\LineBreaking Leading Characters.txt" />
@@ -246,6 +252,7 @@
      <Folder Include="Assets\PolyLabs\PNTD\Free\Sbsar\FreshSnow\presets" />
      <Folder Include="Assets\Assets\asoliddev - Low Poly Dynamic Fantasy Pack\Models\buildings\stairs" />
      <Folder Include="Assets\PolyLabs\PNTD\Free\Textures\CobbledJungleWall_Flooring" />
+     <Folder Include="Assets\PlayerPrefsEditor\Documentation\Images" />
      <None Include="Assets\TextMesh Pro\Resources\LineBreaking Following Characters.txt" />
      <Folder Include="Assets\PolyLabs" />
      <Folder Include="Assets\Assets\asoliddev - Low Poly Dynamic Fantasy Pack\Models\Props" />
@@ -253,6 +260,7 @@
      <Folder Include="Assets\Assets\asoliddev - Low Poly Dynamic Fantasy Pack\Prefabs\Buildings\parts\normal" />
      <Folder Include="Assets\Assets\asoliddev - Low Poly Dynamic Fantasy Pack\Materials\Terrain" />
      <Folder Include="Assets\Assets\asoliddev - Low Poly Dynamic Fantasy Pack\Prefabs\Rocks" />
+     <Folder Include="Assets\_Fog_Plane\Materials" />
      <Folder Include="Assets\Assets" />
      <Folder Include="Assets\PolyLabs\PNTD\Free\Sbsar\BeachSand\BeachSand_graph_0" />
      <Folder Include="Assets\PolyLabs\PNTD\Free\MaterialDemo" />
@@ -261,14 +269,17 @@
      <Folder Include="Assets\Assets\asoliddev - Low Poly Dynamic Fantasy Pack\Prefabs\Crystals" />
      <Folder Include="Assets\PolyLabs\PNTD\Free\Materials" />
      <Folder Include="Assets\Assets\asoliddev - Low Poly Dynamic Fantasy Pack\Models\buildings\parts\grid" />
+     <Folder Include="Assets\_Fog_Plane\Scene\Scene_01" />
      <Folder Include="Assets\Scripts\Camera" />
      <Folder Include="Assets\Assets\asoliddev - Low Poly Dynamic Fantasy Pack\Materials\Basic" />
      <Folder Include="Assets\Assets\asoliddev - Low Poly Dynamic Fantasy Pack\Prefabs\Characters" />
      <Folder Include="Assets\Assets\Joystick Pack\Sprites\All Axis Backgrounds" />
      <Folder Include="Assets\Assets\asoliddev - Low Poly Dynamic Fantasy Pack\Prefabs\Buildings\balcony" />
+     <Folder Include="Assets\PlayerPrefsEditor\Documentation" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Masking.shader" />
      <Folder Include="Assets\PolyLabs\BonusAssets\PrototypeMats\Textures" />
      <Folder Include="Assets\Assets\BOXOPHOBIC\Skybox Cubemap Extended\Demo\Prefabs" />
+     <Folder Include="Assets\_Fog_Plane\Shaders" />
      <Folder Include="Assets\Assets\asoliddev - Low Poly Dynamic Fantasy Pack\Prefabs\Thorns" />
      <Folder Include="Assets\Assets\asoliddev - Low Poly Dynamic Fantasy Pack\Models\buildings\roofs\dynamic\tiles\a3" />
      <Folder Include="Assets\Assets\asoliddev - Low Poly Dynamic Fantasy Pack\Prefabs\Buildings\walls\stone" />
@@ -1060,6 +1071,18 @@
     <ProjectReference Include="Boxophobic.Utils.Editor.csproj">
       <Project>{cb41e395-a3b1-aadd-135f-185fa51ae609}</Project>
       <Name>Boxophobic.Utils.Editor</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.PlayerPrefsEditor.Editor.csproj">
+      <Project>{2f8a1a80-a34d-410c-dc6e-dc0499fd1c71}</Project>
+      <Name>Unity.PlayerPrefsEditor.Editor</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.PlayerPrefsEditor.Samples.SampleScene.csproj">
+      <Project>{798248cc-7ee2-b2dd-b5d9-b53202f1663d}</Project>
+      <Name>Unity.PlayerPrefsEditor.Samples.SampleScene</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.PlayerPrefsEditor.EditorResources.csproj">
+      <Project>{3ab5acaf-5eb3-5905-8198-d2ae1a623caa}</Project>
+      <Name>Unity.PlayerPrefsEditor.EditorResources</Name>
     </ProjectReference>
     <ProjectReference Include="Boxophobic.Utils.Scripts.csproj">
       <Project>{097ac3c5-66cc-4d8b-95f8-a65c93d8807f}</Project>
