@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class PlayerStats : MonoBehaviour
 {
+    [Header("*** STATS ***")]
+    [Space]
     public int health;
     public int damage;
     public float fireTime;

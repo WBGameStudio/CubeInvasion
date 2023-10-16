@@ -10,10 +10,13 @@ public class Timer : MonoBehaviour
     public float time = 20;
 
     private bool isShaked;
+
+    private CameraManager cameraManager;
+
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        
+        cameraManager = FindObjectOfType<CameraManager>();
     }
 
     // Update is called once per frame
@@ -31,7 +34,7 @@ public class Timer : MonoBehaviour
         //Shaking the camera when the time hits 5
         if (timeInt == 5 && !isShaked)
         {
-            FindObjectOfType<CameraManager>().CameraShake();
+            cameraManager.CameraShake();
             isShaked = true;
         }
         
@@ -40,9 +43,9 @@ public class Timer : MonoBehaviour
 
     public void ResetTimer()
     {
-        FindObjectOfType<CameraManager>().StopCameraShake();
+        
         time = 20;
         isShaked = false;
-        
+        FindObjectOfType<CameraManager>().StopCameraShake();
     }
 }

@@ -21,45 +21,32 @@ public class CameraManager : MonoBehaviour
     [SerializeField] private float shakeIntensity;
     [SerializeField] private float shakeFrequency;
     
-    private void Awake()
+    private void Start()
     {
-        GetNoise();
+        StartCoroutine(GetNoise());
+    }
+
+    IEnumerator GetNoise()
+    {   
+        yield return new WaitForEndOfFrame();
+        _camVertical = FindObjectOfType<CubeSelector>().camera;
+        //Finding the active virtual camera to get its noise cinemachine component.
+        yield return new WaitForEndOfFrame();
+        noise = _camVertical.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
     }
     public void CameraChanger(int cubecount) 
     {
         
-        CubeSelector cubeSelector = FindObjectOfType<CubeSelector>();
-        Debug.Log("CUBE" + cubecount);
-        currentRotation = cubeSelector._cubeDowners[cubecount].transform.eulerAngles;
-        Debug.Log("ROTATIONS" + currentRotation);
-        //Changing the Camera according the cubes rotations.
-        if (currentRotation.y == 90) 
-        {
-            _camHorizontal.Priority = 20;
-            _camVertical.Priority = 10;
-            isVertical = false;
-        }
-        else
-        {
-            _camHorizontal.Priority = 10;
-            _camVertical.Priority = 20;
-            isVertical = true;
-        }
+        StartCoroutine(GetNoise());
         
     }
-
-    private void GetNoise()
-    {
-        //Finding the active virtual camera to get its noise cinemachine component.
-        noise = isVertical ? _camVertical.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>() : _camHorizontal.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
-    }
     
+
 
     public void CameraShake()
     {
         //This method gets called in timer when the time hits 5
-        
-        GetNoise();
+        StartCoroutine(GetNoise());
         //Start the shake camera coroutine and start shake the camera.
         StartCoroutine(ShakeCamera());
     }
@@ -73,6 +60,7 @@ public class CameraManager : MonoBehaviour
     }
     private IEnumerator ShakeCamera()
     {
+        yield return new WaitForEndOfFrame();
         // Enable the noise module to start the shake
         noise.m_AmplitudeGain = shakeIntensity;
         noise.m_FrequencyGain = shakeFrequency;

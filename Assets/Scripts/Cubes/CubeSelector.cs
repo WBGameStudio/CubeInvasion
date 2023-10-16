@@ -9,14 +9,17 @@ public class CubeSelector : MonoBehaviour
     public CubeDowner[] _cubeDowners;
     public GameObject[] _cubes;
     public int cubeCount = 0;
+    public CinemachineVirtualCamera camera;
 
     private void Start()
     {
-        //Start for the first cube
         GetCubeDowners();
+        CameraChange();
+        //Start for the first cube
+        
         StartCubeTimer();
         FindObjectOfType<CameraManager>().CameraChanger(cubeCount);
-        CameraChange();
+        
     }
 
     private void CameraChange()
@@ -26,6 +29,7 @@ public class CubeSelector : MonoBehaviour
             _cubeDowners[cubeCount - 1].gameObject.transform.Find("CinemachineVerty").gameObject.SetActive(false);
         }
         _cubeDowners[cubeCount].gameObject.transform.Find("CinemachineVerty").gameObject.SetActive(true);
+        camera = _cubeDowners[cubeCount].gameObject.transform.Find("CinemachineVerty").gameObject.GetComponent<CinemachineVirtualCamera>();
     }
     
     private void GetCubeDowners()
@@ -47,11 +51,13 @@ public class CubeSelector : MonoBehaviour
 
     public void ChangeCube()
     {
+            
             //Increase to cubeCount to change the active cube.
             cubeCount++;
+            CameraChange();
             FindObjectOfType<CameraManager>().CameraChanger(cubeCount);
             // _cubeDowners[cubeCount].transform.GetComponentInChildren<GateController>().EnemyCountOnCube = 0;
             StartCubeTimer();
-            CameraChange();
+           
     }
 }
