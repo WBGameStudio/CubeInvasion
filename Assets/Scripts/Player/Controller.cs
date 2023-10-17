@@ -94,7 +94,7 @@ public class Controller : MonoBehaviour
     void CharacterRotator() 
     {
 
-        float lookSpeed = 360f;
+        float lookSpeed = 720f;
         Animator animator = rb.GetComponentInChildren<Animator>();
 
         if (EnemyOnFOV() || currentTarget != null) 

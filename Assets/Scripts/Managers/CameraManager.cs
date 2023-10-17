@@ -36,9 +36,7 @@ public class CameraManager : MonoBehaviour
     }
     public void CameraChanger(int cubecount) 
     {
-        
         StartCoroutine(GetNoise());
-        
     }
     
 
