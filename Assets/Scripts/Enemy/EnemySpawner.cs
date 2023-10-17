@@ -12,15 +12,23 @@ public class EnemySpawner : MonoBehaviour
     {
         foreach (Transform child in spawnPoints)
         {
-            //Getting the type of the enemy from the spawnPoint object.
-            var enemyObject = child.GetComponent<EnemySpawnerType>().enemyType.enemyObject;
-            //Getting all the spawnPoints and spawn the enemies according to them.
-            var enemy = Instantiate(enemyObject, child.position, Quaternion.identity);
-            enemy.transform.parent = enemies;
-            //It sends the stats to the spawned enemy
-            enemy.GetComponent<Enemy>().SetStats(child.GetComponent<EnemySpawnerType>().enemyType);
-            enemy.GetComponent<Enemy>().gate =
-                enemies.parent.parent.GetComponentInChildren<GateController>().gameObject;
+            UIManager UIManager = FindAnyObjectByType<UIManager>();
+           
+                //Playing spawning effect.
+                ParticleSystem spawnParticle = child.GetComponentInChildren<ParticleSystem>();
+                spawnParticle.Play();
+                //Getting the type of the enemy from the spawnPoint object.
+                var enemyObject = child.GetComponent<EnemySpawnerType>().enemyType.enemyObject;
+                //Getting all the spawnPoints and spawn the enemies according to them.
+                var enemy = Instantiate(enemyObject, child.position, Quaternion.identity);
+                enemy.transform.parent = enemies;
+                //It sends the stats to the spawned enemy
+                enemy.GetComponent<Enemy>().SetStats(child.GetComponent<EnemySpawnerType>().enemyType);
+                enemy.GetComponent<Enemy>().gate =
+                    enemies.parent.parent.GetComponentInChildren<GateController>().gameObject;
         }
     }
+
+   
+
 }

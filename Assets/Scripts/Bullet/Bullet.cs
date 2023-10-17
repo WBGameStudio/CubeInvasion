@@ -25,12 +25,13 @@ public class Bullet : MonoBehaviour
         if (other.transform.CompareTag("Enemy"))
         {
             other.transform.GetComponent<Enemy>().GetDamage(damage);
+            ParticleSystem hit = other.transform.GetComponentInChildren<ParticleSystem>();
+            hit.Play();
             Destroy(gameObject);
         }
         if (other.transform.CompareTag("Bomb")) 
         {
             other.transform.GetComponent<Bomb>().knockBack();
-            Wait();
             Destroy(gameObject);
         }
         
@@ -41,8 +42,5 @@ public class Bullet : MonoBehaviour
         //It will destroy itself in 20 seconds no matter what to prevent any bugs etc.
         Destroy(gameObject, 20f);
     }
-    IEnumerator Wait()
-    {
-        yield return new WaitForSeconds(.5f);
-    }
+   
 }

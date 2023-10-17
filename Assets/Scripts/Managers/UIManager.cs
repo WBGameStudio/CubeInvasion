@@ -24,6 +24,8 @@ public class UIManager : MonoBehaviour
 
     public void TapToPlayBtn()
     {
+        
+
         canvas.transform.Find("MainMenu").gameObject.SetActive(false);
         canvas.transform.Find("PlayMenu").gameObject.SetActive(true);
         isTimeSet =true;
