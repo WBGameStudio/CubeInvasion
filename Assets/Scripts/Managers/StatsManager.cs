@@ -22,7 +22,7 @@ public class StatsManager : MonoBehaviour
         currentHealth = PlayerPrefs.GetInt(HealthKey, 100);
         currentDamage = PlayerPrefs.GetInt(DamageKey, 20);
         currentFireRate = PlayerPrefs.GetFloat(FireRateKey, 0.5f);
-        currentSpeed = PlayerPrefs.GetFloat(SpeedKey, 2.5f);
+        currentSpeed = PlayerPrefs.GetFloat(SpeedKey, 10f);
     }
 
     private void Start()

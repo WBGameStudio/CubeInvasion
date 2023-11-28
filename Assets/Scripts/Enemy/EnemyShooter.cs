@@ -17,6 +17,7 @@ public class EnemyShooter : MonoBehaviour
 
     private bool isShooter;
 
+
     private float timer = 0f;
 
     private void Start()

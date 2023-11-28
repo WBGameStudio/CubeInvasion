@@ -7,7 +7,7 @@ using UnityEngine.UIElements;
 
 public class Controller : MonoBehaviour
 {
-    [SerializeField] FloatingJoystick joystick;
+    [SerializeField] public FloatingJoystick joystick;
     [SerializeField] Rigidbody rb;
     bool isThereKnockBack;
 

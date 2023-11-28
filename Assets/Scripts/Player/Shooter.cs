@@ -16,7 +16,7 @@ public class Shooter : MonoBehaviour
     [Space] [Space]
     [Header("*** DETECTION ***")]
     FOVManager fovManager;
-
+    Controller controller;
     private bool isFirstFireRateInfoTaken;
     private float timer = 0f;
 
@@ -70,8 +70,12 @@ public class Shooter : MonoBehaviour
         // Now the code works if there is "ANY" enemies in the fov the method will be executed only 1 time
         if (colliders.Any(collider => collider.CompareTag("Enemy")))
         {
+            controller = GetComponent<Controller>();
+            if(controller.joystick.Horizontal == 0 || controller.joystick.Vertical == 0)
+            { 
+                SpawnBullet(); 
+            }
             
-            SpawnBullet();
         }
     }
 }
