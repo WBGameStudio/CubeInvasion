@@ -591,6 +591,7 @@ GameObject:
   - component: {fileID: 828255603}
   - component: {fileID: 828255602}
   - component: {fileID: 828255601}
+  - component: {fileID: 828255605}
   m_Layer: 0
   m_Name: UltiBall
   m_TagString: Untagged
@@ -684,6 +685,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2605733360617056765}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &828255605
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 828255600}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1cadafd622d2ee4bbc1fec780dd7281, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &885962868 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2105432091954132214, guid: 9046f3a24933d7944bdf00e5f57ba70f, type: 3}
