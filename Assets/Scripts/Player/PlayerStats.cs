@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class PlayerStats : MonoBehaviour
 {
@@ -11,7 +12,7 @@ public class PlayerStats : MonoBehaviour
     public int damage;
     public float fireTime;
     public float speed;
-
+    
     public void SetUpgrades()
     {
         Debug.Log("UpgradeChange");
