@@ -40,8 +40,10 @@
 /[Tt]emp/UnityLockfile
 /[Ll]ibrary/lockFile
 
-# Yüklenen paketler
-/[Pp]ackages/
+# Unity paket manifestleri sürüm kontrolünde tutulur
+/Packages/*
+!/Packages/manifest.json
+!/Packages/packages-lock.json
 
 # Proje önbelleği
 /[Tt]emp/[Vv]cs-[Cc]ache/

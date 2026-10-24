@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+#if UNITY_EDITOR
 using UnityEditor;
-using Unity.VisualScripting;
+#endif
 
 public class Shooter : MonoBehaviour
 {
@@ -57,7 +58,7 @@ public class Shooter : MonoBehaviour
     private void MoveBullet(GameObject _bullet)
     {
         //Giving a velocity to move the bullet
-        _bullet.GetComponent<Rigidbody>().velocity = (transform.forward * bulletSpeed);
+        _bullet.GetComponent<Rigidbody>().linearVelocity = (transform.forward * bulletSpeed);
     }
 
     void EnemyDetector()

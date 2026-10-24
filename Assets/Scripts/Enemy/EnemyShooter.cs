@@ -63,7 +63,7 @@ public class EnemyShooter : MonoBehaviour
         Vector3 directionToPlayer = (player.transform.position - transform.position).normalized;
 
 // Set the bullet's velocity based on the direction and bullet speed
-        _bullet.GetComponent<Rigidbody>().velocity = directionToPlayer * bulletSpeed;
+        _bullet.GetComponent<Rigidbody>().linearVelocity = directionToPlayer * bulletSpeed;
     }
 
     void EnemyDetector()

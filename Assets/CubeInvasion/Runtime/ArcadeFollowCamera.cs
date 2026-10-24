@@ -1,0 +1,73 @@
+using Cinemachine;
+using UnityEngine;
+
+namespace CubeInvasion.Prototype
+{
+    // The target proxy updates after player movement, before the Brain's LateUpdate.
+    [DefaultExecutionOrder(100)]
+    [RequireComponent(typeof(Camera), typeof(CinemachineBrain))]
+    public sealed class ArcadeFollowCamera : MonoBehaviour
+    {
+        [SerializeField, Range(30, 60)] float tilt = 45;
+        [SerializeField, Range(-180, 180)] float heading = 45;
+        [SerializeField, Min(0)] float followDamping = .18f;
+        [SerializeField, Min(1)] float minimumSize = 6.8f;
+        [SerializeField, Min(1)] float horizontalHalfView = 5.2f;
+        [SerializeField] float forwardFraming = 1;
+        Transform target, anchor;
+        Camera view;
+        CinemachineVirtualCamera virtualCamera;
+        CinemachineTransposer transposer;
+
+        public void Follow(Transform followTarget)
+        {
+            target=followTarget;
+            view=GetComponent<Camera>();
+            view.orthographic=true;
+            var brain=GetComponent<CinemachineBrain>();
+            brain.m_UpdateMethod=CinemachineBrain.UpdateMethod.LateUpdate;
+            brain.m_BlendUpdateMethod=CinemachineBrain.BrainUpdateMethod.LateUpdate;
+            brain.m_DefaultBlend=new CinemachineBlendDefinition(CinemachineBlendDefinition.Style.Cut,0);
+            if(!anchor)
+            {
+                anchor=new GameObject("Camera ground follow anchor").transform;
+                anchor.SetParent(transform.parent,false);
+            }
+            if(!virtualCamera)
+            {
+                var cameraObject=new GameObject("Arcade Cinemachine Virtual Camera");
+                cameraObject.transform.SetParent(transform.parent,false);
+                virtualCamera=cameraObject.AddComponent<CinemachineVirtualCamera>();
+                virtualCamera.Priority=20;
+                transposer=virtualCamera.AddCinemachineComponent<CinemachineTransposer>();
+                transposer.m_BindingMode=CinemachineTransposer.BindingMode.WorldSpace;
+            }
+            virtualCamera.Follow=anchor;
+            virtualCamera.LookAt=null; // Preserve the diagonal heading when the robot turns.
+            UpdateRig();
+            virtualCamera.PreviousStateIsValid=false;
+            virtualCamera.UpdateCameraState(Vector3.up,-1);
+            brain.ManualUpdate(); // Start in the correct pose without a first-frame fly-in.
+        }
+        void Update() { if(target && virtualCamera) UpdateRig(); }
+        void UpdateRig()
+        {
+            var rotation=Quaternion.Euler(tilt,heading,0);
+            var forward=Vector3.ProjectOnPlane(rotation*Vector3.forward,Vector3.up).normalized;
+            // Ground anchor keeps a fall visible instead of following into the void.
+            anchor.position=new Vector3(target.position.x,0,target.position.z)+forward*forwardFraming;
+            virtualCamera.transform.rotation=rotation;
+            transposer.m_FollowOffset=-(rotation*Vector3.forward)*20;
+            transposer.m_XDamping=followDamping;
+            transposer.m_YDamping=followDamping;
+            transposer.m_ZDamping=followDamping;
+            virtualCamera.m_Lens.ModeOverride=LensSettings.OverrideModes.Orthographic;
+            virtualCamera.m_Lens.OrthographicSize=Mathf.Max(minimumSize,horizontalHalfView/Mathf.Max(.4f,view.aspect));
+        }
+        void OnDestroy()
+        {
+            if(virtualCamera)Destroy(virtualCamera.gameObject);
+            if(anchor)Destroy(anchor.gameObject);
+        }
+    }
+}

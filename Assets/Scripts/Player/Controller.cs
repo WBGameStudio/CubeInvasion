@@ -48,7 +48,7 @@ public class Controller : MonoBehaviour
         //Fixing that, while player not rotating the character still having a velocity with using joystick speeds.
         if (joystick.Horizontal == 0 ||  joystick.Vertical == 0)
         {
-            rb.velocity = isThereKnockBack ? new Vector3(rb.velocity.x, rb.velocity.y, rb.velocity.z) : new Vector3(0, rb.velocity.y, 0);
+            rb.linearVelocity = isThereKnockBack ? new Vector3(rb.linearVelocity.x, rb.linearVelocity.y, rb.linearVelocity.z) : new Vector3(0, rb.linearVelocity.y, 0);
             
             animator.SetFloat("Speed", 0);
             //animator.SetFloat("SpeedX", rb.velocity.x);
@@ -56,7 +56,7 @@ public class Controller : MonoBehaviour
         }
         else if (isThereKnockBack) 
         {
-            new Vector3(rb.velocity.x, rb.velocity.y, rb.velocity.z);
+            new Vector3(rb.linearVelocity.x, rb.linearVelocity.y, rb.linearVelocity.z);
             
             animator.SetFloat("Speed", 0);
             //animator.SetFloat("SpeedX", rb.velocity.x);
@@ -70,12 +70,12 @@ public class Controller : MonoBehaviour
             cameraForward.Normalize();
 
             //Getting inputDirection
-            Vector3 inputDirection = new Vector3(joystick.Horizontal, rb.velocity.y, joystick.Vertical);
+            Vector3 inputDirection = new Vector3(joystick.Horizontal, rb.linearVelocity.y, joystick.Vertical);
 
             //Changing inputDirection according to camera's forward
             moveDirection = cameraForward * inputDirection.z + Camera.main.transform.right * inputDirection.x;
             moveDirection.Normalize();
-            rb.velocity = new Vector3(moveDirection.x * speed, rb.velocity.y, moveDirection.z * speed);
+            rb.linearVelocity = new Vector3(moveDirection.x * speed, rb.linearVelocity.y, moveDirection.z * speed);
 
            
 
