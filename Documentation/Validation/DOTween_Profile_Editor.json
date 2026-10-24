@@ -1,0 +1,15 @@
+{
+    "platform": "OSXEditor",
+    "device": "Mac15,12",
+    "unityVersion": "6000.4.8f1",
+    "utc": "2026-10-24T15:07:03.7001710Z",
+    "editor": true,
+    "cpuRecorderValid": true,
+    "gcRecorderValid": true,
+    "frames": 180,
+    "mainThreadMedianMs": 16.696833,
+    "mainThreadP95Ms": 16.704042,
+    "frameMedianMs": 16.696669161319734,
+    "frameP95Ms": 16.7082492262125,
+    "peakGcAllocatedBytes": 31120
+}

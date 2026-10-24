@@ -1,0 +1,43 @@
+Model,Vertices,Triangles
+Armored body / Core,672,308
+Armored body / LeftArm,288,132
+Armored body / LeftLeg,192,88
+Armored body / RightArm,288,132
+Armored body / RightLeg,192,88
+Armored body,1632,748
+Visor,192,88
+Pulse pistol,480,220
+Grunt / Core,672,308
+Grunt / LeftLeg,96,44
+Grunt / RightLeg,96,44
+Grunt,864,396
+Sprinter / Core,246,112
+Sprinter / LeftLeg,192,88
+Sprinter / RightLeg,192,88
+Sprinter,630,288
+Gunner / Core,456,224
+Gunner / LeftBackLeg,96,44
+Gunner / LeftFrontLeg,96,44
+Gunner / RightBackLeg,96,44
+Gunner / RightFrontLeg,96,44
+Gunner,840,400
+Threat crest,114,52
+Gunner barrel,480,220
+Deep sides,1728,792
+Arena surface,1344,616
+Low cover,768,352
+Explosive barrel,864,456
+Explosive band,936,444
+Health +20,384,176
+Gold pickup,432,228
+Gate left post,384,176
+Gate right post,384,176
+Gate header,288,132
+Locked until clear,288,132
+Right bridge,768,352
+Forward bridge,768,352
+Edge light,96,44
+Reward beacon,96,44
+Reward beacon vertical,96,44
+Health cross H,96,44
+Health cross V,96,44

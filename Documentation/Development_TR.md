@@ -65,3 +65,27 @@ Prototip eski koddan namespace ile ayrıldı. Eski sahneler taşınmadı. Eksik 
 Kontroller: Android hedefi, portrait, pause, joystick ile dönüş/son yönü koruma, ileri merminin öndeki hedefe vurup arkadakine vurmaması, gerçek mermiyle düşman temizliği, savaşta kilitli kapı, clear sonrası iki kapının açılması, yürürken donmuş sayaç, kapı yanında geçmenin rota seçmemesi, sağ kapıdan +30 can, ileri kapıdan iki küplük +%15 hasar, çift ödül engeli, köprü sonunda 20 sn reseti, timeout/fail ve son küpte bölüm bitişi.
 
 Görsel kontrol 540×960 kamera çıktısıyla yapıldı. Mobil APK derlemesi ve gerçek cihazdaki dokunmatik/performans testleri henüz yapılmadı. Önceki çalışmalarda UnityEditor.Search başlangıç indeksleme hatası görüldü; son Android kontrolünde bu hata kaydedilmedi.
+
+## P1 / Feel uygulaması
+
+P0 üzerine ilk P1 uygulaması eklendi. Güncel kapsam, testler, editör performans örneği ve cihaz doğrulama sınırları [P1_Feel_TR.md](P1_Feel_TR.md) içinde. Yukarıdaki P0 notlarında geçen geçici IMGUI ve fiziksel pickup eksikleri bu uygulamada giderildi; tam oyun içeriği ve URP geçişi sonraki aşamada.
+
+## Kullanıcı revizyonu — en yakın düşmana kilit
+
+Joystick hareketi belirler; savaş sırasında karakter hareketten bağımsız olarak en yakın canlı düşmana döner ve otomatik ateş eder. Mesafe zemindeki X/Z düzleminde hesaplanır, görüş hattı kontrolü yapılmaz. Oyuncu mermileri siperlerden geçer; düşman mermilerinde siper davranışı korunur. Hedef ölünce veya başka düşman daha yakına gelince kilit güncellenir. Hedef yoksa ateş edilmez. Bu karar önceki joystick yönünde ateş kuralının yerine geçer.
+
+## P2 öncesi 3D görsel set
+
+Ana primitive placeholder'lar 26 paylaşılan mesh ve 9 inceleme prefab'ından oluşan özel bevel'lı toy sci-fi setle değiştirildi. Kapsam: Scout robot, Pulse Pistol, Grunt/Sprinter/Gunner, arena zemin/yan panelleri, siper, varil, sağlık/altın ve kapı parçaları. `ToyArtLibrary` çalışma başlangıcında Resources'tan yüklenir; sahne ve rota varlıkları yeniden yazılmaz. Önceki düşük seviyeli geometriler yalnız kütüphane bulunamazsa fallback olarak kalır; VFX primitive'leri korunur.
+
+Android hedefli ayrı kopyada P0/P1 kontrolleri ve mesh bağlantı kontrolleri geçti. 540×960 oyun görünümü ve ayrı model kataloğu incelendi. [Katalog](Validation/ToyArt_Catalog.png), [oyun görünümü](Validation/ToyArt_Gameplay.png), [mesh bütçesi](../Assets/CubeInvasion/Art/MeshBudget.csv). Animasyon rig'leri ve gerçek Android cihaz performans testi bu aşamada yoktur.
+
+## DOTween animasyon katmanı
+
+Dört robotun mesh'leri 16 ayrı rig parçasına bölündü; toplam geometri değişmeden parçaların pivotları eklendi. DOTween 1.3.045 ile idle/walk/run/strafe ve saldırı/hasar/doğuş/ölüm tepkileri bağlandı. Küp yükselme/düşme ve pickup'lar da DOTween kullanır. Mevcut karakter root'u, hedef kilidi, sahne, rota ve Cinemachine sistemi korunur. Pause ve destruction cleanup testleri geçti. [Ayrıntılar](DOTween_Animation_TR.md).
+
+### Kenar düşüşü ve sahne kurulumu
+- Kenardan çıkınca yalnızca oyuncu 1,15 saniyelik düşüşü tamamlar, ardından fail görünür; aktif küp yerinde kalır. Can bitişi de küpü çökertmez. Süre bitişi aktif küp ile oyuncuyu birlikte düşürür. Başarılı kapı geçişlerindeki eski küpün emekliye ayrılma animasyonu korunur.
+- `CubeInvasionPrototype.unity` artık kamera, Cinemachine Brain/Virtual Camera ve takip hedefi, ışık, oyuncu görselleri, Canvas/HUD/joystick ve EventSystem içerir. Runtime bu kayıtlı referansları kullanır. Küpler, düşmanlar ve ödüller `Dynamic gameplay` altında oyun sırasında oluşturulur.
+- Kamera açısı ve yumuşatma ayarları `Prototype Camera > ArcadeFollowCamera` üzerinden düzenlenir. Mevcut sahne kurulumunun transform ve UI düzeni Play sırasında yeniden oluşturulmaz.
+- Eksik kurulumu mevcut sahneyi sıfırlamadan eklemek için `Cube Invasion > Install Persistent Scene Setup` kullanılabilir.

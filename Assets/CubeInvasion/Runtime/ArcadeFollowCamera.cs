@@ -14,9 +14,10 @@ namespace CubeInvasion.Prototype
         [SerializeField, Min(1)] float minimumSize = 6.8f;
         [SerializeField, Min(1)] float horizontalHalfView = 5.2f;
         [SerializeField] float forwardFraming = 1;
-        Transform target, anchor;
+        [SerializeField] Transform target, anchor;
+        bool ownsAnchor,ownsCamera;
         Camera view;
-        CinemachineVirtualCamera virtualCamera;
+        [SerializeField] CinemachineVirtualCamera virtualCamera;
         CinemachineTransposer transposer;
 
         public void Follow(Transform followTarget)
@@ -30,11 +31,13 @@ namespace CubeInvasion.Prototype
             brain.m_DefaultBlend=new CinemachineBlendDefinition(CinemachineBlendDefinition.Style.Cut,0);
             if(!anchor)
             {
+                ownsAnchor=Application.isPlaying;
                 anchor=new GameObject("Camera ground follow anchor").transform;
                 anchor.SetParent(transform.parent,false);
             }
             if(!virtualCamera)
             {
+                ownsCamera=Application.isPlaying;
                 var cameraObject=new GameObject("Arcade Cinemachine Virtual Camera");
                 cameraObject.transform.SetParent(transform.parent,false);
                 virtualCamera=cameraObject.AddComponent<CinemachineVirtualCamera>();
@@ -42,6 +45,7 @@ namespace CubeInvasion.Prototype
                 transposer=virtualCamera.AddCinemachineComponent<CinemachineTransposer>();
                 transposer.m_BindingMode=CinemachineTransposer.BindingMode.WorldSpace;
             }
+            transposer=virtualCamera.GetCinemachineComponent<CinemachineTransposer>();
             virtualCamera.Follow=anchor;
             virtualCamera.LookAt=null; // Preserve the diagonal heading when the robot turns.
             UpdateRig();
@@ -66,8 +70,8 @@ namespace CubeInvasion.Prototype
         }
         void OnDestroy()
         {
-            if(virtualCamera)Destroy(virtualCamera.gameObject);
-            if(anchor)Destroy(anchor.gameObject);
+            if(ownsCamera && virtualCamera)Destroy(virtualCamera.gameObject);
+            if(ownsAnchor && anchor)Destroy(anchor.gameObject);
         }
     }
 }

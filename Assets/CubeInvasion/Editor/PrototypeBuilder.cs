@@ -25,6 +25,58 @@ public static class PrototypeBuilder
         AssetDatabase.SaveAssets();
         Debug.Log("CUBE_P0_BUILD_OK: scene and route assets generated.");
     }
+    [MenuItem("Cube Invasion/Install Persistent Scene Setup")]
+    public static void InstallSceneSetup()
+    {
+        var scene=UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+        var runtime=Object.FindAnyObjectByType<InvasionPrototype>();
+        if(!runtime)throw new System.InvalidOperationException("Open the Cube Invasion gameplay scene first.");
+        runtime.EnsureSceneSetup();
+        const string folder="Assets/CubeInvasion/Art/SceneSetup";
+        if(!AssetDatabase.IsValidFolder(folder))AssetDatabase.CreateFolder("Assets/CubeInvasion/Art","SceneSetup");
+        var saved=new System.Collections.Generic.Dictionary<Object,Object>();
+        foreach(var renderer in Object.FindObjectsByType<MeshRenderer>())
+        {
+            var materials=renderer.sharedMaterials;
+            for(int i=0;i<materials.Length;i++)
+            {
+                var material=materials[i];
+                if(!material || AssetDatabase.Contains(material))continue;
+                if(!saved.TryGetValue(material,out var asset))
+                {
+                    asset=new Material(material);
+                    AssetDatabase.CreateAsset(asset,AssetDatabase.GenerateUniqueAssetPath(folder+"/SceneMaterial.mat"));
+                    saved.Add(material,asset);
+                }
+                materials[i]=(Material)asset;
+            }
+            renderer.sharedMaterials=materials;
+        }
+        foreach(var image in Object.FindObjectsByType<UnityEngine.UI.Image>(FindObjectsInactive.Include))
+        {
+            var sprite=image.sprite;
+            if(!sprite || AssetDatabase.Contains(sprite))continue;
+            if(!saved.TryGetValue(sprite,out var asset))
+            {
+                var texture=Object.Instantiate(sprite.texture);
+                AssetDatabase.CreateAsset(texture,AssetDatabase.GenerateUniqueAssetPath(folder+"/JoystickTexture.asset"));
+                asset=Sprite.Create(texture,sprite.rect,new Vector2(.5f,.5f));
+                AssetDatabase.CreateAsset(asset,AssetDatabase.GenerateUniqueAssetPath(folder+"/JoystickSprite.asset"));
+                saved.Add(sprite,asset);
+            }
+            image.sprite=(Sprite)asset;
+        }
+        EditorUtility.SetDirty(runtime);
+        EditorSceneManager.MarkSceneDirty(scene);
+        EditorSceneManager.SaveScene(scene);
+        AssetDatabase.SaveAssets();
+        Debug.Log("CUBE_SCENE_SETUP_OK: persistent camera, Cinemachine, player, lighting, HUD and EventSystem saved.");
+    }
+    public static void InstallGameplayScene()
+    {
+        EditorSceneManager.OpenScene("Assets/CubeInvasion/CubeInvasionPrototype.unity");
+        InstallSceneSetup();
+    }
     [MenuItem("Cube Invasion/Configure Android Portrait")]
     public static void ConfigureAndroid()
     {
