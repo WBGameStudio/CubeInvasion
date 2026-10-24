@@ -74,3 +74,11 @@ DOTween 1.3.045 resmî ücretsiz paketi `Assets/Plugins/Demigiant/DOTween` altı
 ## P2 içerik
 
 Play açılışında görev ve silah seçimi bulunur: 6 düşman arketipi, 4 silah, 5 normal görev, Gold Rush ve 3 fazlı boss. Küpler arasında güçlendirme kapılarından yürüyerek geçilir. Yeni modeller, DOTween rig'leri, WAV ses varyantları ve müzik döngüleri projeye dahildir. İçerik ve doğrulama ayrıntıları: [P2_Content_TR.md](Documentation/P2_Content_TR.md).
+
+## P3 kalıcı ilerleme
+
+Güncel sahnede silahlar altınla açılır; hasar, atış hızı ve menzil yükseltmeleri kalıcıdır. Görev kazanıldıkça sonraki görev açılır. Sonuç ekranında deneme kazancı ile toplam cüzdan ayrı gösterilir. Yerel profil/yedek, legacy altın aktarımı, fail/retry ve yazma hatasından kurtarma ayrıntıları: [P3_Meta_TR.md](Documentation/P3_Meta_TR.md).
+
+## Görselli mobil menüler
+
+Ana menü, kaydırılabilir bölüm yolu, 3D ürün görselli market, kalıcı Scout geliştirmeleri ve ses/titreşim/FPS ayarları sahneye bağlıdır. Arka planlar yerleşik Imagegen ile üretildi; kontroller native uGUI'dir. [UI / UX notları](Documentation/UI_UX_TR.md) · [Görsel üretim promptları](Documentation/UI_Imagegen_Prompts.md).

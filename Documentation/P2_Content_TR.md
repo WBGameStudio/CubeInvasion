@@ -48,3 +48,5 @@ Silah ve karşılaşma verilerinde taban pistol için HP / (12 × 0,78) + 3,5 sn
 Son doğrulama: iki rota ile **14 görev sonucu / 54 küp / 40 kapı geçişi** tamamlandı. `CUBE_P2_SMOKE_OK`, `CUBE_P2_VISUAL_OK`, `CUBE_P0_SMOKE_OK`, `CUBE_P1_SMOKE_OK`, `CUBE_FALL_SMOKE_OK` ve animasyon kontrolleri geçti. Ana projenin kendi derleyici response dosyalarıyla runtime/editor C# derlemeleri de hatasız tamamlandı. Yeni varlıkların GUID bağımlılıkları doğrulandı.
 
 Görseller: [görev ekranı](Validation/P2_Loadout.png), [Pusher uyarısı](Validation/P2_Pusher.png), [Gold Rush](Validation/P2_GoldRush.png), [Crusher](Validation/P2_Crusher.png), [yeni model kataloğu](Validation/P2_Model_Catalog.png).
+
+Güncel sahne P3 ilerlemesini de kullanır: yukarıdaki dört silaha doğrudan erişim P2 test moduna aittir; normal oyunda silahlar altınla açılır. [P3 notları](P3_Meta_TR.md).

@@ -19,7 +19,7 @@ namespace CubeInvasion.Prototype
         int CubeCount => HasContent?Mission.cubes.Length:3;
         bool IsGoldRush => HasContent && Mission.mode==MissionMode.GoldRush;
         bool IsBoss => HasContent && Mission.mode==MissionMode.Boss;
-        float FireInterval => HasContent?Weapon.interval:.5f;
+        float FireInterval => HasContent?Weapon.interval/(1+MetaRate):.5f;
         public void ConfigureContent(P2ContentCatalog catalog,P2MissionHud presentation)
         { content=catalog;missionHud=presentation; }
         void InitializeContent()
@@ -34,22 +34,37 @@ namespace CubeInvasion.Prototype
             missionHud.Bind(ChangeMission,ChangeWeapon,()=>StartMission(missionIndex),
                 ()=>StartMission(missionIndex),()=>StartMission(missionIndex+1),OpenMissionMenu);
             phase=Phase.Loadout;
+            InitializeMeta();
+            InitializeFrontEnd();
             RefreshContentHud();
         }
         void ChangeMission(int delta)
-        { if(phase!=Phase.Loadout)return;missionIndex=(missionIndex+delta+content.missions.Length)%content.missions.Length;RefreshContentHud(); }
+        {
+            if(phase!=Phase.Loadout)return;
+            int index=(missionIndex+delta+content.missions.Length)%content.missions.Length;
+            if(HasMeta&&index<=profile.Data.highestMission&&!profile.Select(index,weaponIndex)) { metaNotice=profile.Message;RefreshContentHud();return; }
+            missionIndex=index;metaNotice=null;RefreshContentHud();
+        }
         void ChangeWeapon(int index)
-        { if(phase!=Phase.Loadout)return;weaponIndex=Mathf.Clamp(index,0,content.weapons.Length-1);RefreshContentHud(); }
+        {
+            if(phase!=Phase.Loadout)return;index=Mathf.Clamp(index,0,content.weapons.Length-1);
+            inspectedWeapon=index;metaNotice=null;
+            if(!HasMeta)weaponIndex=index;
+            else if(profile.IsOwned(index)) { if(profile.Select(Mathf.Min(missionIndex,profile.Data.highestMission),index))weaponIndex=index;else metaNotice=profile.Message; }
+            RefreshContentHud();
+        }
         void OpenMissionMenu() { if(phase==Phase.Combat||phase==Phase.Transfer)return;SetPaused(false);phase=Phase.Loadout;feedback.SetMusic(MissionMode.Combat);RefreshContentHud(); }
         void StartMission(int index)
         {
             if(!HasContent)return;
+            if(HasMeta && phase!=Phase.Loadout&&phase!=Phase.Won&&phase!=Phase.Failed)return;
+            if(!BeginMetaRun(index))return;
             StopAllCoroutines();ClearAnimationTweens();ClearPulses();ClearEnemyShots();
             foreach(Transform child in dynamicRoot)Destroy(child.gameObject);
             foes.Clear();barrels.Clear();pickups.Clear();pulses.Clear();enemyShots.Clear();pulsePool.Clear();enemyShotPool.Clear();
             cover=null;rightGate=null;forwardGate=null;rightBarrier=null;forwardBarrier=null;rightPreview=null;forwardPreview=null;
             missionIndex=Mathf.Clamp(index,0,content.missions.Length-1);
-            centre=Vector3.zero;stage=1;health=100;remaining=20;pendingGold=0;quotaGold=0;
+            centre=Vector3.zero;stage=1;health=MaxHealth;remaining=20;pendingGold=0;quotaGold=0;
             bossHealth=0;bossTotal=0;damageCubes=0;damageBonus=0;reason="";routesReady=false;settledPreviews=0;
             SetPaused(false);player.position=new Vector3(0,.65f,-2.5f);player.rotation=Quaternion.identity;
             if(playerAnimation)playerAnimation.SetVisible(true);
@@ -128,7 +143,9 @@ namespace CubeInvasion.Prototype
             string objective=IsGoldRush?$"ALTIN {quotaGold}/{Encounter.goldQuota}":IsBoss?$"FAZ {stage}/3 · {Mathf.CeilToInt(bossHealth)} CAN":$"{foes.Count} HEDEF";
             hud.SetMissionInfo(stage,CubeCount,objective,IsBoss&&phase==Phase.Combat);
             missionHud.SetBoss(bossHealth,bossTotal,IsBoss&&phase==Phase.Combat,stage);
-            missionHud.Refresh(Mission,Weapon,missionIndex,content.missions.Length,weaponIndex,phase.ToString(),reason,wallet);
+            missionHud.Refresh(Mission,HasMeta&&phase==Phase.Loadout?content.weapons[inspectedWeapon]:Weapon,missionIndex,content.missions.Length,weaponIndex,phase.ToString(),reason,wallet);
+            RefreshMetaHud();
+            RefreshFrontEnd();
         }
         bool TickSpecialEnemy(Foe foe,float dt,Vector3 toward,float distance)
         {
@@ -220,7 +237,7 @@ namespace CubeInvasion.Prototype
                 float angle=spec.pellets<=1?0:Mathf.Lerp(-spec.spread*.5f,spec.spread*.5f,i/(float)(spec.pellets-1));
                 var body=RentProjectile(pulsePool,"Forward pulse",origin,spec.color,.18f);
                 projectileTint.SetColor("_Color",spec.color);body.GetComponent<Renderer>().SetPropertyBlock(projectileTint);
-                pulses.Add(new Pulse {body=body,direction=Quaternion.Euler(0,angle,0)*direction,life=spec.projectileLife,damage=spec.damage*(1+(damageCubes>0?damageBonus:0))});
+                pulses.Add(new Pulse {body=body,direction=Quaternion.Euler(0,angle,0)*direction,life=spec.projectileLife*(1+MetaRange),damage=spec.damage*(1+MetaDamage)*(1+(damageCubes>0?damageBonus:0))});
             }
             feedback.Play(spec.kind==ContentWeapon.ScatterShot?CombatFeedback.Cue.Scatter:spec.kind==ContentWeapon.RapidSmg?CombatFeedback.Cue.Rapid:spec.kind==ContentWeapon.TwinBlasters?CombatFeedback.Cue.Twin:CombatFeedback.Cue.Shot);
             feedback.Burst(gun.position,spec.color,.24f,.08f);

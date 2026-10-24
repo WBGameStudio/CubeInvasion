@@ -32,14 +32,16 @@ namespace CubeInvasion.Prototype
             if(!hud) { hud=new GameObject("Mobile Combat HUD",typeof(RectTransform)).AddComponent<MobileCombatHud>();hud.transform.SetParent(world,false); }
             hud.Initialize(view,()=>SetPaused(!paused),Retry,()=>feedback.ToggleMute());
         }
-        void SetPaused(bool value) { paused=value;dragging=false;joystickFinger=-1;stick=Vector2.zero;if(hud)hud.ResetJoystick();if(feedback)feedback.SetPaused(value); }
+        void SetPaused(bool value) { if(phase==Phase.SaveBlocked&&!value&&retrySave!=null)return;paused=value;dragging=false;joystickFinger=-1;stick=Vector2.zero;if(hud)hud.ResetJoystick();if(feedback)feedback.SetPaused(value); }
         void Retry() { if(HasContent) { StartMission(missionIndex);return; } UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex); }
         void LateUpdate()
         {
+            FlushMenuSettings();
             TickAnimations(Time.deltaTime);
             if(!hud)return;
             feedback.SetPaused(paused);
             if(!paused)feedback.Tick(Time.deltaTime);
+            hud.SetMaxHealth(MaxHealth);
             hud.Refresh(remaining,health,stage,foes.Count,wallet,pendingGold,damageCubes,damageBonus,paused,feedback.Muted,phase.ToString(),reason);
             RefreshContentHud();
         }
@@ -93,11 +95,11 @@ namespace CubeInvasion.Prototype
             {
                 var pickup=pickups[i];pickup.age+=dt;
                 if(!pickup.body) { pickups.RemoveAt(i);continue; }
-                if(pickup.healing&&health>=100&&!magnet)continue;
+                if(pickup.healing&&health>=MaxHealth&&!magnet)continue;
                 float distance=Vector3.Distance(player.position,pickup.body.position);
-                if(magnet || distance<1)
+                if(magnet || distance<PickupRadius)
                 {
-                    if(pickup.healing) { health=Mathf.Min(100,health+pickup.value);feedback.Play(CombatFeedback.Cue.Heal); }
+                    if(pickup.healing) { health=Mathf.Min(MaxHealth,health+pickup.value);feedback.Play(CombatFeedback.Cue.Heal); }
                     else { pendingGold+=pickup.value;if(IsGoldRush)quotaGold=Mathf.Min(Encounter.goldQuota,quotaGold+pickup.value);feedback.Play(CombatFeedback.Cue.Gold); }
                     feedback.Burst(pickup.body.position,pickup.healing?Color.green:Color.yellow,.5f);
                     Destroy(pickup.body.gameObject);pickups.RemoveAt(i);
@@ -117,6 +119,7 @@ namespace CubeInvasion.Prototype
             if(foe.animation)foe.animation.Hit();
             feedback.Play(CombatFeedback.Cue.Hit);feedback.Burst(foe.body.position,Color.white,.3f);
             if(foe.hp>0)return;
+            if(HasMeta)runKills++;
             var at=foe.body.position;
             if(foe.warning)Destroy(foe.warning.gameObject);
             AnimateDeath(foe);

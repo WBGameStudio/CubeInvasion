@@ -15,6 +15,8 @@ namespace CubeInvasion.Prototype
         [SerializeField] GameObject bossPanel;
         [SerializeField] Image bossFill;
         [SerializeField] Text bossLabel;
+        bool metaMode,frontEndMode;
+        public void UseFrontEnd(bool value) { frontEndMode=value; }
         Font font;
         readonly Color ink=new Color(.035f,.06f,.105f,1), cyan=new Color(.09f,.74f,.82f), tile=new Color(.1f,.16f,.25f);
         public void Initialize(RectTransform parent)
@@ -50,6 +52,29 @@ namespace CubeInvasion.Prototype
             menu=MakeButton("Menu",result.transform,"GÖREV / SİLAH SEÇ",new Vector2(24,-364),new Vector2(-24,-308));
             loadout.SetActive(true);result.SetActive(false);BuildBossPanel();
         }
+        public void SetMetaMode(bool enabled)
+        {
+            metaMode=enabled;
+            var controls=loadout.transform.Find("Controls");if(controls)controls.gameObject.SetActive(!enabled);
+        }
+        public void SetProgression(MetaProfile profile,P3MetaSettings settings,int inspected,int mission)
+        {
+            bool lockedMission=profile.highestMission<mission;
+            if(lockedMission)missionDescription.text="KİLİTLİ GÖREV · Önce önceki görevi tamamla.\n"+missionDescription.text;
+            deploy.interactable=!lockedMission&&profile.weapons[inspected].owned;
+            string[] names={"PULSE PISTOL","TWIN BLASTERS","SCATTER SHOT","RAPID SMG"};
+            for(int i=0;i<weapons.Length;i++)
+            {
+                weaponLabels[i].text=names[i]+(profile.weapons[i].owned?i==profile.selectedWeapon?"\nSEÇİLİ":"\nAÇIK":$"\n{settings.Price(i)} ALTIN");
+                weapons[i].GetComponent<Image>().color=i==inspected?cyan:tile;
+                weaponLabels[i].color=i==inspected?ink:Color.white;
+            }
+            if(profile.run!=null&&profile.run.ended)
+            {
+                var run=profile.run;
+                resultDescription.text=$"Bu deneme: +{run.gold} altın · {run.cubes} küp · {run.kills} hedef\nSavaş: {run.seconds:0.0} sn · Cüzdan: {profile.gold}"+(run.won?"":$"\n{run.reason}");
+            }
+        }
         void BuildBossPanel()
         {
             if(bossPanel)return;
@@ -76,7 +101,7 @@ namespace CubeInvasion.Prototype
         public void Refresh(MissionSpec mission,WeaponSpec weapon,int missionIndex,int count,int weaponIndex,string phase,string reason,int wallet)
         {
             bool choosing=phase=="Loadout",won=phase=="Won",ended=won||phase=="Failed";
-            loadout.SetActive(choosing);result.SetActive(ended);
+            loadout.SetActive(choosing&&!frontEndMode);result.SetActive(ended);
             if(choosing)
             {
                 missionTitle.text=$"{missionIndex+1:00} / {mission.title}";
@@ -91,7 +116,7 @@ namespace CubeInvasion.Prototype
                 resultDescription.text=won?mission.title+$"\nBankalanan altın: {wallet}":reason+"\nTamamlanan küplerin altını korundu.";
                 advance.gameObject.SetActive(won&&missionIndex<count-1);
                 retry.GetComponentInChildren<Text>().text=won?"YENİDEN OYNA":"TEKRAR DENE";
-                if(won&&missionIndex==count-1)resultDescription.text+="\nP2 görevlerinin sonuna ulaştın.";
+                if(won&&missionIndex==count-1&&!metaMode)resultDescription.text+="\nTüm görevler tamamlandı.";
             }
         }
         RectTransform Panel(string name,Transform parent,Vector2 min,Vector2 max,Vector2 low,Vector2 high,Color color)

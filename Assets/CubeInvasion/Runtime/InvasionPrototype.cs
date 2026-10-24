@@ -10,7 +10,7 @@ namespace CubeInvasion.Prototype
     {
         public CubeRouteDefinition rightRoute, forwardRoute;
         [SerializeField] ToyArtLibrary artLibrary;
-        enum Phase { Loadout, Combat, Choice, Transfer, Collapse, Falling, Dying, Failed, Won }
+        enum Phase { SaveBlocked, Loadout, Combat, Choice, Transfer, Collapse, Falling, Dying, Failed, Won }
         enum FailureKind { Health, EdgeFall, Timeout }
         sealed class Foe
         {
@@ -159,6 +159,8 @@ namespace CubeInvasion.Prototype
             InitializeFeel();
             if(HasContent) { InitializeContent();return; }
             if(missionHud)missionHud.gameObject.SetActive(false);
+            if(metaHud)metaHud.gameObject.SetActive(false);
+            if(frontEnd)frontEnd.gameObject.SetActive(false);
             BeginCombat(null);
             PrepareNextCubes(centre,platform);
         }
@@ -282,7 +284,7 @@ namespace CubeInvasion.Prototype
             var direction=right*input.x-forward*input.y;
             if(direction.sqrMagnitude>.01f)player.rotation=Quaternion.LookRotation(direction);
             Vector3 before=player.position;
-            player.position+=direction*4.5f*dt;
+            player.position+=direction*MoveSpeed*dt;
             if(phase==Phase.Combat && cover && FlatDistance(player.position,cover.position)<1.05f)player.position=before;
             if(phase==Phase.Choice)
             {
@@ -347,6 +349,7 @@ namespace CubeInvasion.Prototype
             if(phase==Phase.Combat)
             {
                 dt=Mathf.Min(dt,remaining);
+                if(HasMeta)runSeconds+=dt;
                 invulnerability-=dt;
                 MovePlayer(stick,dt);
                 if(Mathf.Abs(player.position.x-centre.x)>Half || Mathf.Abs(player.position.z-centre.z)>Half) { Fail("Kenardan düştün",FailureKind.EdgeFall); return; }
@@ -415,9 +418,11 @@ namespace CubeInvasion.Prototype
         }
         void Clear()
         {
+            if(phase!=Phase.Combat)return;
             ClearPulses();
             FinishEncounterFeel(true);
-            wallet+=10+pendingGold;pendingGold=0; PlayerPrefs.SetInt("CI.Wallet",wallet); PlayerPrefs.Save();
+            if(!BankMetaCube(10+pendingGold))return;
+            pendingGold=0;
             damageCubes=Mathf.Max(0,damageCubes-1);
             if(stage==CubeCount) { phase=Phase.Won; damageCubes=0; return; }
             phase=Phase.Choice;
@@ -438,7 +443,7 @@ namespace CubeInvasion.Prototype
             phase=Phase.Transfer;
             feedback.Play(CombatFeedback.Cue.Gate);
             var route=right?rightRoute:forwardRoute;
-            if(route && route.reward==RouteReward.Health)health=Mathf.Min(100,health+route.value);
+            if(route && route.reward==RouteReward.Health)health=Mathf.Min(MaxHealth,health+route.value);
             if(route && route.reward==RouteReward.Damage)
             { damageCubes=route.duration; damageBonus=Mathf.Clamp(route.value/100,0,.35f); }
             StartCoroutine(Transfer(right));
@@ -505,7 +510,7 @@ namespace CubeInvasion.Prototype
                 }
                 yield return null;
             }
-            phase=Phase.Failed; damageCubes=0;
+            CompleteFailure();
         }
         void OnGUI()
         {
@@ -560,7 +565,7 @@ namespace CubeInvasion.Prototype
             GUI.DrawTexture(new Rect(knob.x-23,knob.y-23,46,46),joystickDisc);
             GUI.color=Color.white;
         }
-        void OnApplicationFocus(bool focused) { if(!focused)SetPaused(true); }
-        void OnDestroy() { ClearAnimationTweens();foreach(var mat in materials) if(mat) Destroy(mat); if(joystickDisc)Destroy(joystickDisc); }
+        void OnApplicationFocus(bool focused) { if(!focused) { FlushMenuSettings(true);SetPaused(true); } }
+        void OnDestroy() { FlushMenuSettings(true);ClearAnimationTweens();foreach(var mat in materials) if(mat) Destroy(mat); if(joystickDisc)Destroy(joystickDisc); }
     }
 }

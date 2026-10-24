@@ -6,7 +6,7 @@ namespace CubeInvasion.Prototype
     /// <summary>Bounded, reusable visual and audio voices. No time-scale hit stop.</summary>
     public sealed class CombatFeedback : MonoBehaviour
     {
-        public enum Cue { Shot, Hit, Hurt, Explosion, Gold, Heal, Clear, Alarm, Fail, Gate, Twin, Scatter, Rapid, Telegraph, BossPhase, BossSlam }
+        public enum Cue { Shot, Hit, Hurt, Explosion, Gold, Heal, Clear, Alarm, Fail, Gate, Twin, Scatter, Rapid, Telegraph, BossPhase, BossSlam, Unlock, Upgrade, Denied }
         sealed class Effect { public Transform body; public float age, duration, size; public Vector3 origin; public bool ring; }
         readonly List<Effect> effects=new List<Effect>();
         readonly Stack<Transform> ringPool=new Stack<Transform>(), sparkPool=new Stack<Transform>();
@@ -22,7 +22,7 @@ namespace CubeInvasion.Prototype
         public void SetMusic(MissionMode mode)
         {
             if(!audioBank)return;
-            if(!music) { music=gameObject.AddComponent<AudioSource>();music.loop=true;music.playOnAwake=false;music.spatialBlend=0;music.volume=.11f; }
+            if(!music) { music=gameObject.AddComponent<AudioSource>();music.loop=true;music.playOnAwake=false;music.spatialBlend=0;music.volume=.11f*MusicLevel; }
             var clip=mode==MissionMode.Boss?audioBank.bossLoop:mode==MissionMode.GoldRush?audioBank.goldLoop:audioBank.combatLoop;
             if(music.clip==clip)return;
             music.clip=clip;music.mute=Muted;if(clip) { music.Play();if(frozen)music.Pause(); }
@@ -30,6 +30,15 @@ namespace CubeInvasion.Prototype
         Material lineMaterial, sparkMaterial;
         bool frozen;
         float lastShotSound;
+        public float MusicLevel { get; private set; }=1;
+        public float SfxLevel { get; private set; }=1;
+        public void SetLevels(float musicVolume,float effectsVolume,bool mute,bool save=true)
+        {
+            MusicLevel=Mathf.Clamp01(musicVolume);SfxLevel=Mathf.Clamp01(effectsVolume);Muted=mute;
+            PlayerPrefs.SetFloat("CI.MusicVolume",MusicLevel);PlayerPrefs.SetFloat("CI.SfxVolume",SfxLevel);PlayerPrefs.SetInt("CI.Muted",Muted?1:0);if(save)PlayerPrefs.Save();
+            if(voices!=null)foreach(var voice in voices)voice.mute=Muted;
+            if(music) { music.mute=Muted;music.volume=.11f*MusicLevel; }
+        }
         public bool Muted { get; private set; }
         public int ActiveEffects => effects.Count;
         public void Initialize()
@@ -46,6 +55,7 @@ namespace CubeInvasion.Prototype
                 clips[cue]=clip;
             }
             Muted=PlayerPrefs.GetInt("CI.Muted",0)==1;
+            MusicLevel=PlayerPrefs.GetFloat("CI.MusicVolume",1);SfxLevel=PlayerPrefs.GetFloat("CI.SfxVolume",1);
         }
         AudioClip Synthesize(Cue cue)
         {
@@ -66,9 +76,12 @@ namespace CubeInvasion.Prototype
             }
             var clip=AudioClip.Create("CI "+cue,samples.Length,1,rate,false);clip.SetData(samples,0);return clip;
         }
-        public void ToggleMute() { Muted=!Muted; PlayerPrefs.SetInt("CI.Muted",Muted?1:0); PlayerPrefs.Save(); foreach(var voice in voices)voice.mute=Muted;if(music)music.mute=Muted; }
+        public void ToggleMute() { SetLevels(MusicLevel,SfxLevel,!Muted); }
         public void Play(Cue cue)
         {
+#if UNITY_ANDROID && !UNITY_EDITOR
+            if(!frozen&&PlayerPrefs.GetInt("CI.Haptics",0)==1&&(cue==Cue.Hurt||cue==Cue.Unlock||cue==Cue.Upgrade))Handheld.Vibrate();
+#endif
             if(Muted||frozen||voices==null)return;
             if((cue==Cue.Shot||cue==Cue.Rapid||cue==Cue.Twin) && Time.unscaledTime-lastShotSound<.08f)return;
             if(cue==Cue.Shot||cue==Cue.Rapid||cue==Cue.Twin)lastShotSound=Time.unscaledTime;
@@ -77,7 +90,8 @@ namespace CubeInvasion.Prototype
             if(!selected) { if(cue==Cue.Shot||cue==Cue.Hit||cue==Cue.Gold)return; selected=voices[0]; }
             var variant=audioBank?audioBank.Find(cue,variation++):null;
             selected.clip=variant?variant:clips[cue];selected.pitch=1;
-            selected.volume=cue==Cue.Shot||cue==Cue.Rapid||cue==Cue.Twin?.26f:cue==Cue.Telegraph?.42f:.6f;selected.Play();
+            selected.volume=(cue==Cue.Shot||cue==Cue.Rapid||cue==Cue.Twin?.26f:cue==Cue.Telegraph?.42f:.6f)*SfxLevel;selected.Play();
+
             if(cue==Cue.Explosion||cue==Cue.BossSlam)duck=.25f;
         }
         public void SetPaused(bool value)
@@ -114,7 +128,7 @@ namespace CubeInvasion.Prototype
         public void Tick(float dt)
         {
             if(frozen)return;
-            duck=Mathf.Max(0,duck-dt);if(music)music.volume=duck>0?.04f:.11f;
+            duck=Mathf.Max(0,duck-dt);if(music)music.volume=(duck>0?.04f:.11f)*MusicLevel;
             for(int i=effects.Count-1;i>=0;i--)
             {
                 var effect=effects[i];effect.age+=dt;float t=Mathf.Clamp01(effect.age/effect.duration);

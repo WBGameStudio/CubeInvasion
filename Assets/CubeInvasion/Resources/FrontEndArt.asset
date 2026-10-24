@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d81e401b2a4fb448aab80ad6a8b10f59, type: 3}
+  m_Name: FrontEndArt
+  m_EditorClassIdentifier: Assembly-CSharp::CubeInvasion.Prototype.FrontEndArt
+  menuHero: {fileID: 21300000, guid: 3f598fcbd98e44bda835c6cdf7b37143, type: 3}
+  campaignIslands: {fileID: 21300000, guid: 2326d241af8af499c91e04203c9726c1, type: 3}
+  scout: {fileID: 21300000, guid: 3453757ac995044bf8cf0c003372c80e, type: 3}
+  panel: {fileID: 21300000, guid: 43be4a4e1b86c4c479853fc229b3b310, type: 2}
+  disc: {fileID: 21300000, guid: 3c2d72c9d8aaa42cca6ade4e9a862f34, type: 2}
+  weapons:
+  - {fileID: 21300000, guid: 66a2c54f5884c4c478f05807718a93b3, type: 3}
+  - {fileID: 21300000, guid: f114f2befbadb42cf9c8cac9facd8165, type: 3}
+  - {fileID: 21300000, guid: e5e83919f6dad43cabd557485b9bc3c7, type: 3}
+  - {fileID: 21300000, guid: 16b94498d97dd4f2ab1d4ff9e1c2e1e9, type: 3}

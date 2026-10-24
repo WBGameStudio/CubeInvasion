@@ -26,6 +26,8 @@ public static class P2SmokeCheck
     {
         SessionState.SetBool(Key+".WalletExists",PlayerPrefs.HasKey("CI.Wallet"));SessionState.SetInt(Key+".Wallet",PlayerPrefs.GetInt("CI.Wallet",0));
         EditorSceneManager.OpenScene("Assets/CubeInvasion/CubeInvasionPrototype.unity");
+        var settings=new SerializedObject(Object.FindAnyObjectByType<InvasionPrototype>());
+        settings.FindProperty("metaSettings").objectReferenceValue=null;settings.ApplyModifiedPropertiesWithoutUndo();
         SessionState.SetBool(Key,true);EditorApplication.isPlaying=true;
     }
     public static void RunVisualReview() { SessionState.SetBool(Key+".VisualOnly",true);Run(); }

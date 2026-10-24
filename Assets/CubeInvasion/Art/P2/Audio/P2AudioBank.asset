@@ -77,6 +77,18 @@ MonoBehaviour:
     variants:
     - {fileID: 8300000, guid: 3b7c80aaf3f7548579c54ee43f24beaa, type: 3}
     - {fileID: 8300000, guid: 29a75e0911e824c1f90a8cd03bebf4ff, type: 3}
+  - cue: 16
+    variants:
+    - {fileID: 8300000, guid: 9e65e19c3f8b7488ebc32500f907b7bc, type: 3}
+    - {fileID: 8300000, guid: bd1a019e3f8584cbdbc21dab430575f4, type: 3}
+  - cue: 17
+    variants:
+    - {fileID: 8300000, guid: 98c7d115832f54b049080d12adb7c23a, type: 3}
+    - {fileID: 8300000, guid: d7995f5941e6240288f5b90fdc043f0e, type: 3}
+  - cue: 18
+    variants:
+    - {fileID: 8300000, guid: 7988c93c02f3b4b0cbd4a3a662206148, type: 3}
+    - {fileID: 8300000, guid: 993b024eae1b44fae95c26cc0b0bb9a6, type: 3}
   combatLoop: {fileID: 8300000, guid: ef0af02d00b1b4f1f8c0b6dccd2460b6, type: 3}
   bossLoop: {fileID: 8300000, guid: 696593f41f93d43e29422e29652b0dbc, type: 3}
   goldLoop: {fileID: 8300000, guid: fd11778e9876d45968336815026de948, type: 3}
