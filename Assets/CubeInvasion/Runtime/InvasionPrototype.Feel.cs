@@ -6,10 +6,10 @@ namespace CubeInvasion.Prototype
 {
     public sealed partial class InvasionPrototype
     {
-        enum EnemyKind { Grunt, Sprinter, Gunner }
+        enum EnemyKind { Grunt, Sprinter, Gunner, Pusher, Sniper, Bruiser, Crusher }
         sealed class Barrel { public Transform body, warning; public float hp=12, fuse=-1; }
         sealed class Pickup { public Transform body; public bool healing; public int value; public Vector3 origin; public float age; }
-        sealed class EnemyShot { public Transform body; public Vector3 direction; public float life=2; }
+        sealed class EnemyShot { public Transform body; public Vector3 direction; public float life=2, damage=6, speed=7; }
         readonly List<Barrel> barrels=new List<Barrel>();
         readonly List<Pickup> pickups=new List<Pickup>();
         readonly List<EnemyShot> enemyShots=new List<EnemyShot>();
@@ -33,7 +33,7 @@ namespace CubeInvasion.Prototype
             hud.Initialize(view,()=>SetPaused(!paused),Retry,()=>feedback.ToggleMute());
         }
         void SetPaused(bool value) { paused=value;dragging=false;joystickFinger=-1;stick=Vector2.zero;if(hud)hud.ResetJoystick();if(feedback)feedback.SetPaused(value); }
-        void Retry() { UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex); }
+        void Retry() { if(HasContent) { StartMission(missionIndex);return; } UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex); }
         void LateUpdate()
         {
             TickAnimations(Time.deltaTime);
@@ -41,20 +41,27 @@ namespace CubeInvasion.Prototype
             feedback.SetPaused(paused);
             if(!paused)feedback.Tick(Time.deltaTime);
             hud.Refresh(remaining,health,stage,foes.Count,wallet,pendingGold,damageCubes,damageBonus,paused,feedback.Muted,phase.ToString(),reason);
+            RefreshContentHud();
         }
         void SetupEncounterFeel()
         {
             pendingGold=0;alarmSecond=21;knockback=Vector3.zero;
             if(cover)Destroy(cover.gameObject);cover=null;
             barrels.Clear();pickups.Clear();ClearEnemyShots();
-            if(stage>=2)
+            if(HasContent?Encounter.cover||Encounter.barrels:stage>=2)
             {
-                CreateBarrel(centre+new Vector3(-2.1f,.5f,2.1f));
-                CreateBarrel(centre+new Vector3(2.1f,.5f,2.1f));
+                if(!HasContent||Encounter.barrels)
+                {
+                    CreateBarrel(centre+new Vector3(-2.1f,.5f,2.1f));
+                    CreateBarrel(centre+new Vector3(2.1f,.5f,2.1f));
+                }
+                if(!HasContent||Encounter.cover)
+                {
                 cover=Shape("Low cover",PrimitiveType.Cube,new Vector3(0,.45f,.6f),new Vector3(1.35f,.9f,.8f),new Color(.25f,.34f,.46f),platform);
                 // Shape uses local coordinates; the cover is attached to its own cube.
                 cover.position=centre+new Vector3(0,.45f,.6f);
-                SpawnPickup(centre+new Vector3(0,.45f,-1.2f),true,20);
+                }
+                if(!IsGoldRush)SpawnPickup(centre+new Vector3(0,.45f,-1.2f),true,20);
             }
             else cover=null;
         }
@@ -67,7 +74,7 @@ namespace CubeInvasion.Prototype
         }
         Transform WarningRing(Vector3 at,float radius,Color color)
         {
-            var root=new GameObject("Attack warning").transform;root.SetParent(world,false);root.position=new Vector3(at.x,.09f,at.z);
+            var root=new GameObject("Attack warning").transform;root.SetParent(dynamicRoot?dynamicRoot:world,false);root.position=new Vector3(at.x,.09f,at.z);
             var line=root.gameObject.AddComponent<LineRenderer>();line.sharedMaterial=Mat(color);line.useWorldSpace=false;line.loop=true;line.widthMultiplier=.045f;line.positionCount=40;
             for(int i=0;i<40;i++) {float a=i*Mathf.PI*2/40;line.SetPosition(i,new Vector3(Mathf.Cos(a)*radius,0,Mathf.Sin(a)*radius));}
             return root;
@@ -91,7 +98,7 @@ namespace CubeInvasion.Prototype
                 if(magnet || distance<1)
                 {
                     if(pickup.healing) { health=Mathf.Min(100,health+pickup.value);feedback.Play(CombatFeedback.Cue.Heal); }
-                    else { pendingGold+=pickup.value;feedback.Play(CombatFeedback.Cue.Gold); }
+                    else { pendingGold+=pickup.value;if(IsGoldRush)quotaGold=Mathf.Min(Encounter.goldQuota,quotaGold+pickup.value);feedback.Play(CombatFeedback.Cue.Gold); }
                     feedback.Burst(pickup.body.position,pickup.healing?Color.green:Color.yellow,.5f);
                     Destroy(pickup.body.gameObject);pickups.RemoveAt(i);
                 }
@@ -104,7 +111,9 @@ namespace CubeInvasion.Prototype
         void HitEnemy(Foe foe,float damage,Vector3 direction)
         {
             if(!foes.Contains(foe))return;
+            float applied=Mathf.Min(foe.hp,damage);
             foe.hp-=damage;foe.flash=.09f;
+            if(HasContent && foe.kind==EnemyKind.Crusher)bossHealth=Mathf.Max(0,bossHealth-applied);
             if(foe.animation)foe.animation.Hit();
             feedback.Play(CombatFeedback.Cue.Hit);feedback.Burst(foe.body.position,Color.white,.3f);
             if(foe.hp>0)return;
@@ -136,6 +145,7 @@ namespace CubeInvasion.Prototype
                 if(foe.spawn>0) { foe.spawn-=dt;continue; }
                 foe.attack-=dt;
                 var toward=player.position-foe.body.position;toward.y=0;float distance=toward.magnitude;
+                if(TickSpecialEnemy(foe,dt,toward,distance))continue;
                 if(foe.windup>0)
                 {
                     foe.windup-=dt;
@@ -235,18 +245,18 @@ namespace CubeInvasion.Prototype
             Transform body=pool.Count>0?pool.Pop():Shape(name,PrimitiveType.Sphere,at,Vector3.one*size,color,world);
             body.position=at;body.gameObject.SetActive(true);return body;
         }
-        void FireEnemyShot(Vector3 at,Vector3 direction)
-        { enemyShots.Add(new EnemyShot {body=RentProjectile(enemyShotPool,"Enemy pulse",at,danger,.2f),direction=direction});feedback.Play(CombatFeedback.Cue.Shot); }
+        void FireEnemyShot(Vector3 at,Vector3 direction,float damage=6,float speed=7)
+        { enemyShots.Add(new EnemyShot {body=RentProjectile(enemyShotPool,"Enemy pulse",at,danger,.2f),direction=direction,damage=damage,speed=speed});feedback.Play(CombatFeedback.Cue.Shot); }
         void TickEnemyShots(float dt)
         {
             for(int i=enemyShots.Count-1;i>=0;i--)
             {
-                var shot=enemyShots[i];var start=shot.body.position;var end=start+shot.direction*7*dt;shot.body.position=end;shot.life-=dt;
+                var shot=enemyShots[i];var start=shot.body.position;var end=start+shot.direction*shot.speed*dt;shot.body.position=end;shot.life-=dt;
                 bool blocked=cover && SegmentDistance(cover.position,start,end)<.85f;
                 bool hit=SegmentDistance(player.position,start,end)<.5f;
                 if(blocked && hit && FlatDistance(player.position,start)<FlatDistance(cover.position,start))blocked=false;
                 hit=hit&&!blocked;
-                if(hit) { DamagePlayer(6,shot.direction);if(phase!=Phase.Combat)return; }
+                if(hit) { DamagePlayer(shot.damage,shot.direction);if(phase!=Phase.Combat)return; }
                 if(blocked||hit||shot.life<=0) { shot.body.gameObject.SetActive(false);enemyShotPool.Push(shot.body);enemyShots.RemoveAt(i); }
             }
         }
@@ -257,6 +267,11 @@ namespace CubeInvasion.Prototype
             if(clear)CollectPickups(0,true);else { pendingGold=0;foreach(var p in pickups)if(p.body)Destroy(p.body.gameObject);pickups.Clear(); }
             foreach(var barrel in barrels) { if(barrel.body)Destroy(barrel.body.gameObject);if(barrel.warning)Destroy(barrel.warning.gameObject); }barrels.Clear();
             foreach(var foe in foes)if(foe.warning)foe.warning.gameObject.SetActive(false);
+            if(clear && IsGoldRush)
+            {
+                foreach(var foe in foes) { if(foe.warning)Destroy(foe.warning.gameObject);if(foe.body) { AnimateDeath(foe);Destroy(foe.body.gameObject); } }
+                foes.Clear();
+            }
             knockback=Vector3.zero;
             if(playerAnimation)playerAnimation.SetVisible(true);else player.GetChild(0).GetComponent<Renderer>().enabled=true;
             feedback.Play(clear?CombatFeedback.Cue.Clear:CombatFeedback.Cue.Fail);

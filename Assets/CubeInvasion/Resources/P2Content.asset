@@ -1,0 +1,208 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9600e41e942a4dfeb971ee074976ee4, type: 3}
+  m_Name: P2Content
+  m_EditorClassIdentifier: Assembly-CSharp::CubeInvasion.Prototype.P2ContentCatalog
+  weapons:
+  - title: Pulse Pistol
+    description: "Dengeli tek at\u0131\u015F. Uzak hedeflerde g\xFCvenilir."
+    model: Pulse pistol
+    kind: 0
+    damage: 6
+    interval: 0.5
+    projectileLife: 1
+    pellets: 1
+    spread: 0
+    color: {r: 0.1, g: 0.8, b: 1, a: 1}
+  - title: Twin Blasters
+    description: "\u0130ki namludan birlikte ate\u015F. Orta mesafede yo\u011Fun
+      hasar."
+    model: Twin blasters
+    kind: 1
+    damage: 3.5
+    interval: 0.48
+    projectileLife: 1
+    pellets: 2
+    spread: 3
+    color: {r: 0.45, g: 0.5, b: 1, a: 1}
+  - title: Scatter Shot
+    description: "Be\u015F sa\xE7ma, geni\u015F a\xE7\u0131. Yakla\u015F\u0131nca
+      tek hedefte de etkili."
+    model: Scatter shot
+    kind: 2
+    damage: 3
+    interval: 0.9
+    projectileLife: 0.32
+    pellets: 5
+    spread: 28
+    color: {r: 1, g: 0.63, b: 0.18, a: 1}
+  - title: Rapid SMG
+    description: "K\xFC\xE7\xFCk mermiler, h\u0131zl\u0131 at\u0131\u015F. Hareket
+      ederek bask\u0131y\u0131 s\xFCrd\xFCr."
+    model: Rapid smg
+    kind: 3
+    damage: 2
+    interval: 0.14
+    projectileLife: 1
+    pellets: 1
+    spread: 0
+    color: {r: 0.25, g: 1, b: 0.62, a: 1}
+  missions:
+  - title: "\u0130lk Temas"
+    description: "\u0130stilac\u0131lar\u0131 temizle. Kap\u0131lar aras\u0131nda
+      can\u0131n\u0131 ve g\xFCc\xFCn\xFC y\xF6net."
+    mode: 0
+    accent: {r: 0.1, g: 0.75, b: 0.85, a: 1}
+    cubes:
+    - enemies: 000000000000000000000000
+      cover: 0
+      barrels: 0
+      goldQuota: 30
+    - enemies: 000000000000000001000000
+      cover: 0
+      barrels: 0
+      goldQuota: 30
+    - enemies: 000000000100000001000000
+      cover: 0
+      barrels: 0
+      goldQuota: 30
+  - title: Neon Yard
+    description: "At\u0131c\u0131lar\u0131n serilerini oku. Siperler d\xFC\u015Fman
+      mermilerini keser."
+    mode: 0
+    accent: {r: 0.3, g: 0.55, b: 1, a: 1}
+    cubes:
+    - enemies: 000000000000000002000000
+      cover: 1
+      barrels: 0
+      goldQuota: 30
+    - enemies: 000000000100000001000000
+      cover: 0
+      barrels: 1
+      goldQuota: 30
+    - enemies: 00000000000000000200000002000000
+      cover: 1
+      barrels: 1
+      goldQuota: 30
+    - enemies: 010000000100000002000000
+      cover: 1
+      barrels: 0
+      goldQuota: 30
+  - title: "\u0130tki Tesisi"
+    description: "\u0130ticinin turuncu konisinden \xE7\u0131k; kenarlarda oyalanma."
+    mode: 0
+    accent: {r: 1, g: 0.56, b: 0.2, a: 1}
+    cubes:
+    - enemies: 030000000000000000000000
+      cover: 0
+      barrels: 0
+      goldQuota: 30
+    - enemies: 030000000100000001000000
+      cover: 1
+      barrels: 0
+      goldQuota: 30
+    - enemies: 030000000300000000000000
+      cover: 0
+      barrels: 1
+      goldQuota: 30
+    - enemies: 030000000200000001000000
+      cover: 1
+      barrels: 1
+      goldQuota: 30
+  - title: Uzun Menzil
+    description: "Lazer \xE7izgisi sabitlenince yana ka\xE7. Ezicilerin darbesine
+      yakla\u015Fma."
+    mode: 0
+    accent: {r: 0.7, g: 0.35, b: 1, a: 1}
+    cubes:
+    - enemies: 040000000000000000000000
+      cover: 1
+      barrels: 0
+      goldQuota: 30
+    - enemies: 0500000001000000
+      cover: 0
+      barrels: 1
+      goldQuota: 30
+    - enemies: 040000000400000002000000
+      cover: 1
+      barrels: 0
+      goldQuota: 30
+    - enemies: 050000000300000001000000
+      cover: 0
+      barrels: 1
+      goldQuota: 30
+    - enemies: 040000000500000000000000
+      cover: 1
+      barrels: 1
+      goldQuota: 30
+  - title: Son Hat
+    description: "\xDC\xE7 tehdide kadar kar\u0131\u015F\u0131k kar\u015F\u0131la\u015Fmalar.
+      Her kap\u0131 ayn\u0131 sava\u015F a\u015Famas\u0131na \xE7\u0131kar."
+    mode: 0
+    accent: {r: 0.95, g: 0.28, b: 0.45, a: 1}
+    cubes:
+    - enemies: 02000000020000000100000001000000
+      cover: 1
+      barrels: 1
+      goldQuota: 30
+    - enemies: 050000000300000000000000
+      cover: 0
+      barrels: 1
+      goldQuota: 30
+    - enemies: 04000000020000000000000000000000
+      cover: 1
+      barrels: 0
+      goldQuota: 30
+    - enemies: 05000000010000000100000003000000
+      cover: 0
+      barrels: 1
+      goldQuota: 30
+    - enemies: 050000000400000003000000
+      cover: 1
+      barrels: 1
+      goldQuota: 30
+  - title: Gold Rush
+    description: "Hedefleri \xF6ld\xFCrmek yetmez. Her k\xFCp\xFCn alt\u0131n kotas\u0131n\u0131
+      s\xFCre dolmadan topla."
+    mode: 1
+    accent: {r: 1, g: 0.72, b: 0.2, a: 1}
+    cubes:
+    - enemies: 0000000000000000
+      cover: 0
+      barrels: 0
+      goldQuota: 40
+    - enemies: 010000000100000000000000
+      cover: 0
+      barrels: 0
+      goldQuota: 50
+    - enemies: 0100000002000000
+      cover: 1
+      barrels: 0
+      goldQuota: 60
+  - title: The Crusher
+    description: "Z\u0131rh, silah sistemi, \xE7ekirdek: \xFC\xE7 ayr\u0131 20 saniyelik
+      faz. Toplam boss can\u0131 kap\u0131larda s\u0131f\u0131rlanmaz."
+    mode: 2
+    accent: {r: 1, g: 0.32, b: 0.16, a: 1}
+    cubes:
+    - enemies: 0600000000000000
+      cover: 0
+      barrels: 0
+      goldQuota: 30
+    - enemies: 060000000100000001000000
+      cover: 1
+      barrels: 0
+      goldQuota: 30
+    - enemies: 060000000200000000000000
+      cover: 0
+      barrels: 1
+      goldQuota: 30

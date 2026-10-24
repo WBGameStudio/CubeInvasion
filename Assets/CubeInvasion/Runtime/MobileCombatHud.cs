@@ -14,6 +14,9 @@ namespace CubeInvasion.Prototype
         [SerializeField] Text timer, status, healthLabel, gold, hint, resultTitle, resultDetail, pauseText, soundText, buffText;
         [SerializeField] Image timerFill, healthFill;
         [SerializeField] GameObject result, pauseOverlay;
+        bool campaignMode;
+        public void SetCampaignMode(bool value) { campaignMode=value; }
+        public void SetMissionInfo(int stage,int total,string objective,bool suppressHint=false) { status.text=$"KÜP {stage}/{total}\n{objective}";if(suppressHint)hint.text=""; }
         Font font;
         Texture2D joystickTexture;
         Sprite joystickSprite;
@@ -104,10 +107,10 @@ namespace CubeInvasion.Prototype
             buffText.text=buffCubes>0?$"HASAR +%{buff*100:0} · {buffCubes} KÜP":"";
             hint.text=phase=="Choice"?"KÜP TEMİZLENDİ\nBir güçlendirme kapısından geç":phase=="Transfer"?"SONRAKİ KÜPE İLERLENİYOR":seconds<=5&&phase=="Combat"?"SON SANİYELER!":"";
             pauseText.text=paused?"▶":"II";soundText.text=muted?"SESSİZ":"SES";pauseOverlay.SetActive(paused);
-            bool ended=phase=="Won"||phase=="Failed";result.SetActive(ended);
+            bool ended=phase=="Won"||phase=="Failed";result.SetActive(ended&&!campaignMode);
             if(ended) { resultTitle.text=phase=="Won"?"BÖLÜM TAMAMLANDI":"LEVEL FAIL";resultDetail.text=phase=="Won"?$"3 küp temizlendi\nBankalanan altın: {wallet}":reason; }
-            if(paused||ended||phase=="Transfer"||(phase=="Collapse"||phase=="Falling"||phase=="Dying"))joystick.ResetInput();
-            joystick.GetComponent<Image>().raycastTarget=!paused&&!ended&&phase!="Transfer"&&phase!="Collapse"&&phase!="Falling"&&phase!="Dying";
+            if(paused||ended||phase=="Loadout"||phase=="Transfer"||(phase=="Collapse"||phase=="Falling"||phase=="Dying"))joystick.ResetInput();
+            joystick.GetComponent<Image>().raycastTarget=!paused&&!ended&&phase!="Loadout"&&phase!="Transfer"&&phase!="Collapse"&&phase!="Falling"&&phase!="Dying";
         }
         void OnDestroy() { if(joystickSprite)Destroy(joystickSprite);if(joystickTexture)Destroy(joystickTexture); }
         public void ResetJoystick() { if(joystick)joystick.ResetInput(); }

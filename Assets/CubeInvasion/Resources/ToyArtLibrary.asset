@@ -191,3 +191,98 @@ MonoBehaviour:
     rig: []
     trim: {fileID: 2100000, guid: 2f5ddb51370cb41579f72f2ca1f132b2, type: 2}
     accent: {fileID: 2100000, guid: 1bd4c495196c640e2ac5c78c3c424830, type: 2}
+  - key: Pusher
+    mesh: {fileID: 4300000, guid: 98e0ccecd2bc54e888f2e1790e7bcdc1, type: 2}
+    rig:
+    - name: Core
+      mesh: {fileID: 4300000, guid: ea93631aeed8e47c9a0d3eaaeaa0e2ba, type: 2}
+      pivot: {x: 0, y: 0, z: 0}
+    - name: LeftLeg
+      mesh: {fileID: 4300000, guid: 25f33bef963b748a29febdb0b9349a55, type: 2}
+      pivot: {x: -0.288, y: -0.3, z: 0}
+    - name: LeftArm
+      mesh: {fileID: 4300000, guid: 574b2c32b3b464b238c51020f915feb1, type: 2}
+      pivot: {x: -0.52199996, y: 0.25, z: 0}
+    - name: RightLeg
+      mesh: {fileID: 4300000, guid: 71e3f63839d904260823c4389d5e3964, type: 2}
+      pivot: {x: 0.288, y: -0.3, z: 0}
+    - name: RightArm
+      mesh: {fileID: 4300000, guid: 077fe19b014fd4af487005e73c60161c, type: 2}
+      pivot: {x: 0.52199996, y: 0.25, z: 0}
+    trim: {fileID: 2100000, guid: eb06829b4aa7644458bac5cf034cb6a6, type: 2}
+    accent: {fileID: 2100000, guid: 2fc84ee695ce24101a85d22419a2c181, type: 2}
+  - key: Sniper
+    mesh: {fileID: 4300000, guid: 3e56df4d50eda4998a2bd8259a19a413, type: 2}
+    rig:
+    - name: Core
+      mesh: {fileID: 4300000, guid: f20cf637a65a542e2835841ab266c021, type: 2}
+      pivot: {x: 0, y: 0, z: 0}
+    - name: LeftLeg
+      mesh: {fileID: 4300000, guid: 1c5e93bf41134443ebc59f1f35494668, type: 2}
+      pivot: {x: -0.288, y: -0.3, z: 0}
+    - name: LeftArm
+      mesh: {fileID: 4300000, guid: 2da11d904536a4d33b888932a595f039, type: 2}
+      pivot: {x: -0.52199996, y: 0.25, z: 0}
+    - name: RightLeg
+      mesh: {fileID: 4300000, guid: 81b89480cad4d42cda4581d1ba843cc4, type: 2}
+      pivot: {x: 0.288, y: -0.3, z: 0}
+    - name: RightArm
+      mesh: {fileID: 4300000, guid: 8eba2a7ff05f64957b843c2ba5bce6be, type: 2}
+      pivot: {x: 0.52199996, y: 0.25, z: 0}
+    trim: {fileID: 2100000, guid: eb06829b4aa7644458bac5cf034cb6a6, type: 2}
+    accent: {fileID: 2100000, guid: 96ab798a8f4cc46a4889ac9fd3b60959, type: 2}
+  - key: Bruiser
+    mesh: {fileID: 4300000, guid: 9e71436fd51584b0a8812928aa3f8187, type: 2}
+    rig:
+    - name: Core
+      mesh: {fileID: 4300000, guid: 56c5f5084463042988c23831c8c1c911, type: 2}
+      pivot: {x: 0, y: 0, z: 0}
+    - name: LeftLeg
+      mesh: {fileID: 4300000, guid: be5180329f32c41d0a54e2c2be6e170f, type: 2}
+      pivot: {x: -0.39999998, y: -0.3, z: 0}
+    - name: LeftArm
+      mesh: {fileID: 4300000, guid: 5abe0cd87b3884d75a049a6e15310d8a, type: 2}
+      pivot: {x: -0.72499996, y: 0.25, z: 0}
+    - name: RightLeg
+      mesh: {fileID: 4300000, guid: f2d77ae39d29946bbbf78a7c502285cb, type: 2}
+      pivot: {x: 0.39999998, y: -0.3, z: 0}
+    - name: RightArm
+      mesh: {fileID: 4300000, guid: c964d854e9b0f4391a893f2056897bd9, type: 2}
+      pivot: {x: 0.72499996, y: 0.25, z: 0}
+    trim: {fileID: 2100000, guid: eb06829b4aa7644458bac5cf034cb6a6, type: 2}
+    accent: {fileID: 2100000, guid: 5442f263b387d4f51906a42a79393414, type: 2}
+  - key: Crusher
+    mesh: {fileID: 4300000, guid: 739e0c9371227498d97299d750961100, type: 2}
+    rig:
+    - name: Core
+      mesh: {fileID: 4300000, guid: d35784e1fb5ac4a3f891cac22743bbfe, type: 2}
+      pivot: {x: 0, y: 0, z: 0}
+    - name: LeftLeg
+      mesh: {fileID: 4300000, guid: 7dd4f4cddbbe4462cabcbce39ad61237, type: 2}
+      pivot: {x: -0.67199993, y: -0.3, z: 0}
+    - name: LeftArm
+      mesh: {fileID: 4300000, guid: 47a316779712041b68130b164b987263, type: 2}
+      pivot: {x: -1.2179999, y: 0.25, z: 0}
+    - name: RightLeg
+      mesh: {fileID: 4300000, guid: eaaf4cee659f5461ca0850d63f9fb754, type: 2}
+      pivot: {x: 0.67199993, y: -0.3, z: 0}
+    - name: RightArm
+      mesh: {fileID: 4300000, guid: 9fe7b0d8992a047a4bc56b8c8084cba3, type: 2}
+      pivot: {x: 1.2179999, y: 0.25, z: 0}
+    trim: {fileID: 2100000, guid: eb06829b4aa7644458bac5cf034cb6a6, type: 2}
+    accent: {fileID: 2100000, guid: 545d44a6c642b438ea40891548ee9836, type: 2}
+  - key: Twin blasters
+    mesh: {fileID: 4300000, guid: 29a9ac92e448549eeb7cd40edc1c5694, type: 2}
+    rig: []
+    trim: {fileID: 2100000, guid: eb06829b4aa7644458bac5cf034cb6a6, type: 2}
+    accent: {fileID: 2100000, guid: b98c5864ea5ff4504b395bdbb4d5971b, type: 2}
+  - key: Scatter shot
+    mesh: {fileID: 4300000, guid: da84ec0a4588c40238407342e48087d3, type: 2}
+    rig: []
+    trim: {fileID: 2100000, guid: eb06829b4aa7644458bac5cf034cb6a6, type: 2}
+    accent: {fileID: 2100000, guid: eed449fc488a34c9d92d0713da7d1230, type: 2}
+  - key: Rapid smg
+    mesh: {fileID: 4300000, guid: 8af88b5272e1d4715a9e277d93112162, type: 2}
+    rig: []
+    trim: {fileID: 2100000, guid: eb06829b4aa7644458bac5cf034cb6a6, type: 2}
+    accent: {fileID: 2100000, guid: 35112b1557dfe481d99ac552e7cbc1a6, type: 2}

@@ -38,6 +38,9 @@ public static class ToyArtBuilder
         const string libraryPath="Assets/CubeInvasion/Resources/ToyArtLibrary.asset";
         var library=AssetDatabase.LoadAssetAtPath<ToyArtLibrary>(libraryPath);
         if(!library){library=ScriptableObject.CreateInstance<ToyArtLibrary>();AssetDatabase.CreateAsset(library,libraryPath);}
+        // Keep extension libraries and hand-added models when rebuilding the base toy set.
+        if(library.models!=null)foreach(var model in library.models)
+            if(model!=null&&!entries.Exists(item=>item.key==model.key))entries.Add(model);
         library.models=entries.ToArray();EditorUtility.SetDirty(library);
         foreach(var key in new[]{"Armored body","Grunt","Sprinter","Gunner","Explosive barrel","Low cover","Health +20","Gold pickup","Deep sides"})
         {

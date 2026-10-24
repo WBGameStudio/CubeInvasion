@@ -10,7 +10,7 @@ namespace CubeInvasion.Prototype
     {
         public CubeRouteDefinition rightRoute, forwardRoute;
         [SerializeField] ToyArtLibrary artLibrary;
-        enum Phase { Combat, Choice, Transfer, Collapse, Falling, Dying, Failed, Won }
+        enum Phase { Loadout, Combat, Choice, Transfer, Collapse, Falling, Dying, Failed, Won }
         enum FailureKind { Health, EdgeFall, Timeout }
         sealed class Foe
         {
@@ -23,7 +23,7 @@ namespace CubeInvasion.Prototype
             public ToyActorAnimator animation;
             public Vector3 aim;
             public float spawn=.65f, windup, dash, burstClock, flash;
-            public int burst;
+            public int burst, pattern;
             public bool dashHit;
         }
         sealed class Pulse
@@ -157,6 +157,8 @@ namespace CubeInvasion.Prototype
             playerAnimation=AnimateActor(playerBody,player,"Armored body",playerVisor,gun);
             view.GetComponent<ArcadeFollowCamera>().Follow(player);
             InitializeFeel();
+            if(HasContent) { InitializeContent();return; }
+            if(missionHud)missionHud.gameObject.SetActive(false);
             BeginCombat(null);
             PrepareNextCubes(centre,platform);
         }
@@ -164,6 +166,7 @@ namespace CubeInvasion.Prototype
         {
             remaining=20; shot=0; invulnerability=1.3f; phase=Phase.Combat;
             SetupEncounterFeel();
+            if(HasContent) { SpawnContentEncounter();return; }
             int grunts=route?route.grunts:2, runners=route?route.sprinters:0;
             for(int i=0;i<grunts+runners;i++)
             {
@@ -297,7 +300,7 @@ namespace CubeInvasion.Prototype
                 relative.x=Mathf.Clamp(relative.x,-4.3f,4.3f); relative.z=Mathf.Clamp(relative.z,-4.3f,4.3f);
                 player.position=centre+relative;
             }
-            else if(stage<3)
+            else if(stage<CubeCount)
             {
                 var relative=player.position-centre;
                 if(Mathf.Abs(relative.z)<1.15f && relative.x>3.85f)relative.x=3.85f;
@@ -350,14 +353,14 @@ namespace CubeInvasion.Prototype
                 TickEnemies(dt);
                 if(phase!=Phase.Combat)return;
                 shot-=dt;
-                if(AimAtNearestEnemy() && shot<=0) { shot=.5f; FirePulse(); }
+                if(AimAtNearestEnemy() && shot<=0) { shot=FireInterval; FirePulse(); }
                 TickPulses(dt);
                 TickWorldFeel(dt);
                 if(phase!=Phase.Combat)return;
                 if(Mathf.Abs(player.position.x-centre.x)>Half || Mathf.Abs(player.position.z-centre.z)>Half) { Fail("Kenardan düştün",FailureKind.EdgeFall); return; }
                 // Resolve valid damage before timeout, using only the frame's remaining combat time.
                 remaining=Mathf.Max(0,remaining-dt);
-                if(foes.Count==0) Clear();
+                if(ObjectiveComplete) Clear();
                 else if(remaining<=0) Fail("20 saniye doldu",FailureKind.Timeout);
             }
             else if(phase==Phase.Choice)
@@ -369,6 +372,7 @@ namespace CubeInvasion.Prototype
         void FirePulse()
         {
             if(phase!=Phase.Combat || !AimAtNearestEnemy())return;
+            if(HasContent) { FireContentWeapon();return; }
             var body=RentProjectile(pulsePool,"Forward pulse",gun.position+player.forward*.35f,cyan,.18f);
             if(playerAnimation)playerAnimation.Shoot();
             feedback.Play(CombatFeedback.Cue.Shot);feedback.Burst(body.position,cyan,.23f,.07f);
@@ -415,7 +419,7 @@ namespace CubeInvasion.Prototype
             FinishEncounterFeel(true);
             wallet+=10+pendingGold;pendingGold=0; PlayerPrefs.SetInt("CI.Wallet",wallet); PlayerPrefs.Save();
             damageCubes=Mathf.Max(0,damageCubes-1);
-            if(stage==3) { phase=Phase.Won; damageCubes=0; return; }
+            if(stage==CubeCount) { phase=Phase.Won; damageCubes=0; return; }
             phase=Phase.Choice;
             if(routesReady)OpenExits();
         }
@@ -462,7 +466,7 @@ namespace CubeInvasion.Prototype
                 if(t>=.35f && !prepared)
                 {
                     prepared=true;
-                    if(stage+1<3)PrepareNextCubes(destination,chosen);
+                    if(stage+1<CubeCount)PrepareNextCubes(destination,chosen);
                 }
                 // Drop the old floor only after the player is safely on the new cube.
                 if(t>=.8f && !retired)

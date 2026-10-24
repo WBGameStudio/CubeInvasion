@@ -70,3 +70,7 @@ Mevcut sahne, rota ve kamera ayarları korunur. `ToyArtLibrary` Resources üzeri
 DOTween 1.3.045 resmî ücretsiz paketi `Assets/Plugins/Demigiant/DOTween` altındadır. Analog joystick düşük hızda yürüyüş, tam hızda koşu üretir. Karakter en yakın düşmana bakarken yana/geri adımlayabilir. Gövde nefesi, kol/bacak döngüsü, ateş geri tepmesi, vurulma, spawn/death, küp yükselme/düşme, kapı açılışı ve pickup hover/spin animasyonları eklidir. Pause tüm bu saatleri durdurur. Gameplay root'u animasyonla taşınmaz; Cinemachine takibi korunur.
 
 [Animasyon önizlemesi](Documentation/Validation/DOTween_Locomotion.gif) · [Teknik notlar ve kontroller](Documentation/DOTween_Animation_TR.md). Testte ek başarı işaretleri: `CUBE_ANIMATION_SMOKE_OK`, `CUBE_ANIMATION_CLEANUP_OK`.
+
+## P2 içerik
+
+Play açılışında görev ve silah seçimi bulunur: 6 düşman arketipi, 4 silah, 5 normal görev, Gold Rush ve 3 fazlı boss. Küpler arasında güçlendirme kapılarından yürüyerek geçilir. Yeni modeller, DOTween rig'leri, WAV ses varyantları ve müzik döngüleri projeye dahildir. İçerik ve doğrulama ayrıntıları: [P2_Content_TR.md](Documentation/P2_Content_TR.md).

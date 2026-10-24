@@ -36,7 +36,7 @@ namespace CubeInvasion.Prototype
         void AnimateDeath(Foe foe)
         {
             if(!foe.animation)return;
-            var visual=foe.animation.DetachVisual(world);if(!visual)return;
+            var visual=foe.animation.DetachVisual(dynamicRoot?dynamicRoot:world);if(!visual)return;
             var sequence=DOTween.Sequence().Join(visual.DOScale(Vector3.zero,.22f).SetEase(Ease.InBack))
                 .Join(visual.DORotate(visual.eulerAngles+new Vector3(20,0,20),.22f));
             WorldTween(sequence).OnComplete(()=> {if(visual)Destroy(visual.gameObject);}).SetLink(visual.gameObject);

@@ -1,0 +1,82 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5532f7832f2f411e9a76e54a0ff2f03, type: 3}
+  m_Name: P2AudioBank
+  m_EditorClassIdentifier: Assembly-CSharp::CubeInvasion.Prototype.P2AudioBank
+  sounds:
+  - cue: 0
+    variants:
+    - {fileID: 8300000, guid: 16ba3043069434f77ad3ff988c24950c, type: 3}
+    - {fileID: 8300000, guid: a02e0c4d3f04a4bcea95fb598c2f3538, type: 3}
+  - cue: 1
+    variants:
+    - {fileID: 8300000, guid: 2d63699fc1a964f50a1f1790c8f7ad8f, type: 3}
+    - {fileID: 8300000, guid: b57b72408216c4d64ad3c4e5eb9bfc0a, type: 3}
+  - cue: 2
+    variants:
+    - {fileID: 8300000, guid: 35fe43bd4c44745f197f5c68fdb923fb, type: 3}
+    - {fileID: 8300000, guid: d3173dcec82ae4057b35efc4db6b712a, type: 3}
+  - cue: 3
+    variants:
+    - {fileID: 8300000, guid: a3c2e9febaac24e42916e51ff76a51ad, type: 3}
+    - {fileID: 8300000, guid: e5643cd247f984020bfb00f3c73a233f, type: 3}
+  - cue: 4
+    variants:
+    - {fileID: 8300000, guid: 980df5c075393480aa97c298fd18adc5, type: 3}
+    - {fileID: 8300000, guid: 08740b787bb2947468af1f6c7f285776, type: 3}
+  - cue: 5
+    variants:
+    - {fileID: 8300000, guid: 55bac5e49da5e42e39db1d2dac4f0086, type: 3}
+    - {fileID: 8300000, guid: 01cf29913e6494f08bc875f271444e7c, type: 3}
+  - cue: 6
+    variants:
+    - {fileID: 8300000, guid: fc1d29994d2534131aa7081a9fb1f281, type: 3}
+    - {fileID: 8300000, guid: cef0b8266b4f943fb87198fc56ce4bfb, type: 3}
+  - cue: 7
+    variants:
+    - {fileID: 8300000, guid: cbfe4ff31a60f4995b516dc288611759, type: 3}
+    - {fileID: 8300000, guid: 8dc7a29f56f2b45e0aaa118525a60790, type: 3}
+  - cue: 8
+    variants:
+    - {fileID: 8300000, guid: b616fba47eafb4a538a8794417caf9e8, type: 3}
+    - {fileID: 8300000, guid: fac9860f2be3d41bc9c8726b84ac8eed, type: 3}
+  - cue: 9
+    variants:
+    - {fileID: 8300000, guid: aaa65d6246375406f8a3312d3b2d5c24, type: 3}
+    - {fileID: 8300000, guid: 8fc49aac51b51419d894a288c31729b5, type: 3}
+  - cue: 10
+    variants:
+    - {fileID: 8300000, guid: 2fd7b2b9dc0224e0d9875d21512bb3a8, type: 3}
+    - {fileID: 8300000, guid: 3f8fc7d40fb3d4bf1b685df014709bc8, type: 3}
+  - cue: 11
+    variants:
+    - {fileID: 8300000, guid: 3050ff7be48fe4dfa8160c168f4aa146, type: 3}
+    - {fileID: 8300000, guid: 4289a6f3eb4ab4d58bc0e908b250f7e0, type: 3}
+  - cue: 12
+    variants:
+    - {fileID: 8300000, guid: 7136e9ef19f96413d9cfa9d638156e2e, type: 3}
+    - {fileID: 8300000, guid: 9f42fa122df1e42439dffaffa524fc23, type: 3}
+  - cue: 13
+    variants:
+    - {fileID: 8300000, guid: 035fac6ab7a164d9bb57a7a9c12ec36d, type: 3}
+    - {fileID: 8300000, guid: 45c0a598b044b4648bb90a32faaf2892, type: 3}
+  - cue: 14
+    variants:
+    - {fileID: 8300000, guid: 05395b7dd3ba946879fb165bf0c77614, type: 3}
+    - {fileID: 8300000, guid: 28ea9f8c7d2b64e9a98dc11ae8f92634, type: 3}
+  - cue: 15
+    variants:
+    - {fileID: 8300000, guid: 3b7c80aaf3f7548579c54ee43f24beaa, type: 3}
+    - {fileID: 8300000, guid: 29a75e0911e824c1f90a8cd03bebf4ff, type: 3}
+  combatLoop: {fileID: 8300000, guid: ef0af02d00b1b4f1f8c0b6dccd2460b6, type: 3}
+  bossLoop: {fileID: 8300000, guid: 696593f41f93d43e29422e29652b0dbc, type: 3}
+  goldLoop: {fileID: 8300000, guid: fd11778e9876d45968336815026de948, type: 3}

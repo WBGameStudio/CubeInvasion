@@ -110,6 +110,12 @@ namespace CubeInvasion.Prototype
             if(!ready)return;
             reactions.Add(reactionRoot.DOPunchPosition(Vector3.back*.035f,.12f,3,.4f).SetUpdate(UpdateType.Manual));
         }
+        public void Slam()
+        {
+            if(!ready)return;
+            reactions.Add(reactionRoot.DOPunchPosition(Vector3.down*.14f,.26f,3,.35f).SetUpdate(UpdateType.Manual));
+            reactions.Add(reactionRoot.DOPunchRotation(Vector3.right*15,.26f,3,.35f).SetUpdate(UpdateType.Manual));
+        }
         public void Hit()
         {
             if(!ready)return;

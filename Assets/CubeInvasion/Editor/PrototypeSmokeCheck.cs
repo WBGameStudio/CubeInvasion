@@ -31,6 +31,8 @@ public static class PrototypeSmokeCheck
         walletExisted=PlayerPrefs.HasKey("CI.Wallet"); savedWallet=PlayerPrefs.GetInt("CI.Wallet",0);
         SessionState.SetInt("CI.Smoke.Wallet",savedWallet); SessionState.SetBool("CI.Smoke.WalletExisted",walletExisted);
         EditorSceneManager.OpenScene("Assets/CubeInvasion/CubeInvasionPrototype.unity");
+        var runtime=Object.FindAnyObjectByType<InvasionPrototype>();
+        var setup=new SerializedObject(runtime);setup.FindProperty("content").objectReferenceValue=null;setup.ApplyModifiedPropertiesWithoutUndo();
         SessionState.SetBool(Key,true); EditorApplication.isPlaying=true;
     }
     static object Get(string field) => typeof(InvasionPrototype).GetField(field,Flags).GetValue(game);
@@ -141,7 +143,7 @@ public static class PrototypeSmokeCheck
         Check(Get("currentTarget")==gunner && (float)Item(gunner,"hp")==targetHp-6 && ((IList)Get("pulses")).Count==0,
             "Player locks and fires through cover at nearest enemy");
         float protectedHealth=(float)Get("health");Set("invulnerability",0f);
-        Call("FireEnemyShot",cover.position+Vector3.forward*2,Vector3.back);Call("TickEnemyShots",.6f);
+        Call("FireEnemyShot",cover.position+Vector3.forward*2,Vector3.back,6f,7f);Call("TickEnemyShots",.6f);
         Check((float)Get("health")==protectedHealth && ((IList)Get("enemyShots")).Count==0,"Cover blocks incoming enemy projectiles");
         var pickupList=(IList)Get("pickups");foreach(var item in pickupList)UnityEngine.Object.Destroy(((Transform)Item(item,"body")).gameObject);pickupList.Clear();
         Call("SpawnPickup",player.position,true,20);Call("CollectPickups",0f,false);
@@ -162,7 +164,7 @@ public static class PrototypeSmokeCheck
         Check((float)Item(chained,"fuse")>0,"Chain reaction starts another visible fuse instead of instant damage");
         Call("DamagePlayer",10f,Vector3.right);Check((float)Get("health")==90,"Damage grace period prevents immediate repeated hit");
         var beforeHealthFailure=((Transform)Get("platform")).position;
-        Set("invulnerability",0f);Set("health",3f);Call("FireEnemyShot",player.position-Vector3.forward,Vector3.forward);Call("TickEnemyShots",.2f);
+        Set("invulnerability",0f);Set("health",3f);Call("FireEnemyShot",player.position-Vector3.forward,Vector3.forward,6f,7f);Call("TickEnemyShots",.2f);
         Check(State=="Dying" && ((IList)Get("enemyShots")).Count==0 && (int)Get("pendingGold")==0,"Lethal projectile fails safely and discards unbanked gold");
         Check(((Transform)Get("platform")).position==beforeHealthFailure,"Health failure leaves combat cube stationary");
         Check((int)Get("wallet")==bank,"Failed cube preserves previously banked wallet");

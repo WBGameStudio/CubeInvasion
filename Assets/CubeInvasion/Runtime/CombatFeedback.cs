@@ -6,13 +6,27 @@ namespace CubeInvasion.Prototype
     /// <summary>Bounded, reusable visual and audio voices. No time-scale hit stop.</summary>
     public sealed class CombatFeedback : MonoBehaviour
     {
-        public enum Cue { Shot, Hit, Hurt, Explosion, Gold, Heal, Clear, Alarm, Fail, Gate }
+        public enum Cue { Shot, Hit, Hurt, Explosion, Gold, Heal, Clear, Alarm, Fail, Gate, Twin, Scatter, Rapid, Telegraph, BossPhase, BossSlam }
         sealed class Effect { public Transform body; public float age, duration, size; public Vector3 origin; public bool ring; }
         readonly List<Effect> effects=new List<Effect>();
         readonly Stack<Transform> ringPool=new Stack<Transform>(), sparkPool=new Stack<Transform>();
         readonly List<Material> materials=new List<Material>();
         readonly Dictionary<Cue,AudioClip> clips=new Dictionary<Cue,AudioClip>();
+        [SerializeField] P2AudioBank audioBank;
+        readonly List<AudioClip> ownedClips=new List<AudioClip>();
         AudioSource[] voices;
+        AudioSource music;
+        int variation;
+        float duck;
+        public void ConfigureAudio(P2AudioBank bank) { audioBank=bank; }
+        public void SetMusic(MissionMode mode)
+        {
+            if(!audioBank)return;
+            if(!music) { music=gameObject.AddComponent<AudioSource>();music.loop=true;music.playOnAwake=false;music.spatialBlend=0;music.volume=.11f; }
+            var clip=mode==MissionMode.Boss?audioBank.bossLoop:mode==MissionMode.GoldRush?audioBank.goldLoop:audioBank.combatLoop;
+            if(music.clip==clip)return;
+            music.clip=clip;music.mute=Muted;if(clip) { music.Play();if(frozen)music.Pause(); }
+        }
         Material lineMaterial, sparkMaterial;
         bool frozen;
         float lastShotSound;
@@ -20,11 +34,17 @@ namespace CubeInvasion.Prototype
         public int ActiveEffects => effects.Count;
         public void Initialize()
         {
+            if(voices!=null)return;
             lineMaterial=new Material(Shader.Find("Sprites/Default")); materials.Add(lineMaterial);
             sparkMaterial=new Material(Shader.Find("Standard")); materials.Add(sparkMaterial);
             voices=new AudioSource[6];
             for(int i=0;i<voices.Length;i++) { voices[i]=gameObject.AddComponent<AudioSource>(); voices[i].playOnAwake=false; voices[i].spatialBlend=0; }
-            foreach(Cue cue in System.Enum.GetValues(typeof(Cue)))clips[cue]=Synthesize(cue);
+            foreach(Cue cue in System.Enum.GetValues(typeof(Cue)))
+            {
+                var clip=audioBank?audioBank.Find(cue,0):null;
+                if(!clip) { clip=Synthesize(cue);ownedClips.Add(clip); }
+                clips[cue]=clip;
+            }
             Muted=PlayerPrefs.GetInt("CI.Muted",0)==1;
         }
         AudioClip Synthesize(Cue cue)
@@ -46,16 +66,19 @@ namespace CubeInvasion.Prototype
             }
             var clip=AudioClip.Create("CI "+cue,samples.Length,1,rate,false);clip.SetData(samples,0);return clip;
         }
-        public void ToggleMute() { Muted=!Muted; PlayerPrefs.SetInt("CI.Muted",Muted?1:0); PlayerPrefs.Save(); foreach(var voice in voices)voice.mute=Muted; }
+        public void ToggleMute() { Muted=!Muted; PlayerPrefs.SetInt("CI.Muted",Muted?1:0); PlayerPrefs.Save(); foreach(var voice in voices)voice.mute=Muted;if(music)music.mute=Muted; }
         public void Play(Cue cue)
         {
             if(Muted||frozen||voices==null)return;
-            if(cue==Cue.Shot && Time.unscaledTime-lastShotSound<.08f)return;
-            if(cue==Cue.Shot)lastShotSound=Time.unscaledTime;
+            if((cue==Cue.Shot||cue==Cue.Rapid||cue==Cue.Twin) && Time.unscaledTime-lastShotSound<.08f)return;
+            if(cue==Cue.Shot||cue==Cue.Rapid||cue==Cue.Twin)lastShotSound=Time.unscaledTime;
             AudioSource selected=null;
             foreach(var voice in voices)if(!voice.isPlaying) { selected=voice;break; }
             if(!selected) { if(cue==Cue.Shot||cue==Cue.Hit||cue==Cue.Gold)return; selected=voices[0]; }
-            selected.clip=clips[cue];selected.volume=cue==Cue.Shot?.3f:.65f;selected.Play();
+            var variant=audioBank?audioBank.Find(cue,variation++):null;
+            selected.clip=variant?variant:clips[cue];selected.pitch=1;
+            selected.volume=cue==Cue.Shot||cue==Cue.Rapid||cue==Cue.Twin?.26f:cue==Cue.Telegraph?.42f:.6f;selected.Play();
+            if(cue==Cue.Explosion||cue==Cue.BossSlam)duck=.25f;
         }
         public void SetPaused(bool value)
         {
@@ -63,6 +86,7 @@ namespace CubeInvasion.Prototype
             frozen=value;
             if(voices==null)return;
             foreach(var voice in voices) { if(value)voice.Pause();else voice.UnPause(); }
+            if(music) { if(value)music.Pause();else music.UnPause(); }
         }
         public void Burst(Vector3 position, Color color, float size=.5f, float duration=.2f, bool ring=false)
         {
@@ -90,6 +114,7 @@ namespace CubeInvasion.Prototype
         public void Tick(float dt)
         {
             if(frozen)return;
+            duck=Mathf.Max(0,duck-dt);if(music)music.volume=duck>0?.04f:.11f;
             for(int i=effects.Count-1;i>=0;i--)
             {
                 var effect=effects[i];effect.age+=dt;float t=Mathf.Clamp01(effect.age/effect.duration);
@@ -99,6 +124,6 @@ namespace CubeInvasion.Prototype
             }
         }
         void Recycle(int i) { var effect=effects[i];effect.body.gameObject.SetActive(false);(effect.ring?ringPool:sparkPool).Push(effect.body);effects.RemoveAt(i); }
-        void OnDestroy() { foreach(var clip in clips.Values)if(clip)Destroy(clip);foreach(var material in materials)if(material)Destroy(material); }
+        void OnDestroy() { foreach(var clip in ownedClips)if(clip)Destroy(clip);foreach(var material in materials)if(material)Destroy(material); }
     }
 }
