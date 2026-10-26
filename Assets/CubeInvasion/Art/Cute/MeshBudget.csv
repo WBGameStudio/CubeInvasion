@@ -1,0 +1,34 @@
+Model,Vertices,Triangles,RigParts,DrawsPerVisiblePose
+Armored body,16287,27792,10,10
+Grunt,16287,27792,10,10
+Sprinter,16780,28632,11,11
+Gunner,20870,35496,12,12
+Pusher,18775,32128,10,10
+Sniper,17795,30296,11,11
+Bruiser,18739,31872,10,10
+Crusher,21538,36712,10,10
+Pulse pistol,5182,8880,0,1
+Twin blasters,6690,11384,0,1
+Scatter shot,5626,9576,0,1
+Rapid smg,5415,9200,0,1
+Visor,551,952,0,1
+Gunner barrel,5182,8880,0,1
+Threat crest,551,952,0,1
+Deep sides,3180,5616,0,1
+Arena surface,2166,3888,0,1
+Low cover,3180,5616,0,1
+Explosive barrel,1545,2476,0,1
+Explosive band,407,720,0,1
+Health +20,3720,6336,0,1
+Gold pickup,1182,1888,0,1
+Gate left post,2166,3888,0,1
+Gate right post,2166,3888,0,1
+Gate header,2166,3888,0,1
+Locked until clear,1986,3264,0,1
+Right bridge,1014,1728,0,1
+Forward bridge,1014,1728,0,1
+Edge light,1014,1728,0,1
+Reward beacon,1014,1728,0,1
+Reward beacon vertical,1014,1728,0,1
+Health cross H,1014,1728,0,1
+Health cross V,1014,1728,0,1

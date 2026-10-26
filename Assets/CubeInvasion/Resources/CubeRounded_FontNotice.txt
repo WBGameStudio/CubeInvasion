@@ -1,0 +1,5 @@
+Cube Rounded Bold is a modified static instance of Fredoka, distributed under SIL Open Font License 1.1. See CubeRounded_OFL.txt.
+Original copyright: Copyright 2016 The Fredoka Project Authors (https://github.com/hafontia/Fredoka-One).
+Source: https://github.com/google/fonts/tree/main/ofl/fredoka
+Modifications for Cube Invasion: static weight 700, width 90; family renamed Cube Rounded; Turkish precomposed G-breve, I-dot and S-cedilla glyphs assembled from original glyphs/diacritics.
+Reproduction script: Documentation/Tools/BuildReferenceFont.py (requires fontTools).

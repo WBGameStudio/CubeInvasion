@@ -26,6 +26,7 @@ public static class P2SmokeCheck
     {
         SessionState.SetBool(Key+".WalletExists",PlayerPrefs.HasKey("CI.Wallet"));SessionState.SetInt(Key+".Wallet",PlayerPrefs.GetInt("CI.Wallet",0));
         EditorSceneManager.OpenScene("Assets/CubeInvasion/CubeInvasionPrototype.unity");
+        var legacyRoutes=new SerializedObject(Object.FindAnyObjectByType<InvasionPrototype>());legacyRoutes.FindProperty("branchSettings").objectReferenceValue=null;legacyRoutes.ApplyModifiedPropertiesWithoutUndo();
         var settings=new SerializedObject(Object.FindAnyObjectByType<InvasionPrototype>());
         settings.FindProperty("metaSettings").objectReferenceValue=null;settings.ApplyModifiedPropertiesWithoutUndo();
         SessionState.SetBool(Key,true);EditorApplication.isPlaying=true;
@@ -115,7 +116,7 @@ public static class P2SmokeCheck
                     player.position=pusherBody.position+Vector3.right*2;Call("TickEnemies",.9f);
                     Check((float)Get("health")==100,"Sidestepping locked pusher cone avoids damage");
                     player.position=pusherBody.position+Vector3.forward*2;Put(pusher,"attack",0f);Call("TickEnemies",.01f);Call("TickEnemies",.9f);
-                    Check((float)Get("health")==95&&((Vector3)Get("knockback")).magnitude>8,"Pusher applies warned directional knockback");
+                    Check(Mathf.Approximately((float)Get("health"),93.5f)&&((Vector3)Get("knockback")).magnitude>8,"Pusher applies warned directional knockback");
                     Capture("Pusher");
                     Call("StartMission",3);Set("paused",true);Set("invulnerability",0f);Isolate("Sniper");
                     var sniper=((IList)Get("foes"))[0];Call("TickEnemies",.01f);var aim=(Vector3)Item(sniper,"aim");
@@ -123,10 +124,11 @@ public static class P2SmokeCheck
                     player.position+=Vector3.right*2;Call("TickEnemies",1.11f);var enemyShots=(IList)Get("enemyShots");
                     Check(enemyShots.Count==1 && (Vector3)Item(enemyShots[0],"direction")==aim,"Sniper shot preserves the telegraphed aim");
                     Check((float)Item(enemyShots[0],"damage")==9,"Sniper has distinct 9-damage projectile");
-                    KillAll();var bruiser=Call("SpawnContentEnemy",ContentEnemy.Bruiser,new Vector3(0,.6f,1));
-                    player.position=new Vector3(0,.65f,2);Put(bruiser,"spawn",0f);Put(bruiser,"attack",0f);Call("TickEnemies",.01f);Call("TickEnemies",.35f);
+                    // Keep this damage test in the open lane; the revised cover blocks attacks through it.
+                    KillAll();var bruiser=Call("SpawnContentEnemy",ContentEnemy.Bruiser,new Vector3(2,.6f,0));
+                    player.position=new Vector3(2,.65f,1);Put(bruiser,"spawn",0f);Put(bruiser,"attack",0f);Call("TickEnemies",.01f);Call("TickEnemies",.35f);
                     Check((float)Get("health")==100,"Bruiser windup cannot deal early damage");Call("TickEnemies",.5f);
-                    Check((float)Get("health")==87,"Bruiser resolves a 13-damage close slam");
+                    Check(Mathf.Approximately((float)Get("health"),83.1f),"Bruiser slam applies the configured enemy damage multiplier");
                     Call("StartMission",5);Set("paused",true);KillAll();Set("invulnerability",100f);Set("paused",false);Call("Update");
                     Check(State=="Combat"&&(int)Get("quotaGold")<catalog.missions[5].cubes[0].goldQuota,"Gold Rush does not clear when enemies die before quota");
                     Set("paused",true);Capture("GoldRush");Call("CollectPickups",0f,true);Set("remaining",.001f);Set("paused",false);Call("Update");

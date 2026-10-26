@@ -4,7 +4,7 @@ using UnityEngine;
 namespace CubeInvasion.Prototype
 {
     /// <summary>Bounded, reusable visual and audio voices. No time-scale hit stop.</summary>
-    public sealed class CombatFeedback : MonoBehaviour
+    public sealed partial class CombatFeedback : MonoBehaviour
     {
         public enum Cue { Shot, Hit, Hurt, Explosion, Gold, Heal, Clear, Alarm, Fail, Gate, Twin, Scatter, Rapid, Telegraph, BossPhase, BossSlam, Unlock, Upgrade, Denied }
         sealed class Effect { public Transform body; public float age, duration, size; public Vector3 origin; public bool ring; }
@@ -40,7 +40,7 @@ namespace CubeInvasion.Prototype
             if(music) { music.mute=Muted;music.volume=.11f*MusicLevel; }
         }
         public bool Muted { get; private set; }
-        public int ActiveEffects => effects.Count;
+        public int ActiveEffects => effects.Count+flashes.Count;
         public void Initialize()
         {
             if(voices!=null)return;
@@ -104,7 +104,7 @@ namespace CubeInvasion.Prototype
         }
         public void Burst(Vector3 position, Color color, float size=.5f, float duration=.2f, bool ring=false)
         {
-            if(effects.Count>=48)Recycle(0);
+            MakeEffectRoom();
             var pool=ring?ringPool:sparkPool;
             Transform body;
             if(pool.Count>0)body=pool.Pop();
@@ -128,6 +128,7 @@ namespace CubeInvasion.Prototype
         public void Tick(float dt)
         {
             if(frozen)return;
+            TickMuzzles(dt);
             duck=Mathf.Max(0,duck-dt);if(music)music.volume=(duck>0?.04f:.11f)*MusicLevel;
             for(int i=effects.Count-1;i>=0;i--)
             {

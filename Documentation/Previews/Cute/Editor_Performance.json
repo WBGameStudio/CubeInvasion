@@ -1,0 +1,20 @@
+{
+    "platform": "OSXEditor",
+    "device": "Mac15,12",
+    "unityVersion": "6000.4.8f1",
+    "utc": "2026-10-25T00:11:29.6199720Z",
+    "graphicsDevice": "Apple M3",
+    "editor": true,
+    "cpuRecorderValid": true,
+    "gcRecorderValid": true,
+    "frames": 180,
+    "targetFrameRate": 60,
+    "width": 640,
+    "height": 480,
+    "mainThreadMedianMs": 16.696834,
+    "mainThreadP95Ms": 16.703083,
+    "frameMedianMs": 16.697080805897714,
+    "frameP95Ms": 16.70708693563938,
+    "peakGcAllocatedBytes": 30702,
+    "allocatedMemoryBytes": 223954258
+}

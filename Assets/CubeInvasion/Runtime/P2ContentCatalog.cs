@@ -19,7 +19,8 @@ namespace CubeInvasion.Prototype
     [Serializable] public sealed class EncounterSpec
     {
         public ContentEnemy[] enemies;
-        public bool cover, barrels;
+        public bool cover, barrels, healing;
+        public Vector2 coverOffset=new Vector2(0,.6f),healOffset=new Vector2(2.6f,1.4f);
         public int goldQuota=30;
     }
     [Serializable] public sealed class MissionSpec
@@ -34,5 +35,6 @@ namespace CubeInvasion.Prototype
     {
         public WeaponSpec[] weapons;
         public MissionSpec[] missions;
+        public int pressureRevision;
     }
 }

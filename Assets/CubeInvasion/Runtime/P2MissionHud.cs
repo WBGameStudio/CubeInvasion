@@ -22,7 +22,7 @@ namespace CubeInvasion.Prototype
         public void Initialize(RectTransform parent)
         {
             font=Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            if(loadout) { BuildBossPanel();return; }
+            if(loadout) { BuildBossPanel();ApplyVoidToyStyle();return; }
             transform.SetParent(parent,false);
             var root=(RectTransform)transform;root.anchorMin=Vector2.zero;root.anchorMax=Vector2.one;root.offsetMin=root.offsetMax=Vector2.zero;
             loadout=Panel("Mission loadout",transform,Vector2.zero,Vector2.one,Vector2.zero,Vector2.zero,ink).gameObject;
@@ -50,8 +50,11 @@ namespace CubeInvasion.Prototype
             advance=MakeButton("Advance",result.transform,"SONRAKİ GÖREV",new Vector2(24,-228),new Vector2(-24,-172));
             retry=MakeButton("Retry",result.transform,"TEKRAR DENE",new Vector2(24,-296),new Vector2(-24,-240));
             menu=MakeButton("Menu",result.transform,"GÖREV / SİLAH SEÇ",new Vector2(24,-364),new Vector2(-24,-308));
-            loadout.SetActive(true);result.SetActive(false);BuildBossPanel();
+            loadout.SetActive(true);result.SetActive(false);BuildBossPanel();ApplyVoidToyStyle();
         }
+        [SerializeField] Image resultEmblem;
+        [SerializeField] Sprite victoryEmblem,failureEmblem;
+        public void ConfigureResultEmblem(Image image,Sprite won,Sprite failed) { resultEmblem=image;victoryEmblem=won;failureEmblem=failed; }
         public void SetMetaMode(bool enabled)
         {
             metaMode=enabled;
@@ -102,7 +105,7 @@ namespace CubeInvasion.Prototype
         {
             bool choosing=phase=="Loadout",won=phase=="Won",ended=won||phase=="Failed";
             loadout.SetActive(choosing&&!frontEndMode);result.SetActive(ended);
-            if(choosing)
+            if(choosing&&!frontEndMode)
             {
                 missionTitle.text=$"{missionIndex+1:00} / {mission.title}";
                 string mode=mission.mode==MissionMode.Boss?"3 FAZLI BOSS":mission.mode==MissionMode.GoldRush?"ALTIN KOTASI":"SAVAŞ";
@@ -112,12 +115,37 @@ namespace CubeInvasion.Prototype
             }
             if(ended)
             {
-                resultTitle.text=won?"GÖREV TAMAMLANDI":"GÖREV BAŞARISIZ";
+                resultTitle.text=won?"TEMİZLENDİ!":"KÜP ÇÖKTÜ";resultTitle.color=won?VoidToyPalette.Gold:VoidToyPalette.DangerText;
+                // One cyan primary per state: advance after a win, retry after a fail.
+                bool canAdvance=won&&missionIndex<count-1;
+                Paint(advance,true);Paint(retry,!canAdvance);Paint(menu,false);
+                if(resultEmblem)resultEmblem.sprite=won?victoryEmblem:failureEmblem;
                 resultDescription.text=won?mission.title+$"\nBankalanan altın: {wallet}":reason+"\nTamamlanan küplerin altını korundu.";
                 advance.gameObject.SetActive(won&&missionIndex<count-1);
                 retry.GetComponentInChildren<Text>().text=won?"YENİDEN OYNA":"TEKRAR DENE";
                 if(won&&missionIndex==count-1&&!metaMode)resultDescription.text+="\nTüm görevler tamamlandı.";
             }
+        }
+        public void ApplyVoidToyStyle()
+        {
+            var art=Resources.Load<FrontEndArt>("FrontEndArt");Sprite tile=art?art.casualButton:null;
+            var modal=result?result.GetComponent<Image>():null;
+            if(modal) {VoidToyStyle.Surface(modal,tile,VoidToyPalette.Panel,1.5f);}
+            var dim=transform.Find("Result dim");if(dim)dim.GetComponent<Image>().color=VoidToyPalette.WithAlpha(VoidToyPalette.Void,.8f);
+            if(resultDescription)resultDescription.color=VoidToyPalette.Text;
+            if(bossPanel)
+            {
+                VoidToyStyle.Surface(bossPanel.GetComponent<Image>(),tile,VoidToyPalette.WithAlpha(VoidToyPalette.Void,.9f),14);
+                VoidToyStyle.Surface(bossFill,tile,VoidToyPalette.Danger,14);
+            }
+            foreach(var text in GetComponentsInChildren<Text>(true))VoidToyStyle.Outline(text);
+        }
+        static void Paint(Button button,bool primary)
+        {
+            if(!button)return;
+            var image=button.GetComponent<Image>();if(image)image.color=primary?VoidToyPalette.Cyan:VoidToyPalette.Raised;
+            var label=button.GetComponentInChildren<Text>(true);
+            if(label) {label.color=primary?VoidToyPalette.Ink:VoidToyPalette.Text;VoidToyStyle.Outline(label);}
         }
         RectTransform Panel(string name,Transform parent,Vector2 min,Vector2 max,Vector2 low,Vector2 high,Color color)
         {

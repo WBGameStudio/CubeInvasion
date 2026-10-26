@@ -1,0 +1,12 @@
+{
+  "unity": "6000.4.8f1",
+  "front_end_smoke": "passed",
+  "onboarding": "passed",
+  "plain_surface_no_background_image": "passed",
+  "nine_slice_generated_button": "passed",
+  "pointer_dotween_feedback": "passed",
+  "android_il2cpp_arm64_development_build": "passed",
+  "apk": "CubeInvasion-HybridCasual.apk",
+  "apk_bytes": 30275521,
+  "actual_android_device_tested": false
+}

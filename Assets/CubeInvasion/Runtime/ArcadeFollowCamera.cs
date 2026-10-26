@@ -19,6 +19,11 @@ namespace CubeInvasion.Prototype
         Camera view;
         [SerializeField] CinemachineVirtualCamera virtualCamera;
         CinemachineTransposer transposer;
+        [SerializeField] CountdownCameraShake countdownShake;
+        public float CountdownStrength=>countdownShake?countdownShake.Strength:0;
+        public float CountdownPulse=>countdownShake?countdownShake.Pulse:0;
+        public void ConfigureCountdown(CountdownCameraShake effect) {countdownShake=effect;}
+        public bool DriveCountdown(float seconds,bool active,float dt)=>countdownShake&&countdownShake.Drive(seconds,active,dt);
 
         public void Follow(Transform followTarget)
         {
@@ -46,6 +51,9 @@ namespace CubeInvasion.Prototype
                 transposer.m_BindingMode=CinemachineTransposer.BindingMode.WorldSpace;
             }
             transposer=virtualCamera.GetCinemachineComponent<CinemachineTransposer>();
+            if(!countdownShake)countdownShake=virtualCamera.GetComponent<CountdownCameraShake>();
+            if(!countdownShake)countdownShake=virtualCamera.gameObject.AddComponent<CountdownCameraShake>();
+            countdownShake.ResetUrgency();
             virtualCamera.Follow=anchor;
             virtualCamera.LookAt=null; // Preserve the diagonal heading when the robot turns.
             UpdateRig();

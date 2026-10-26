@@ -1,0 +1,23 @@
+import pymupdf as f
+src=f.open('/Users/furkanelmali/Downloads/Furkan_Elmali_CV_updated (1).pdf')
+d=f.open(); p=d.new_page(width=src[0].rect.width,height=src[0].rect.height)
+p.show_pdf_page(f.Rect(0,0,594.72,660),src,0,clip=f.Rect(0,0,594.72,660))
+p.show_pdf_page(f.Rect(0,694,594.72,824),src,0,clip=f.Rect(0,660,594.72,790))
+fonts=src[0].get_fonts(full=True)
+print(fonts)
+fontdata=src.extract_font(fonts[0][0])[3]
+p.insert_font(fontname='cvfont',fontbuffer=fontdata)
+color=(.176,.176,.176)
+p.insert_font(fontname='cvbold',fontfile='/System/Library/Fonts/Supplemental/Arial Bold.ttf')
+p.insert_text((119.9,660),'Master\'s in Digital Game Design',fontname='cvbold',fontsize=11,color=color)
+p.insert_text((119.1,674),'Atlas University',fontname='cvfont',fontsize=9.2,color=color)
+p.insert_text((44.1,660),'Oct 2026 -',fontname='cvfont',fontsize=9.2,color=color)
+p.insert_text((44.1,671),'Present',fontname='cvfont',fontsize=9.2,color=color)
+p.draw_line((104.2,650),(104.2,684),color=(.55,.58,.63),width=.7)
+p.draw_circle((104.2,655),2.7,color=(.13,.13,.13),fill=(.13,.13,.13))
+d.insert_pdf(src,from_page=1,to_page=1)
+out='output/pdf/Furkan_Elmali_CV_Atlas_2026.pdf'
+d.save(out,garbage=4,deflate=True)
+v=f.open(out)
+for i,page in enumerate(v): page.get_pixmap(matrix=f.Matrix(1.3,1.3)).save(f'/tmp/cv-after-{i}.png')
+print(v[0].get_text()[-800:])

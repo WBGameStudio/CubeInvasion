@@ -58,65 +58,98 @@ MonoBehaviour:
     color: {r: 0.25, g: 1, b: 0.62, a: 1}
   missions:
   - title: "\u0130lk Temas"
-    description: "\u0130stilac\u0131lar\u0131 temizle. Kap\u0131lar aras\u0131nda
-      can\u0131n\u0131 ve g\xFCc\xFCn\xFC y\xF6net."
+    description: "Ka\xE7arken seyrek, yava\u015Flarken h\u0131zl\u0131 ate\u015F
+      et. Siperin etraf\u0131ndan a\xE7\u0131 bul."
     mode: 0
     accent: {r: 0.1, g: 0.75, b: 0.85, a: 1}
     cubes:
-    - enemies: 000000000000000000000000
+    - enemies: 000000000000000002000000010000000200000001000000
       cover: 0
       barrels: 0
+      healing: 0
+      coverOffset: {x: -0.65, y: 0.55}
+      healOffset: {x: 2.7, y: 1.7}
       goldQuota: 30
-    - enemies: 000000000000000001000000
-      cover: 0
+    - enemies: 000000000100000002000000000000000100000002000000
+      cover: 1
       barrels: 0
+      healing: 0
+      coverOffset: {x: 0.65, y: 0.75}
+      healOffset: {x: -2.7, y: 1.7}
       goldQuota: 30
-    - enemies: 000000000100000001000000
-      cover: 0
+    - enemies: 000000000100000002000000000000000100000002000000
+      cover: 1
       barrels: 0
+      healing: 0
+      coverOffset: {x: -0.65, y: 0.95000005}
+      healOffset: {x: 2.7, y: 1.7}
       goldQuota: 30
   - title: Neon Yard
-    description: "At\u0131c\u0131lar\u0131n serilerini oku. Siperler d\xFC\u015Fman
-      mermilerini keser."
+    description: "Siper iki taraf\u0131n mermisini de durdurur. Yak\u0131n ve uzak
+      tehditleri birlikte y\xF6net."
     mode: 0
     accent: {r: 0.3, g: 0.55, b: 1, a: 1}
     cubes:
-    - enemies: 000000000000000002000000
+    - enemies: 000000000000000002000000010000000200000001000000
       cover: 1
       barrels: 0
+      healing: 0
+      coverOffset: {x: -0.65, y: 0.55}
+      healOffset: {x: 2.7, y: 1.7}
       goldQuota: 30
-    - enemies: 000000000100000001000000
+    - enemies: 010000000100000000000000020000000000000002000000
       cover: 0
       barrels: 1
+      healing: 0
+      coverOffset: {x: 0.65, y: 0.75}
+      healOffset: {x: -2.7, y: 1.7}
       goldQuota: 30
-    - enemies: 00000000000000000200000002000000
+    - enemies: 000000000000000002000000020000000100000001000000
       cover: 1
       barrels: 1
+      healing: 1
+      coverOffset: {x: -0.65, y: 0.95000005}
+      healOffset: {x: 2.7, y: 1.7}
       goldQuota: 30
-    - enemies: 010000000100000002000000
+    - enemies: 010000000100000002000000000000000200000000000000
       cover: 1
       barrels: 0
+      healing: 0
+      coverOffset: {x: 0.65, y: 0.55}
+      healOffset: {x: -2.7, y: 1.7}
       goldQuota: 30
   - title: "\u0130tki Tesisi"
     description: "\u0130ticinin turuncu konisinden \xE7\u0131k; kenarlarda oyalanma."
     mode: 0
     accent: {r: 1, g: 0.56, b: 0.2, a: 1}
     cubes:
-    - enemies: 030000000000000000000000
-      cover: 0
-      barrels: 0
-      goldQuota: 30
-    - enemies: 030000000100000001000000
+    - enemies: 0300000000000000000000000100000002000000
       cover: 1
       barrels: 0
+      healing: 0
+      coverOffset: {x: -0.65, y: 0.55}
+      healOffset: {x: 2.7, y: 1.7}
       goldQuota: 30
-    - enemies: 030000000300000000000000
+    - enemies: 0300000001000000010000000200000000000000
       cover: 0
-      barrels: 1
+      barrels: 0
+      healing: 0
+      coverOffset: {x: 0.65, y: 0.75}
+      healOffset: {x: -2.7, y: 1.7}
       goldQuota: 30
-    - enemies: 030000000200000001000000
+    - enemies: 0300000003000000000000000200000001000000
       cover: 1
       barrels: 1
+      healing: 1
+      coverOffset: {x: -0.65, y: 0.95000005}
+      healOffset: {x: 2.7, y: 1.7}
+      goldQuota: 30
+    - enemies: 0300000002000000010000000000000002000000
+      cover: 1
+      barrels: 1
+      healing: 0
+      coverOffset: {x: 0.65, y: 0.55}
+      healOffset: {x: -2.7, y: 1.7}
       goldQuota: 30
   - title: Uzun Menzil
     description: "Lazer \xE7izgisi sabitlenince yana ka\xE7. Ezicilerin darbesine
@@ -124,51 +157,81 @@ MonoBehaviour:
     mode: 0
     accent: {r: 0.7, g: 0.35, b: 1, a: 1}
     cubes:
-    - enemies: 040000000000000000000000
+    - enemies: 0400000000000000000000000100000002000000
       cover: 1
       barrels: 0
+      healing: 0
+      coverOffset: {x: -0.65, y: 0.55}
+      healOffset: {x: 2.7, y: 1.7}
       goldQuota: 30
-    - enemies: 0500000001000000
+    - enemies: 05000000010000000000000002000000
       cover: 0
       barrels: 1
+      healing: 0
+      coverOffset: {x: 0.65, y: 0.75}
+      healOffset: {x: -2.7, y: 1.7}
       goldQuota: 30
-    - enemies: 040000000400000002000000
+    - enemies: 0400000004000000020000000100000000000000
       cover: 1
       barrels: 0
+      healing: 0
+      coverOffset: {x: -0.65, y: 0.95000005}
+      healOffset: {x: 2.7, y: 1.7}
       goldQuota: 30
-    - enemies: 050000000300000001000000
+    - enemies: 05000000030000000100000002000000
       cover: 0
       barrels: 1
+      healing: 1
+      coverOffset: {x: 0.65, y: 0.55}
+      healOffset: {x: -2.7, y: 1.7}
       goldQuota: 30
-    - enemies: 040000000500000000000000
+    - enemies: 0400000005000000000000000100000002000000
       cover: 1
       barrels: 1
+      healing: 0
+      coverOffset: {x: -0.65, y: 0.75}
+      healOffset: {x: 2.7, y: 1.7}
       goldQuota: 30
   - title: Son Hat
-    description: "\xDC\xE7 tehdide kadar kar\u0131\u015F\u0131k kar\u015F\u0131la\u015Fmalar.
-      Her kap\u0131 ayn\u0131 sava\u015F a\u015Famas\u0131na \xE7\u0131kar."
+    description: "\xC7apraz ate\u015F ve yak\u0131n d\xF6v\xFC\u015F bask\u0131s\u0131.
+      G\xFCvenli at\u0131\u015F aral\u0131klar\u0131 yarat."
     mode: 0
     accent: {r: 0.95, g: 0.28, b: 0.45, a: 1}
     cubes:
-    - enemies: 02000000020000000100000001000000
+    - enemies: 020000000200000001000000010000000000000002000000
       cover: 1
       barrels: 1
+      healing: 0
+      coverOffset: {x: -0.65, y: 0.55}
+      healOffset: {x: 2.7, y: 1.7}
       goldQuota: 30
-    - enemies: 050000000300000000000000
+    - enemies: 0500000003000000000000000100000002000000
       cover: 0
       barrels: 1
+      healing: 0
+      coverOffset: {x: 0.65, y: 0.75}
+      healOffset: {x: -2.7, y: 1.7}
       goldQuota: 30
-    - enemies: 04000000020000000000000000000000
+    - enemies: 040000000200000000000000000000000100000002000000
       cover: 1
       barrels: 0
+      healing: 0
+      coverOffset: {x: -0.65, y: 0.95000005}
+      healOffset: {x: 2.7, y: 1.7}
       goldQuota: 30
-    - enemies: 05000000010000000100000003000000
+    - enemies: 0500000001000000010000000300000002000000
       cover: 0
       barrels: 1
+      healing: 1
+      coverOffset: {x: 0.65, y: 0.55}
+      healOffset: {x: -2.7, y: 1.7}
       goldQuota: 30
-    - enemies: 050000000400000003000000
+    - enemies: 0500000004000000030000000100000002000000
       cover: 1
       barrels: 1
+      healing: 0
+      coverOffset: {x: -0.65, y: 0.75}
+      healOffset: {x: 2.7, y: 1.7}
       goldQuota: 30
   - title: Gold Rush
     description: "Hedefleri \xF6ld\xFCrmek yetmez. Her k\xFCp\xFCn alt\u0131n kotas\u0131n\u0131
@@ -176,17 +239,26 @@ MonoBehaviour:
     mode: 1
     accent: {r: 1, g: 0.72, b: 0.2, a: 1}
     cubes:
-    - enemies: 0000000000000000
-      cover: 0
-      barrels: 0
-      goldQuota: 40
-    - enemies: 010000000100000000000000
-      cover: 0
-      barrels: 0
-      goldQuota: 50
-    - enemies: 0100000002000000
+    - enemies: 00000000010000000200000002000000
       cover: 1
       barrels: 0
+      healing: 0
+      coverOffset: {x: -0.65, y: 0.55}
+      healOffset: {x: 2.7, y: 1.7}
+      goldQuota: 40
+    - enemies: 0100000001000000000000000200000002000000
+      cover: 0
+      barrels: 0
+      healing: 0
+      coverOffset: {x: 0.65, y: 0.75}
+      healOffset: {x: -2.7, y: 1.7}
+      goldQuota: 50
+    - enemies: 01000000020000000300000002000000
+      cover: 1
+      barrels: 0
+      healing: 0
+      coverOffset: {x: -0.65, y: 0.95000005}
+      healOffset: {x: 2.7, y: 1.7}
       goldQuota: 60
   - title: The Crusher
     description: "Z\u0131rh, silah sistemi, \xE7ekirdek: \xFC\xE7 ayr\u0131 20 saniyelik
@@ -194,15 +266,25 @@ MonoBehaviour:
     mode: 2
     accent: {r: 1, g: 0.32, b: 0.16, a: 1}
     cubes:
-    - enemies: 0600000000000000
+    - enemies: 060000000000000001000000
       cover: 0
       barrels: 0
+      healing: 0
+      coverOffset: {x: -0.65, y: 0.55}
+      healOffset: {x: 2.7, y: 1.7}
       goldQuota: 30
-    - enemies: 060000000100000001000000
+    - enemies: 06000000010000000100000002000000
       cover: 1
       barrels: 0
+      healing: 0
+      coverOffset: {x: 0.65, y: 0.75}
+      healOffset: {x: -2.7, y: 1.7}
       goldQuota: 30
-    - enemies: 060000000200000000000000
+    - enemies: 06000000020000000000000001000000
       cover: 0
       barrels: 1
+      healing: 0
+      coverOffset: {x: -0.65, y: 0.95000005}
+      healOffset: {x: 2.7, y: 1.7}
       goldQuota: 30
+  pressureRevision: 2

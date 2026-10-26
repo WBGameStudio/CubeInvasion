@@ -9,7 +9,7 @@ namespace CubeInvasion.Prototype
         float settingsSaveAt=-1;
         void FlushMenuSettings(bool force=false)
         { if(settingsSaveAt>=0&&(force||Time.unscaledTime>=settingsSaveAt)) { PlayerPrefs.Save();settingsSaveAt=-1; } }
-        void OnApplicationPause(bool value) { if(value)FlushMenuSettings(true); }
+        void OnApplicationPause(bool value) { if(value) { FlushMenuSettings(true);validationLog?.Flush();SetPaused(true); } }
         public void ConfigureFrontEnd(MenuFrontEnd menu,FrontEndArt graphics) { frontEnd=menu;frontEndArt=graphics; }
         void InitializeFrontEnd()
         {

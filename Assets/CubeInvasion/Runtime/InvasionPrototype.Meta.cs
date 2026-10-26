@@ -87,21 +87,23 @@ namespace CubeInvasion.Prototype
         void CompleteFailure()
         {
             if(HasMeta&&!profile.FailRun(runId,reason,runKills,runSeconds)) { BlockSave(CompleteFailure);return; }
-            phase=Phase.Failed;damageCubes=0;
+            phase=Phase.Failed;ClearAllRouteBuffs();
         }
         void BuyWeapon()
         {
             if(!HasMeta||phase!=Phase.Loadout)return;
+            int previousGold=profile.Data.gold;
             if(profile.Unlock(inspectedWeapon))
-            { weaponIndex=inspectedWeapon;wallet=profile.Data.gold;metaNotice="Silah açıldı.";PlayMetaSuccess(true); }
+            { RecordEconomy("weapon_unlocked",null,previousGold-profile.Data.gold);weaponIndex=inspectedWeapon;wallet=profile.Data.gold;metaNotice="Silah açıldı.";PlayMetaSuccess(true); }
             else { metaNotice=profile.Message;feedback.Play(CombatFeedback.Cue.Denied); }
             RefreshContentHud();
         }
         void UpgradeWeapon(WeaponUpgrade kind)
         {
             if(!HasMeta||phase!=Phase.Loadout)return;
+            int previousGold=profile.Data.gold;
             if(profile.Upgrade(inspectedWeapon,kind))
-            { wallet=profile.Data.gold;metaNotice="Yükseltme kaydedildi.";PlayMetaSuccess(false); }
+            { RecordEconomy("weapon_upgraded",kind.ToString(),previousGold-profile.Data.gold);wallet=profile.Data.gold;metaNotice="Yükseltme kaydedildi.";PlayMetaSuccess(false); }
             else { metaNotice=profile.Message;feedback.Play(CombatFeedback.Cue.Denied); }
             RefreshContentHud();
         }

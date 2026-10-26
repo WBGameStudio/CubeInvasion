@@ -1,0 +1,26 @@
+{
+  "tool": "built-in image_gen",
+  "transparent_background": true,
+  "assets": [
+    {
+      "path": "Assets/CubeInvasion/Art/UI/Reference/Journey.png",
+      "prompt": "Use case: stylized-concept. Asset type: production mobile game UI icon with real alpha transparency. A chunky turquoise blue toy cube with a bright golden five-point star badge on its front. One isolated navigation icon. Premium playful hybrid casual game UI, bold rounded toy proportions, saturated colors, glossy highlights, restrained deep navy contour, subtle darker bottom extrusion, very clear small-size silhouette. Straight-on slightly three-quarter view. Centered square composition, object fits inside central 85 percent. No background, no scenery, no buttons behind it, no text, no letters, no numbers, no watermark, no stray particles. Consistent polished 3D cartoon casual game UI style."
+    },
+    {
+      "path": "Assets/CubeInvasion/Art/UI/Reference/Arsenal.png",
+      "prompt": "Use case: stylized-concept. Asset type: production mobile game UI icon with real alpha transparency. Two friendly chunky sci-fi toy blasters crossed diagonally, cobalt blue bodies, cyan energy tips, a few orange accents. One isolated navigation icon. Premium playful hybrid casual game UI, bold rounded toy proportions, saturated colors, glossy highlights, restrained deep navy contour, subtle darker bottom extrusion, very clear small-size silhouette. Straight-on slightly three-quarter view. Centered square composition, object fits inside central 85 percent. No background, no scenery, no buttons behind it, no text, no letters, no numbers, no watermark, no stray particles. Consistent polished 3D cartoon casual game UI style."
+    },
+    {
+      "path": "Assets/CubeInvasion/Art/UI/Reference/Pilot.png",
+      "prompt": "Use case: stylized-concept. Asset type: production mobile game UI icon with real alpha transparency. A chunky bright golden lightning bolt over a small cyan shield, symbolizing character upgrades. One isolated navigation icon. Premium playful hybrid casual game UI, bold rounded toy proportions, saturated colors, glossy highlights, restrained deep navy contour, subtle darker bottom extrusion, very clear small-size silhouette. Straight-on slightly three-quarter view. Centered square composition, object fits inside central 85 percent. No background, no scenery, no buttons behind it, no text, no letters, no numbers, no watermark, no stray particles. Consistent polished 3D cartoon casual game UI style."
+    },
+    {
+      "path": "Assets/CubeInvasion/Art/UI/Reference/Settings.png",
+      "prompt": "Use case: stylized-concept. Asset type: production mobile game UI icon with real alpha transparency. One chunky golden orange gear with a deep blue circular center. One isolated navigation icon. Premium playful hybrid casual game UI, bold rounded toy proportions, saturated colors, glossy highlights, restrained deep navy contour, subtle darker bottom extrusion, very clear small-size silhouette. Straight-on slightly three-quarter view. Centered square composition, object fits inside central 85 percent. No background, no scenery, no buttons behind it, no text, no letters, no numbers, no watermark, no stray particles. Consistent polished 3D cartoon casual game UI style."
+    },
+    {
+      "path": "Assets/CubeInvasion/Art/UI/Reference/Coin.png",
+      "prompt": "Use case: stylized-concept. Asset type: production mobile game UI icon with real alpha transparency. A short stack of three chunky golden coins, one standing coin with a simple embossed cube symbol. One isolated currency icon. Premium playful hybrid casual game UI, bold rounded toy proportions, saturated colors, glossy highlights, restrained deep navy contour, subtle darker bottom extrusion, very clear small-size silhouette. Straight-on slightly three-quarter view. Centered square composition, object fits inside central 85 percent. No background, no scenery, no buttons behind it, no text, no letters, no numbers, no watermark, no stray particles. Consistent polished 3D cartoon casual game UI style."
+    }
+  ]
+}

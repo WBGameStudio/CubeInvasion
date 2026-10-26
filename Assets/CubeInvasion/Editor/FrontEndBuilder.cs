@@ -38,6 +38,7 @@ public static class FrontEndBuilder
         for(int i=0;i<4;i++)preview.weapons[i]=new WeaponProgress {owned=i==0};
         menu.Refresh(preview,rules,content,0,0,0,"Loadout",null);menu.SyncSettings(1,1,false,false,true);
         AssetDatabase.SaveAssets();EditorSceneManager.MarkSceneDirty(runtime.gameObject.scene);EditorSceneManager.SaveScene(runtime.gameObject.scene);
+        HybridCasualUiBuilder.Install();
         Debug.Log("CUBE_UI_INSTALL_OK: generated backgrounds, five authored menu pages and campaign path installed.");
     }
     [MenuItem("Cube Invasion/UI/Preview/Home")]

@@ -1,0 +1,22 @@
+{
+  "utc": "2026-10-24T17:46:01.997788+00:00",
+  "unity": "6000.4.8f1",
+  "checks": {
+    "core_movement_aim_camera": "passed",
+    "combat_feel_pause": "passed",
+    "animation": "passed",
+    "edge_fall_timeout": "passed",
+    "seven_missions_both_routes": "passed",
+    "meta_gameplay_save_retry": "passed",
+    "profile_store": "passed",
+    "diagnostics_content_integrity": "passed",
+    "five_menu_pages": "passed",
+    "first_run_guidance": "passed",
+    "android_arm64_il2cpp_development_build": "passed"
+  },
+  "apk_bytes": 30024209,
+  "device_connected": false,
+  "device_performance_verified": false,
+  "player_kpi_verified": false,
+  "note": "Play Mode tested in isolated project. Existing UnityEditor.Search.SearchDatabase startup exception remains in editor logs; smoke suites and build exited successfully."
+}

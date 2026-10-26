@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-26",
+  "unity": "6000.4.8f1",
+  "restored_set": "Original Toy Sci-Fi + original P2 models",
+  "model_entries": 33,
+  "checks": {
+    "original_assets": true,
+    "animation_camera_transitions": true,
+    "laser_vfx": true,
+    "barriers_controls": true,
+    "menus": true,
+    "android_build": true
+  },
+  "android_device_tested": false,
+  "apk_bytes": 61420960
+}

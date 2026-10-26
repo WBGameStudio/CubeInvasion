@@ -1,0 +1,14 @@
+{
+  "date": "2026-10-26",
+  "unity": "6000.4.8f1",
+  "checks": {
+    "countdown_tension": true,
+    "camera_animation_transition_fall": true,
+    "runtime_editor_compile": true,
+    "android_build": true
+  },
+  "maximum_camera_displacement": 0.075,
+  "heading_changed": false,
+  "android_device_tested": false,
+  "apk_bytes": 61420960
+}

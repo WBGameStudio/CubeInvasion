@@ -1,0 +1,15 @@
+{
+  "utc": "2026-10-24T23:36:01.480664+00:00",
+  "unity": "6000.4.8f1",
+  "home_journey_launch": "passed",
+  "five_pages_transactions_settings_reload": "passed",
+  "tall_portrait_action_and_dock": "passed",
+  "route_render_order": "passed",
+  "result_labels_and_modal_layer": "passed",
+  "result_retry": "passed",
+  "p3_meta_save_recovery": "passed",
+  "android_arm64_il2cpp_development_build": "passed",
+  "apk": "CubeInvasion-ReferenceUI.apk",
+  "apk_bytes": 40685631,
+  "actual_device_tested": false
+}

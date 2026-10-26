@@ -44,7 +44,7 @@ namespace CubeInvasion.Prototype
         public void Refresh(MetaProfile profile,P3MetaSettings rules,WeaponSpec weapon,int inspected,int equipped,string phase,string message)
         {
             loadout.SetActive(phase=="Loadout"&&!frontEndMode);blocked.SetActive(phase=="SaveBlocked");saveMessage.text=message;
-            if(phase!="Loadout")return;
+            if(phase!="Loadout"||frontEndMode)return;
             gold.text=$"ALTIN {profile.gold}";var state=profile.weapons[inspected];
             float dps=weapon.NominalDps*(1+state.damage*rules.damagePerLevel)*(1+state.fireRate*rules.fireRatePerLevel);
             detail.text=$"DPS {dps:0.0} · Menzil {18*weapon.projectileLife*(1+state.range*rules.rangePerLevel):0.0} m";

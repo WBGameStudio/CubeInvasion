@@ -18,7 +18,7 @@ public static class P3SmokeCheck
     static double deadline,next;
     static Transform player;
     static Camera camera;
-    static int beforeFailure;
+    static int beforeFailure,expectedRunGold;
     static string runBeforeRestart,blockedDirectory;
     static readonly BindingFlags Flags=BindingFlags.NonPublic|BindingFlags.Instance;
     static P3SmokeCheck() { EditorApplication.update+=Tick; }
@@ -29,7 +29,8 @@ public static class P3SmokeCheck
         SessionState.SetString(Key+".Directory",directory);Environment.SetEnvironmentVariable(Env,file);
         var rules=AssetDatabase.LoadAssetAtPath<P3MetaSettings>("Assets/CubeInvasion/Resources/P3MetaSettings.asset");
         new MetaProfileStore(file,rules,7,0);
-        EditorSceneManager.OpenScene("Assets/CubeInvasion/CubeInvasionPrototype.unity");SessionState.SetBool(Key,true);EditorApplication.isPlaying=true;
+        EditorSceneManager.OpenScene("Assets/CubeInvasion/CubeInvasionPrototype.unity");
+        var legacyRoutes=new SerializedObject(Object.FindAnyObjectByType<InvasionPrototype>());legacyRoutes.FindProperty("branchSettings").objectReferenceValue=null;legacyRoutes.ApplyModifiedPropertiesWithoutUndo();SessionState.SetBool(Key,true);EditorApplication.isPlaying=true;
     }
     static object Get(string name)=>typeof(InvasionPrototype).GetField(name,Flags).GetValue(game);
     static void Set(string name,object value)=>typeof(InvasionPrototype).GetField(name,Flags).SetValue(game,value);
@@ -64,6 +65,7 @@ public static class P3SmokeCheck
             {
                 case 0:
                     player=(Transform)Get("player");camera=(Camera)Get("view");
+                    expectedRunGold=0;foreach(var encounter in ((P2ContentCatalog)Get("content")).missions[0].cubes)expectedRunGold+=10+encounter.enemies.Length*3;
                     Check(State=="Loadout"&&Store.Data.gold==0&&Store.Data.highestMission==0,"New player has zero gold and first mission only");
                     Capture("Arsenal");Call("ChangeWeapon",1);Call("BuyWeapon");
                     Check(!Store.IsOwned(1)&&Store.Data.gold==0&&(int)Get("weaponIndex")==0,"Unaffordable locked weapon cannot be equipped or granted");Capture("LockedWeapon");
@@ -86,15 +88,15 @@ public static class P3SmokeCheck
                         Call("Select",runs%2==0);next=now+1.05;return;
                     }
                     if(State!="Won")return;
-                    Check(Store.Data.run.won&&Store.Data.run.gold==57&&Store.Data.run.cubes==3,"Win result contains this attempt's earnings and completed cubes");
+                    Check(Store.Data.run.won&&Store.Data.run.gold==expectedRunGold&&Store.Data.run.cubes==3,"Win result contains this attempt's earnings and completed cubes");
                     Check(Store.Data.highestMission==1&&Store.Data.completed[0],"First win opens second mission and persists completion");
                     runs++;
                     if(runs<5) { Call("StartMission",0);Set("invulnerability",100f);next=now+.1;return; }
-                    Check(Store.Data.gold==285,"Five legitimate replays bank exactly 285 gold");Capture("Win");Call("OpenMissionMenu");Call("ChangeWeapon",1);
+                    Check(Store.Data.gold==expectedRunGold*5,"Five legitimate replays bank the exact catalog reward");Capture("Win");Call("OpenMissionMenu");Call("ChangeWeapon",1);
                     int gold=Store.Data.gold;Call("BuyWeapon");Check(Store.IsOwned(1)&&Store.Data.gold==gold-150&&(int)Get("weaponIndex")==1,"Unlock persists ownership, charges price and equips selected weapon");
                     gold=Store.Data.gold;Call("BuyWeapon");Check(Store.Data.gold==gold,"Repeated unlock press cannot double-charge");
                     Call("UpgradeWeapon",WeaponUpgrade.Damage);Call("UpgradeWeapon",WeaponUpgrade.FireRate);Call("UpgradeWeapon",WeaponUpgrade.Range);
-                    Check(Store.Data.gold==20&&Store.Data.weapons[1].damage==1&&Store.Data.weapons[1].fireRate==1&&Store.Data.weapons[1].range==1,"Three upgrade types save exact prices and levels");
+                    Check(Store.Data.gold==expectedRunGold*5-265&&Store.Data.weapons[1].damage==1&&Store.Data.weapons[1].fireRate==1&&Store.Data.weapons[1].range==1,"Three upgrade types save exact prices and levels");
                     Capture("UpgradedWeapon");Call("StartMission",1);Set("invulnerability",100f);Set("paused",true);Call("FirePulse");
                     var pulse=((IList)Get("pulses"))[0];var type=pulse.GetType();
                     Check(Mathf.Abs((float)type.GetField("damage").GetValue(pulse)-3.675f)<.001f,"Permanent damage upgrade affects actual projectiles");
@@ -111,7 +113,7 @@ public static class P3SmokeCheck
                     Check(State=="Falling","P3 keeps player-only edge fall");next=now+1.3;step=4;break;
                 case 4:
                     Check(State=="Failed"&&Store.Data.gold==beforeFailure,"Fail discards active cube's unbanked gold");
-                    Check(Store.Data.lastResult.cubes==1&&Store.Data.lastResult.gold==beforeFailure-20,"Fail result reports only completed-cube gold");Capture("Fail");
+                    Check(Store.Data.lastResult.cubes==1&&Store.Data.lastResult.gold==beforeFailure-(expectedRunGold*5-265),"Fail result reports only completed-cube gold");Capture("Fail");
                     Call("Retry");Check(State=="Combat"&&(int)Get("weaponIndex")==1&&Store.Data.weapons[1].damage==1,"Retry keeps selected owned weapon and permanent upgrades");
                     runBeforeRestart=Store.Data.run.id;
                     UnityEngine.SceneManagement.SceneManager.LoadScene(game.gameObject.scene.name);game=null;next=now+.4;step=5;break;

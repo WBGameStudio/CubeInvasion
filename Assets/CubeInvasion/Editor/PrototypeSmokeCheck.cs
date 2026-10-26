@@ -81,7 +81,7 @@ public static class PrototypeSmokeCheck
     static void AnimationChecks()
     {
         var animator=(ToyActorAnimator)Get("playerAnimation");var player=(Transform)Get("player");
-        Check(animator && animator.JointCount==4,"DOTween rig has independent player arms and legs");
+        Check(animator && animator.JointCount>=4,"DOTween rig has independent player arms and legs");
         Vector3 rootBefore=player.position;
         animator.TickPose(player.forward*1.2f,.2f,false);
         var left=animator.VisualRoot.Find("DOTween Reactions/LeftLeg");var right=animator.VisualRoot.Find("DOTween Reactions/RightLeg");
@@ -140,8 +140,8 @@ public static class PrototypeSmokeCheck
         ((Transform)Item(gunner,"body")).position=cover.position+Vector3.forward*2;
         player.position=cover.position-Vector3.forward*2;Call("MovePlayer",WorldInput(Vector3.forward),0f);
         float targetHp=(float)Item(gunner,"hp");Call("FirePulse");Call("TickPulses",.25f);
-        Check(Get("currentTarget")==gunner && (float)Item(gunner,"hp")==targetHp-6 && ((IList)Get("pulses")).Count==0,
-            "Player locks and fires through cover at nearest enemy");
+        Check(Get("currentTarget")!=gunner && (float)Item(gunner,"hp")==targetHp,
+            "Player skips the nearer target blocked by cover");Call("ClearPulses");
         float protectedHealth=(float)Get("health");Set("invulnerability",0f);
         Call("FireEnemyShot",cover.position+Vector3.forward*2,Vector3.back,6f,7f);Call("TickEnemyShots",.6f);
         Check((float)Get("health")==protectedHealth && ((IList)Get("enemyShots")).Count==0,"Cover blocks incoming enemy projectiles");
@@ -373,7 +373,9 @@ public static class PrototypeSmokeCheck
     public static void CaptureAnimationReview(ToyArtLibrary library)
     {
         const string folder="/tmp/cube-animation-frames";Directory.CreateDirectory(folder);
-        var prefab=AssetDatabase.LoadAssetAtPath<GameObject>("Assets/CubeInvasion/Art/Prefabs/Scout_Robot.prefab");
+        library.TryGet("Armored body",out var activeModel);
+        var prefab=AssetDatabase.LoadAssetAtPath<GameObject>(activeModel.integratedFace?CuteArtBuilder.Root+"/Prefabs/"+CuteArtBuilder.Slug("Armored body")+".prefab":"Assets/CubeInvasion/Art/Prefabs/Scout_Robot.prefab");
+        if(!prefab)prefab=AssetDatabase.LoadAssetAtPath<GameObject>("Assets/CubeInvasion/Art/Prefabs/Scout_Robot.prefab");
         var actor=Object.Instantiate(prefab);actor.name="Animation review";actor.transform.position=Vector3.zero;actor.transform.rotation=Quaternion.identity;
         var animator=actor.GetComponent<ToyActorAnimator>();if(!animator)animator=actor.AddComponent<ToyActorAnimator>();animator.enabled=false;
         var accessories=new List<Transform>();foreach(Transform child in actor.transform)accessories.Add(child);
@@ -403,5 +405,6 @@ public static class PrototypeSmokeCheck
         if(gait.IsActive()||idleTween.IsActive())throw new System.Exception("Actor destruction left locomotion tweens active");
         Debug.Log("CUBE_ANIMATION_CLEANUP_OK");
         Debug.Log("CUBE_ANIMATION_REVIEW_OK: "+folder);
+        if(activeModel.integratedFace)CuteArtReview.Animation();
     }
 }

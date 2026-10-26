@@ -1,0 +1,63 @@
+{
+  "date": "2026-10-26",
+  "unity": "6000.4.8f1",
+  "platform": "Android IL2CPP ARM64 portrait",
+  "routePairs": 10240,
+  "checks": {
+    "route_director": {
+      "passed": true,
+      "marker": "CUBE_BRANCH_DIRECTOR_OK",
+      "log": "/tmp/cube-branch-director.log"
+    },
+    "branch_gameplay": {
+      "passed": true,
+      "marker": "CUBE_BRANCH_ROUTES_OK",
+      "log": "/tmp/cube-branches-final-BranchRoutesCheck.log"
+    },
+    "branch_economy_save_retry": {
+      "passed": true,
+      "marker": "CUBE_BRANCH_ECONOMY_OK",
+      "log": "/tmp/cube-branches-final-BranchEconomyCheck.log"
+    },
+    "legacy_core": {
+      "passed": true,
+      "marker": "CUBE_P0_SMOKE_OK",
+      "log": "/tmp/cube-branches-PrototypeSmokeCheck.log"
+    },
+    "campaign": {
+      "passed": true,
+      "marker": "CUBE_P2_SMOKE_OK",
+      "log": "/tmp/cube-branches-P2SmokeCheck.log"
+    },
+    "profile": {
+      "passed": true,
+      "marker": "CUBE_P3_STORE_OK",
+      "log": "/tmp/cube-branches-P3ProfileCheck.log"
+    },
+    "meta_integration": {
+      "passed": true,
+      "marker": "CUBE_P3_SMOKE_OK",
+      "log": "/tmp/cube-branches-P3SmokeCheck.log"
+    },
+    "combat_pressure": {
+      "passed": true,
+      "marker": "CUBE_PRESSURE_SMOKE_OK",
+      "log": "/tmp/cube-branches-CombatPressureSmokeCheck.log"
+    },
+    "android": {
+      "passed": true,
+      "marker": "CUBE_P4_ANDROID_BUILD_OK",
+      "log": "/tmp/cube-branches-final-P4AndroidBuild.log"
+    }
+  },
+  "apkBytes": 61420960,
+  "apkSha256": "48734f501687e7b82c627e99d6f2158cd0ccf609c3a8338e4bbfe8609fc2b9bd",
+  "sceneChanges": "Only branchSettings reference; all preexisting serialized values preserved",
+  "devicePlaytest": false,
+  "apkMetadataVerified": [
+    "RouteDirector",
+    "BranchRouteSettings",
+    "SetBranchPreview",
+    "CountdownCameraShake"
+  ]
+}

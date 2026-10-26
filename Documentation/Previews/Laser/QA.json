@@ -1,0 +1,13 @@
+{
+  "date": "2026-10-26",
+  "unity": "6000.4.8f1",
+  "checks": {
+    "laser_vfx": true,
+    "collisions_and_controls": true,
+    "core_and_fall": true,
+    "android_development_build": true,
+    "runtime_editor_compile": true
+  },
+  "android_device_tested": false,
+  "apk_bytes": 61426000
+}

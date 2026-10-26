@@ -1,0 +1,8 @@
+mission,seconds,hp,enemies_left,outcome
+1,8.65,63.6,0,all_enemies_dead
+2,8.65,46.7,0,all_enemies_dead
+3,7.65,70.1,0,all_enemies_dead
+4,7.18,80.5,0,all_enemies_dead
+5,9.15,76.6,0,all_enemies_dead
+6,6.15,84.4,0,all_enemies_dead
+7,8.03,87.0,0,all_enemies_dead

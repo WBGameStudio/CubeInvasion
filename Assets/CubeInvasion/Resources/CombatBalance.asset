@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5c4f709c00ba471ca3d0f298ecad305, type: 3}
+  m_Name: CombatBalance
+  m_EditorClassIdentifier: Assembly-CSharp::CubeInvasion.Prototype.CombatBalanceSettings
+  enemyMoveMultiplier: 1.2
+  enemyRecoveryMultiplier: 0.8
+  enemyDamageMultiplier: 1.3
+  focusRadius: 0.25
+  runningRadius: 0.85
+  runningShotIntervalMultiplier: 2.1

@@ -37,6 +37,13 @@ namespace CubeInvasion.Prototype
         {
             if(!foe.animation)return;
             var visual=foe.animation.DetachVisual(dynamicRoot?dynamicRoot:world);if(!visual)return;
+            if(foe.animation.IsMechanical)
+            {
+                // The visual shell collapses, while the gameplay root can be removed immediately.
+                var shatter=DOTween.Sequence().Join(visual.DOMoveY(visual.position.y-.18f,.24f).SetEase(Ease.InQuad))
+                    .Join(visual.DORotate(visual.eulerAngles+new Vector3(42,0,18),.24f)).Append(visual.DOScale(Vector3.zero,.14f).SetEase(Ease.InBack));
+                WorldTween(shatter).OnComplete(()=> {if(visual)Destroy(visual.gameObject);}).SetLink(visual.gameObject);return;
+            }
             var sequence=DOTween.Sequence().Join(visual.DOScale(Vector3.zero,.22f).SetEase(Ease.InBack))
                 .Join(visual.DORotate(visual.eulerAngles+new Vector3(20,0,20),.22f));
             WorldTween(sequence).OnComplete(()=> {if(visual)Destroy(visual.gameObject);}).SetLink(visual.gameObject);

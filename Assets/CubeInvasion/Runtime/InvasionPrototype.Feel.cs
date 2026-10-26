@@ -32,7 +32,7 @@ namespace CubeInvasion.Prototype
             if(!hud) { hud=new GameObject("Mobile Combat HUD",typeof(RectTransform)).AddComponent<MobileCombatHud>();hud.transform.SetParent(world,false); }
             hud.Initialize(view,()=>SetPaused(!paused),Retry,()=>feedback.ToggleMute());
         }
-        void SetPaused(bool value) { if(phase==Phase.SaveBlocked&&!value&&retrySave!=null)return;paused=value;dragging=false;joystickFinger=-1;stick=Vector2.zero;if(hud)hud.ResetJoystick();if(feedback)feedback.SetPaused(value); }
+        void SetPaused(bool value) { if(phase==Phase.SaveBlocked&&!value&&retrySave!=null)return;paused=value;dragging=false;joystickFinger=-1;stick=Vector2.zero;if(hud)hud.ResetJoystick();if(feedback)feedback.SetPaused(value);if(value)ResetCountdownPresentation(); }
         void Retry() { if(HasContent) { StartMission(missionIndex);return; } UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex); }
         void LateUpdate()
         {
@@ -42,14 +42,24 @@ namespace CubeInvasion.Prototype
             feedback.SetPaused(paused);
             if(!paused)feedback.Tick(Time.deltaTime);
             hud.SetMaxHealth(MaxHealth);
+            if(player)hud.SetPlayerAnchor(player.position+Vector3.up*1.35f);
             hud.Refresh(remaining,health,stage,foes.Count,wallet,pendingGold,damageCubes,damageBonus,paused,feedback.Muted,phase.ToString(),reason);
+            hud.SetFireRhythm(FireMovementWeight,currentTarget!=null,phase==Phase.Combat&&!paused);
             RefreshContentHud();
+            TickOnboarding();
+            RefreshRouteHud();
+            RefreshCountdownHud();
+        }
+        void ClearPickups()
+        {
+            foreach(var pickup in pickups)if(pickup.body)Destroy(pickup.body.gameObject);
+            pickups.Clear();
         }
         void SetupEncounterFeel()
         {
             pendingGold=0;alarmSecond=21;knockback=Vector3.zero;
             if(cover)Destroy(cover.gameObject);cover=null;
-            barrels.Clear();pickups.Clear();ClearEnemyShots();
+            barrels.Clear();ClearPickups();ClearEnemyShots();
             if(HasContent?Encounter.cover||Encounter.barrels:stage>=2)
             {
                 if(!HasContent||Encounter.barrels)
@@ -61,11 +71,13 @@ namespace CubeInvasion.Prototype
                 {
                 cover=Shape("Low cover",PrimitiveType.Cube,new Vector3(0,.45f,.6f),new Vector3(1.35f,.9f,.8f),new Color(.25f,.34f,.46f),platform);
                 // Shape uses local coordinates; the cover is attached to its own cube.
-                cover.position=centre+new Vector3(0,.45f,.6f);
+                var offset=HasContent?Encounter.coverOffset:new Vector2(0,.6f);
+                cover.position=centre+new Vector3(offset.x,.45f,offset.y);
                 }
-                if(!IsGoldRush)SpawnPickup(centre+new Vector3(0,.45f,-1.2f),true,20);
+
             }
             else cover=null;
+            if(!IsGoldRush&&HasContent&&Encounter.healing)SpawnPickup(centre+new Vector3(Encounter.healOffset.x,.45f,Encounter.healOffset.y),true,20);
         }
         void CreateBarrel(Vector3 at)
         {
@@ -97,7 +109,7 @@ namespace CubeInvasion.Prototype
                 if(!pickup.body) { pickups.RemoveAt(i);continue; }
                 if(pickup.healing&&health>=MaxHealth&&!magnet)continue;
                 float distance=Vector3.Distance(player.position,pickup.body.position);
-                if(magnet || distance<PickupRadius)
+                if((magnet&&!pickup.healing) || distance<PickupRadius*(pickup.healing?1:1+RouteMagnet))
                 {
                     if(pickup.healing) { health=Mathf.Min(MaxHealth,health+pickup.value);feedback.Play(CombatFeedback.Cue.Heal); }
                     else { pendingGold+=pickup.value;if(IsGoldRush)quotaGold=Mathf.Min(Encounter.goldQuota,quotaGold+pickup.value);feedback.Play(CombatFeedback.Cue.Gold); }
@@ -130,6 +142,8 @@ namespace CubeInvasion.Prototype
         void DamagePlayer(float damage,Vector3 push)
         {
             if(phase!=Phase.Combat||invulnerability>0)return;
+            float absorbed=Mathf.Min(routeShield,Mathf.Max(0,damage));routeShield-=absorbed;damage-=absorbed;
+            cubeDamageTaken+=Mathf.Min(health,Mathf.Max(0,damage));
             health=Mathf.Max(0,health-damage);invulnerability=.55f;hurtFlash=.18f;knockback=push;
             if(playerAnimation)playerAnimation.Hit();
             feedback.Play(CombatFeedback.Cue.Hurt);feedback.Burst(player.position,danger,.8f,.2f,true);
@@ -158,7 +172,7 @@ namespace CubeInvasion.Prototype
                         foe.warning.gameObject.SetActive(false);
                         if(foe.kind==EnemyKind.Sprinter) { foe.dash=.32f;foe.dashHit=false; }
                         else if(foe.kind==EnemyKind.Gunner) { foe.burst=3;foe.burstClock=0; }
-                        else if(distance<1.5f)DamagePlayer(5,foe.aim*1.2f);
+                        else if(distance<1.5f)DamagePlayer(5*EnemyDamageMultiplier*foe.attackPower,foe.aim*1.2f);
                     }
                     continue;
                 }
@@ -167,21 +181,21 @@ namespace CubeInvasion.Prototype
                     Vector3 previous=foe.body.position;
                     MoveEnemy(foe,foe.aim*7.5f*dt);
                     if(!foe.dashHit && SegmentDistance(player.position,previous,foe.body.position)<.8f)
-                    { DamagePlayer(7,foe.aim*3);foe.dashHit=true; }
+                    { DamagePlayer(7*EnemyDamageMultiplier*foe.attackPower,foe.aim*3);foe.dashHit=true; }
                     foe.dash-=dt;continue;
                 }
                 if(foe.burst>0)
                 {
                     foe.burstClock-=dt;
-                    if(foe.burstClock<=0) { if(foe.animation)foe.animation.Shoot();FireEnemyShot(foe.body.position,foe.aim);foe.burst--;foe.burstClock=.13f; }
+                    if(foe.burstClock<=0) { if(foe.animation)foe.animation.Shoot();FireEnemyShot(foe.body.position,foe.aim,6*foe.attackPower);foe.burst--;foe.burstClock=.13f; }
                     continue;
                 }
                 float range=foe.kind==EnemyKind.Grunt?1.3f:foe.kind==EnemyKind.Sprinter?4.3f:7;
-                if(foe.attack<=0 && distance<range)
+                if(foe.attack<=0 && distance<range&&!CoverHit(foe.body.position,player.position,.1f,out _))
                 {
                     foe.aim=toward.sqrMagnitude>.01f?toward.normalized:Vector3.forward;
                     foe.windup=foe.kind==EnemyKind.Grunt?.5f:foe.kind==EnemyKind.Sprinter?.65f:1.0f;
-                    foe.attack=foe.windup+(foe.kind==EnemyKind.Grunt?1.1f:1.8f);
+                    foe.attack=foe.windup+(foe.kind==EnemyKind.Grunt?1.1f:1.8f)*EnemyRecoveryMultiplier;
                     if(foe.animation)foe.animation.Telegraph(foe.windup);
                     foe.warning.gameObject.SetActive(true);
                     foe.body.rotation=Quaternion.LookRotation(foe.aim);
@@ -191,13 +205,20 @@ namespace CubeInvasion.Prototype
                         line.SetPosition(0,foe.body.position);line.SetPosition(1,foe.body.position+foe.aim*(foe.kind==EnemyKind.Gunner?8:2.4f));
                     }
                 }
-                else if(distance>(foe.kind==EnemyKind.Gunner?3.8f:.85f))MoveEnemy(foe,toward.normalized*foe.speed*dt);
+                else if(CoverHit(foe.body.position,player.position,.1f,out _)||distance>(foe.kind==EnemyKind.Gunner?3.8f:.85f))MoveEnemy(foe,toward.normalized*foe.speed*dt);
             }
         }
         void MoveEnemy(Foe foe,Vector3 delta)
         {
+            delta*=EnemyMoveMultiplier;
+            // Committed dashes retain their telegraphed direction; ordinary pursuit routes around cover.
+            if(foe.dash<=0&&delta.sqrMagnitude>.000001f)
+            {
+                var waypoint=EnemyWaypoint(foe.body.position,player.position);var toward=waypoint-foe.body.position;toward.y=0;
+                delta=toward.normalized*Mathf.Min(delta.magnitude,toward.magnitude);
+            }
             Vector3 next=foe.body.position+delta;
-            if(cover && FlatDistance(next,cover.position)<1.05f)return;
+            if(CoverHit(foe.body.position,next,.3f,out _))return;
             var relative=next-centre;relative.x=Mathf.Clamp(relative.x,-4,4);relative.z=Mathf.Clamp(relative.z,-4,4);foe.body.position=centre+relative;
         }
         void TickWorldFeel(float dt)
@@ -209,7 +230,7 @@ namespace CubeInvasion.Prototype
                 if(playerAnimation)playerAnimation.SetVisible(visible);else player.GetChild(0).GetComponent<Renderer>().enabled=visible;
             }
             Vector3 before=player.position;player.position+=knockback*dt;knockback=Vector3.Lerp(knockback,Vector3.zero,dt*10);
-            if(cover && FlatDistance(player.position,cover.position)<1.05f)player.position=before;
+            if(CoverHit(before,player.position,.3f,out _))player.position=before;
             for(int i=barrels.Count-1;i>=0;i--)
             {
                 var barrel=barrels[i];if(barrel.fuse<0)continue;
@@ -218,7 +239,7 @@ namespace CubeInvasion.Prototype
             }
             TickEnemyShots(dt);if(phase!=Phase.Combat)return;CollectPickups(dt,false);
             int second=Mathf.CeilToInt(remaining);
-            if(second<=5&&second>0&&second!=alarmSecond) { alarmSecond=second;feedback.Play(CombatFeedback.Cue.Alarm);feedback.Burst(centre+Vector3.up*.1f,danger,4.4f,.3f,true); }
+            if(second<=5&&second>0&&second!=alarmSecond) { alarmSecond=second;feedback.Burst(centre+Vector3.up*.1f,danger,4.4f,.3f,true); }
         }
         void HitBarrel(Barrel barrel,float damage)
         {
@@ -233,9 +254,9 @@ namespace CubeInvasion.Prototype
             Destroy(barrel.body.gameObject);Destroy(barrel.warning.gameObject);
             feedback.Play(CombatFeedback.Cue.Explosion);feedback.Burst(new Vector3(at.x,.12f,at.z),new Color(1,.45f,.1f),2.2f,.3f,true);
             // Reverse iteration survives deaths; chained barrels receive their own visible fuse.
-            for(int i=foes.Count-1;i>=0;i--)if(FlatDistance(foes[i].body.position,at)<=2.2f)HitEnemy(foes[i],30,(foes[i].body.position-at).normalized);
+            for(int i=foes.Count-1;i>=0;i--)if(FlatDistance(foes[i].body.position,at)<=2.2f)HitEnemy(foes[i],30*(1+RouteBlast),(foes[i].body.position-at).normalized);
             foreach(var other in barrels)if(FlatDistance(other.body.position,at)<=2.2f)HitBarrel(other,100);
-            if(FlatDistance(player.position,at)<=2.2f)DamagePlayer(10,(player.position-at).normalized*5);
+            if(FlatDistance(player.position,at)<=2.2f)DamagePlayer(10*(1+RouteBlast),(player.position-at).normalized*5);
         }
         static float FlatDistance(Vector3 a,Vector3 b) { a.y=b.y=0;return Vector3.Distance(a,b); }
         static float SegmentDistance(Vector3 point,Vector3 start,Vector3 end)
@@ -245,28 +266,32 @@ namespace CubeInvasion.Prototype
         }
         Transform RentProjectile(Stack<Transform> pool,string name,Vector3 at,Color color,float size)
         {
-            Transform body=pool.Count>0?pool.Pop():Shape(name,PrimitiveType.Sphere,at,Vector3.one*size,color,world);
-            body.position=at;body.gameObject.SetActive(true);return body;
+            Transform body;
+            if(pool.Count>0)body=pool.Pop();
+            else {body=new GameObject(name,typeof(LineRenderer),typeof(LaserBoltVisual)).transform;body.SetParent(dynamicRoot?dynamicRoot:world,false);}
+            body.position=at;body.GetComponent<LaserBoltVisual>().ResetVisual(color,size);body.gameObject.SetActive(true);return body;
         }
         void FireEnemyShot(Vector3 at,Vector3 direction,float damage=6,float speed=7)
-        { enemyShots.Add(new EnemyShot {body=RentProjectile(enemyShotPool,"Enemy pulse",at,danger,.2f),direction=direction,damage=damage,speed=speed});feedback.Play(CombatFeedback.Cue.Shot); }
+        {
+            var body=RentProjectile(enemyShotPool,"Enemy pulse",at,new Color(1,.18f,.055f),.2f);body.GetComponent<LaserBoltVisual>().Fly(direction,0);
+            enemyShots.Add(new EnemyShot {body=body,direction=direction,damage=damage,speed=speed});EnemyMuzzle(at,direction);feedback.Play(CombatFeedback.Cue.Shot);
+        }
         void TickEnemyShots(float dt)
         {
             for(int i=enemyShots.Count-1;i>=0;i--)
             {
-                var shot=enemyShots[i];var start=shot.body.position;var end=start+shot.direction*shot.speed*dt;shot.body.position=end;shot.life-=dt;
-                bool blocked=cover && SegmentDistance(cover.position,start,end)<.85f;
-                bool hit=SegmentDistance(player.position,start,end)<.5f;
-                if(blocked && hit && FlatDistance(player.position,start)<FlatDistance(cover.position,start))blocked=false;
-                hit=hit&&!blocked;
-                if(hit) { DamagePlayer(shot.damage,shot.direction);if(phase!=Phase.Combat)return; }
+                var shot=enemyShots[i];var start=shot.body.position;var end=start+shot.direction*shot.speed*Mathf.Min(dt,Mathf.Max(0,shot.life));shot.body.position=end;shot.life-=dt;
+                shot.body.GetComponent<LaserBoltVisual>().Fly(shot.direction,Vector3.Distance(start,end));
+                bool blocked=CoverHit(start,end,.1f,out float wallT);
+                bool hit=CircleHit(start,end,player.position,.5f,out float playerT)&&(!blocked||playerT<wallT);
+                if(hit) { DamagePlayer(shot.damage*EnemyDamageMultiplier,shot.direction);if(phase!=Phase.Combat)return; }
                 if(blocked||hit||shot.life<=0) { shot.body.gameObject.SetActive(false);enemyShotPool.Push(shot.body);enemyShots.RemoveAt(i); }
             }
         }
         void ClearEnemyShots() { foreach(var shot in enemyShots) { shot.body.gameObject.SetActive(false);enemyShotPool.Push(shot.body); }enemyShots.Clear(); }
         void FinishEncounterFeel(bool clear)
         {
-            ClearEnemyShots();
+            ClearEnemyShots();feedback.ClearMuzzles();
             if(clear)CollectPickups(0,true);else { pendingGold=0;foreach(var p in pickups)if(p.body)Destroy(p.body.gameObject);pickups.Clear(); }
             foreach(var barrel in barrels) { if(barrel.body)Destroy(barrel.body.gameObject);if(barrel.warning)Destroy(barrel.warning.gameObject); }barrels.Clear();
             foreach(var foe in foes)if(foe.warning)foe.warning.gameObject.SetActive(false);

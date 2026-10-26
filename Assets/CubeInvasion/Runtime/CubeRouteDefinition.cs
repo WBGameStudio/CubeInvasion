@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace CubeInvasion.Prototype
 {
-    public enum RouteReward { Health, Damage }
+    public enum RouteReward { Health, Damage, FireRate, Shield, Gold, Blast, Magnet, Elite }
 
     [CreateAssetMenu(menuName = "Cube Invasion/Route")]
     public sealed class CubeRouteDefinition : ScriptableObject

@@ -89,3 +89,15 @@ Dört robotun mesh'leri 16 ayrı rig parçasına bölündü; toplam geometri de�
 - `CubeInvasionPrototype.unity` artık kamera, Cinemachine Brain/Virtual Camera ve takip hedefi, ışık, oyuncu görselleri, Canvas/HUD/joystick ve EventSystem içerir. Runtime bu kayıtlı referansları kullanır. Küpler, düşmanlar ve ödüller `Dynamic gameplay` altında oyun sırasında oluşturulur.
 - Kamera açısı ve yumuşatma ayarları `Prototype Camera > ArcadeFollowCamera` üzerinden düzenlenir. Mevcut sahne kurulumunun transform ve UI düzeni Play sırasında yeniden oluşturulmaz.
 - Eksik kurulumu mevcut sahneyi sıfırlamadan eklemek için `Cube Invasion > Install Persistent Scene Setup` kullanılabilir.
+
+## P4 — Validate
+
+İlk oyun yönlendirmeleri, yerel sınırlı playtest olayları, UI yenileme optimizasyonu, arka plan pause güvenliği, içerik/denge kontrolü ve Android Development ölçüm desteği eklendi. Kurulum, test sonuçları ve gerçek cihaz/oyuncu testi sınırları için [P4 doğrulama notları](P4_Validation_TR.md).
+
+## Referans UI yeniden tasarımı
+
+Verilen örneklere göre ana bölüm yolu, kaynak şeridi, ikon dock, silah/pilot/ayar yerleşimleri ve HUD/sonuç modalı yeniden kuruldu. [Tasarım, varlıklar ve kontroller](UI_Reference_Redesign_TR.md).
+
+## GDD v1.1 — Dallanan rota sistemi
+
+Sekiz ödül, seçilen kapıya bağlı karşılaşma, risk/tehdit önizlemesi, süreli güçlendirmeler, koşullu altın ve yerel rota olayları eklendi. Seçim yürüyerek yapılır; sahne, karakter ve kamera sürekliliği korunur. Tasarım ayarları, doğrulama ve kapsam sınırları: [Dallanan küpler](Branch_Routes_TR.md).

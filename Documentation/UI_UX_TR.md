@@ -1,3 +1,9 @@
+Güncel görünüm: [Void Toy Arcade UI](UI_VoidToy_TR.md). Aşağıdaki tasarım önceki sürümdür.
+
+Güncel tasarım ve yerleşim: [Referans UI yeniden tasarımı](UI_Reference_Redesign_TR.md). Bu dosyanın önceki görünümü aşağıda tarihçe olarak tutulur.
+
+Güncel görünüm: [Hybrid casual UI](UI_HybridCasual_TR.md). Aşağıdaki illüstrasyonlu tasarım önceki sürümdür; aktif menüler artık düz zemin ve yeni buton sistemini kullanır.
+
 # Mobil arayüz / UX uygulaması
 
 Unity sahnesine Imagegen görsellerini kullanan beş ekran eklendi: ana menü, sefer yolu, silah marketi, Scout geliştirmeleri ve ayarlar. Görseller arka plan olarak kullanılır; metinler, fiyatlar, kilitler, yol düğümleri ve bütün kontroller gerçek uGUI bileşenleridir. İşlevler ekran görüntüsüne gömülü değildir.

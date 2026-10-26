@@ -1,0 +1,67 @@
+{
+  "date": "2026-10-26",
+  "unity": "6000.4.8f1",
+  "checks": {
+    "combat_mechanics": true,
+    "core_and_fall": true,
+    "campaign_routes": true,
+    "ui_and_onboarding": true,
+    "balance": true,
+    "android_development_build": true,
+    "final_combat_mechanics": true,
+    "final_csharp_compile": true
+  },
+  "hands_off_probe": [
+    {
+      "mission": "1",
+      "seconds": "8.65",
+      "hp": "63.6",
+      "enemies_left": "0",
+      "outcome": "all_enemies_dead"
+    },
+    {
+      "mission": "2",
+      "seconds": "8.65",
+      "hp": "46.7",
+      "enemies_left": "0",
+      "outcome": "all_enemies_dead"
+    },
+    {
+      "mission": "3",
+      "seconds": "7.65",
+      "hp": "70.1",
+      "enemies_left": "0",
+      "outcome": "all_enemies_dead"
+    },
+    {
+      "mission": "4",
+      "seconds": "7.18",
+      "hp": "80.5",
+      "enemies_left": "0",
+      "outcome": "all_enemies_dead"
+    },
+    {
+      "mission": "5",
+      "seconds": "9.15",
+      "hp": "76.6",
+      "enemies_left": "0",
+      "outcome": "all_enemies_dead"
+    },
+    {
+      "mission": "6",
+      "seconds": "6.15",
+      "hp": "84.4",
+      "enemies_left": "0",
+      "outcome": "all_enemies_dead"
+    },
+    {
+      "mission": "7",
+      "seconds": "8.03",
+      "hp": "87.0",
+      "enemies_left": "0",
+      "outcome": "all_enemies_dead"
+    }
+  ],
+  "android_device_tested": false,
+  "apk_bytes": 49579853
+}

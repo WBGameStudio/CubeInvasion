@@ -12,13 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d81e401b2a4fb448aab80ad6a8b10f59, type: 3}
   m_Name: FrontEndArt
   m_EditorClassIdentifier: Assembly-CSharp::CubeInvasion.Prototype.FrontEndArt
-  menuHero: {fileID: 21300000, guid: 3f598fcbd98e44bda835c6cdf7b37143, type: 3}
-  campaignIslands: {fileID: 21300000, guid: 2326d241af8af499c91e04203c9726c1, type: 3}
-  scout: {fileID: 21300000, guid: 3453757ac995044bf8cf0c003372c80e, type: 3}
+  menuHero: {fileID: 0}
+  campaignIslands: {fileID: 0}
+  scout: {fileID: 21300000, guid: 547ad80b6a0674d3ca5d946e5a6bd7b4, type: 3}
   panel: {fileID: 21300000, guid: 43be4a4e1b86c4c479853fc229b3b310, type: 2}
   disc: {fileID: 21300000, guid: 3c2d72c9d8aaa42cca6ade4e9a862f34, type: 2}
+  casualButton: {fileID: -4390266454762342410, guid: 8269f0c0bcf9c4c03a0cae27e4923086, type: 3}
+  journey: {fileID: 21300000, guid: a0806219a83c147aaae7fc555e930b9d, type: 3}
+  arsenal: {fileID: 21300000, guid: 9ea35def08f9f4decb86e2faa68c5393, type: 3}
+  pilot: {fileID: 21300000, guid: e00c0c6eb7645450b8d123b64a1f8133, type: 3}
+  settings: {fileID: 21300000, guid: 6de432314e2ca4245880e4463dc57e76, type: 3}
+  coin: {fileID: 21300000, guid: 7b9000ddefb64432aad36fec914e212a, type: 3}
+  uiFont: {fileID: 12800000, guid: f2a16989bb3b04cc88d03fff240296a2, type: 3}
   weapons:
-  - {fileID: 21300000, guid: 66a2c54f5884c4c478f05807718a93b3, type: 3}
-  - {fileID: 21300000, guid: f114f2befbadb42cf9c8cac9facd8165, type: 3}
-  - {fileID: 21300000, guid: e5e83919f6dad43cabd557485b9bc3c7, type: 3}
-  - {fileID: 21300000, guid: 16b94498d97dd4f2ab1d4ff9e1c2e1e9, type: 3}
+  - {fileID: 21300000, guid: e5463e14bd2bc477baa2130a167f6029, type: 3}
+  - {fileID: 21300000, guid: 53ebd96a9fae6494abe1349737395f03, type: 3}
+  - {fileID: 21300000, guid: 83ba9c077e5254846838dd12856c854a, type: 3}
+  - {fileID: 21300000, guid: 6a361b8d17cce44d48c50c431ad5734b, type: 3}
