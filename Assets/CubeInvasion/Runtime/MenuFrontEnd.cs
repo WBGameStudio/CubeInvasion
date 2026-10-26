@@ -22,6 +22,7 @@ namespace CubeInvasion.Prototype
         [SerializeField] Image[] homeRings;
         [SerializeField] Text[] homeNumbers;
         [SerializeField] Text homeLaunch,homeMission;
+        [SerializeField] Text[] weaponUpgradeInfo;
         [SerializeField] Image progressFill;
         [SerializeField] Slider musicSlider,sfxSlider;
         [SerializeField] Toggle muteToggle,hapticsToggle,frameToggle;
@@ -47,7 +48,15 @@ namespace CubeInvasion.Prototype
         public MenuPage CurrentPage=>page;
         public void Initialize(RectTransform parent,FrontEndArt graphics,P2ContentCatalog catalog)
         {
-            art=graphics;if(pages!=null&&pages.Length==5) { background.raycastTarget=true;VoidToyStyle.Restyle(transform,art.uiFont);return; }
+            art=graphics;
+            // A front end saved before the Void Toy layout (no upgrade info rows) is rebuilt in place.
+            bool current=weaponUpgradeInfo!=null&&weaponUpgradeInfo.Length==3&&weaponUpgradeInfo[0];
+            if(pages!=null&&pages.Length==5&&current) { background.raycastTarget=true;VoidToyStyle.Restyle(transform,art.uiFont);return; }
+            if(pages!=null&&pages.Length==5)
+            {
+                for(int i=transform.childCount-1;i>=0;i--)DestroyImmediate(transform.GetChild(i).gameObject);
+                pages=null;navigation=null;
+            }
             font=art.uiFont?art.uiFont:Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             transform.SetParent(parent,false);Stretch((RectTransform)transform);
             background=Image("Generated background",transform,new Color(.025f,.32f,.45f));background.raycastTarget=true;Stretch(background.rectTransform);
@@ -55,26 +64,29 @@ namespace CubeInvasion.Prototype
             shade=Image("Readability layer",transform,Color.clear);Stretch(shade.rectTransform);
             pages=new GameObject[5];for(int i=0;i<5;i++)pages[i]=Rect(((MenuPage)i)+" page",transform,Vector2.zero,Vector2.one,Vector2.zero,Vector2.zero).gameObject;
             BuildHome(catalog);BuildRoad(catalog);BuildArsenal(catalog);BuildPilot();BuildSettings();
-            var header=Panel("Top bar",transform,new Vector2(12,-88),new Vector2(-12,-8),new Color(.02f,.24f,.36f));
-            var avatar=Icon("Scout badge",header,art.scout,new Vector2(8,-72),new Vector2(72,-4));
-            Label("Brand",header,"CUBE INVASION",22,new Vector2(82,-43),new Vector2(305,-8),white);
-            section=Label("Section",header,"",12,new Vector2(83,-65),new Vector2(305,-40),muted);
-            var purse=Panel("Currency capsule",header,new Vector2(322,-63),new Vector2(-10,-13),new Color(.01f,.16f,.25f));
-            Icon("Gold icon",purse,art.coin,new Vector2(-5,-53),new Vector2(53,3));
-            wallet=Label("Wallet",purse,"",22,new Vector2(55,-43),new Vector2(-9,-6),white);wallet.alignment=TextAnchor.MiddleRight;
-            var dock=Panel("Navigation dock",transform,new Vector2(0,-960),new Vector2(0,-847),new Color(.015f,.24f,.36f));
-            var dockRect=(RectTransform)dock;dockRect.anchorMax=new Vector2(1,1);Bottom(dockRect,0,113);
+            // Void Toy top bar: profile chip on the left, gold chip on the right, no full-width slab.
+            var header=Rect("Top bar",transform,new Vector2(0,1),new Vector2(1,1),new Vector2(14,-92),new Vector2(-14,-12));
+            var profile=Panel("Profile chip",header,new Vector2(0,-76),new Vector2(270,-4),panel);
+            var avatarTile=Panel("Scout badge tile",profile,new Vector2(8,-64),new Vector2(64,-8),VoidToyPalette.Cobalt);
+            Icon("Scout badge",avatarTile,art.scout,new Vector2(2,-54),new Vector2(-2,-2));
+            Label("Brand",profile,"CUBE INVASION",21,new Vector2(74,-40),new Vector2(-10,-8),white);
+            section=Label("Section",profile,"",14,new Vector2(75,-66),new Vector2(-10,-40),muted);
+            var purse=Panel("Currency capsule",header,new Vector2(340,-70),new Vector2(0,-10),panel);
+            Icon("Gold icon",purse,art.coin,new Vector2(8,-54),new Vector2(58,-6));
+            wallet=Label("Wallet",purse,"",26,new Vector2(60,-52),new Vector2(-14,-8),gold);wallet.alignment=TextAnchor.MiddleRight;
+            var dock=Panel("Navigation dock",transform,new Vector2(12,-960),new Vector2(-12,-847),panel);
+            var dockRect=(RectTransform)dock;Bottom(dockRect,12,118);
             string[] navNames={"ANA ÜS","BÖLÜMLER","SİLAHLAR","PİLOT","AYARLAR"};
             Sprite[] navArt={art.journey,art.journey,art.arsenal,art.pilot,art.settings};int[] slots={2,1,0,3,4};navigation=new Button[5];
             for(int i=0;i<5;i++)
             {
-                int index=i,slot=slots[i];var tab=Button("Tab "+i,dock,navNames[i],new Vector2(3+slot*107,-108),new Vector2(105+slot*107,-4),12);
+                int index=i,slot=slots[i];var tab=Button("Tab "+i,dock,navNames[i],new Vector2(6+slot*102,-100),new Vector2(98+slot*102,-6),12);
                 tab.GetComponent<Image>().sprite=art.panel;tab.GetComponent<Image>().color=Color.clear;
                 var label=tab.GetComponentInChildren<Text>();Top(label.rectTransform,new Vector2(0,-103),new Vector2(0,-77));
                 Icon("Navigation icon",tab.transform,navArt[i],new Vector2(10,-78),new Vector2(-10,2));navigation[i]=tab;
                 tab.onClick.AddListener(()=>ShowPage((MenuPage)index));
             }
-            toast=Label("Feedback",transform,"",16,new Vector2(18,-844),new Vector2(-18,-817),gold);toast.alignment=TextAnchor.MiddleCenter;Bottom(toast.rectTransform,116,143);
+            toast=Label("Feedback",transform,"",16,new Vector2(18,-844),new Vector2(-18,-817),gold);toast.alignment=TextAnchor.MiddleCenter;Bottom(toast.rectTransform,122,150);
             VoidToyStyle.Restyle(transform,font);ShowPage(MenuPage.Home,false);
         }
         public void Bind(Action<int> weapon,Action<int> mission,Action start,Action purchase,Action<WeaponUpgrade> upgrade,Action<CharacterUpgrade> character,Action<float,float,bool,bool,bool> settings)
@@ -151,6 +163,8 @@ namespace CubeInvasion.Prototype
                 nodeNumbers[i].text=homeNumbers[i].text=open||done?(i+1).ToString():"KİLİT";
                 nodeNumbers[i].fontSize=homeNumbers[i].fontSize=open?34:15;
                 nodeNumbers[i].color=homeNumbers[i].color=selected?VoidToyPalette.Ink:Color.white;
+                // Home shows the journey as a compact cube strip: numbers only, locked tiles stay blank.
+                homeNumbers[i].text=open||done?(i+1).ToString():"";homeNumbers[i].fontSize=selected?26:20;
             }
             var current=content.missions[mission];roadTitle.text=$"{mission+1:00}  {current.title}";
             roadDescription.text=mission>profile.highestMission?"Önce önceki görevi tamamla.":$"{current.cubes.Length} KÜP · HER KÜP 20 sn\n"+current.description;
@@ -170,9 +184,15 @@ namespace CubeInvasion.Prototype
             for(int i=0;i<3;i++)
             {
                 var kind=(WeaponUpgrade)i;int level=state.Level(kind),cost=rules.UpgradeCost(kind,level);bool max=level>=rules.Cap(kind);
-                weaponUpgrades[i].gameObject.SetActive(state.owned);weaponUpgrades[i].interactable=!max&&profile.gold>=cost;
+                weaponUpgrades[i].gameObject.SetActive(state.owned);if(weaponUpgradeInfo!=null&&weaponUpgradeInfo.Length==3)weaponUpgradeInfo[i].transform.parent.gameObject.SetActive(state.owned);weaponUpgrades[i].interactable=!max&&profile.gold>=cost;
                 string title=i==0?"HASAR":i==1?"ATIŞ HIZI":"MENZİL";
-                weaponUpgrades[i].GetComponentInChildren<Text>().text=$"{title}  {level}/{rules.Cap(kind)}\n"+(max?"MAKSİMUM":$"+%{(i==0?rules.damagePerLevel:i==1?rules.fireRatePerLevel:rules.rangePerLevel)*100:0} · {cost} ALTIN");
+                float step=(i==0?rules.damagePerLevel:i==1?rules.fireRatePerLevel:rules.rangePerLevel)*100;
+                if(weaponUpgradeInfo!=null&&weaponUpgradeInfo.Length==3)
+                {
+                    weaponUpgradeInfo[i].text=$"{title}   SV {level}/{rules.Cap(kind)}\n"+(max?"Maksimum seviye":$"Sonraki seviye +%{step:0}");
+                    weaponUpgrades[i].GetComponentInChildren<Text>().text=max?"MAKS.":$"{cost}";
+                }
+                else weaponUpgrades[i].GetComponentInChildren<Text>().text=$"{title}  {level}/{rules.Cap(kind)}\n"+(max?"MAKSİMUM":$"+%{step:0} · {cost} ALTIN");
                 var character=(CharacterUpgrade)i;int rank=profile.CharacterLevel(character),price=rules.CharacterCost(character,rank);bool capped=rank>=rules.characterCap;
                 characterUpgrades[i].interactable=!capped&&profile.gold>=price;
                 characterUpgrades[i].GetComponentInChildren<Text>().text=capped?"MAKS.":$"{price}\nALTIN";

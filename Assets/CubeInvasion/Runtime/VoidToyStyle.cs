@@ -91,7 +91,7 @@ namespace CubeInvasion.Prototype
             {
                 if(font&&text.font!=font)text.font=font;
                 var surface=text.GetComponentInParent<Button>(true)?text.GetComponentInParent<Button>(true).GetComponent<Image>():null;
-                bool onCyan=surface&&Approximately(surface.color,VoidToyPalette.Cyan);
+                bool onCyan=surface&&(Approximately(surface.color,VoidToyPalette.Cyan)||Approximately(surface.color,VoidToyPalette.Gold));
                 if(onCyan)text.color=VoidToyPalette.Ink;
                 else if(Approximately(text.color,new Color(.75f,.91f,1)))text.color=VoidToyPalette.Muted;
                 else if(text.color.r>.95f&&text.color.g>.7f&&text.color.b<.3f)text.color=VoidToyPalette.Gold;

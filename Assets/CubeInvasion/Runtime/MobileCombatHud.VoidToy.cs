@@ -57,6 +57,8 @@ namespace CubeInvasion.Prototype
             VoidToyStyle.Place(coin,new Vector2(0,.5f),new Vector2(0,.5f),new Vector2(8,-18),new Vector2(44,18));
             var coinImage=coin.GetComponent<Image>();coinImage.sprite=art?art.coin:null;coinImage.preserveAspect=true;coinImage.raycastTarget=false;coinImage.color=art&&art.coin?Color.white:VoidToyPalette.Gold;
             Fit(gold,(RectTransform)goldChip.transform,new Vector2(42,0),new Vector2(-10,0),22,TextAnchor.MiddleRight,VoidToyPalette.Gold);
+            // Wallet plus pending gold stays on one line; best fit shrinks it inside the chip.
+            gold.horizontalOverflow=HorizontalWrapMode.Wrap;gold.resizeTextForBestFit=true;gold.resizeTextMinSize=12;gold.resizeTextMaxSize=22;gold.verticalOverflow=VerticalWrapMode.Truncate;
 
             var pause=pauseText.GetComponentInParent<Button>(true).GetComponent<RectTransform>();pause.SetParent(SafeRoot,false);
             VoidToyStyle.Place(pause,Vector2.one,Vector2.one,new Vector2(-76,-76),new Vector2(-16,-16));

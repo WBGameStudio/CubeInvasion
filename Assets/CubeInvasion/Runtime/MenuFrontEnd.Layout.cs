@@ -7,15 +7,44 @@ namespace CubeInvasion.Prototype
         void BuildHome(P2ContentCatalog catalog)
         {
             var root=pages[0].transform;
-            var progress=Panel("Campaign progress",root,new Vector2(22,-147),new Vector2(-22,-102),line);
-            var track=Panel("Progress track",progress,new Vector2(8,-35),new Vector2(-8,-9),new Color(.01f,.16f,.23f));
-            progressFill=Image("Progress fill",track,cyan);Stretch(progressFill.rectTransform);
-            homeProgress=Label("Campaign progress label",progress,"",17,new Vector2(12,-39),new Vector2(-12,-3),white);homeProgress.alignment=TextAnchor.MiddleCenter;
-            BuildMap(root,catalog,true);
-            var arsenal=Button("Open arsenal",root,"SİLAH",new Vector2(12,-450),new Vector2(95,-350),14);QuickIcon(arsenal,art.arsenal);
-            var pilot=Button("Open pilot",root,"PİLOT",new Vector2(445,-450),new Vector2(-12,-350),14);QuickIcon(pilot,art.pilot);
-            var launch=Button("Play campaign",root,"",new Vector2(76,-807),new Vector2(-76,-718),30,true);homeLaunch=launch.GetComponentInChildren<Text>();Bottom((RectTransform)launch.transform,153,242);
-            homeMission=Label("Current mission",root,"",20,new Vector2(100,-711),new Vector2(-100,-681),gold);homeMission.alignment=TextAnchor.MiddleCenter;Bottom(homeMission.rectTransform,247,279);
+            var biome=Label("Biome",root,"BİYOM 1 · NEON YARD",17,new Vector2(20,-128),new Vector2(-20,-102),VoidToyPalette.CyanText);biome.alignment=TextAnchor.MiddleCenter;
+            BuildStrip(root,catalog);
+            var progress=Panel("Campaign progress",root,new Vector2(150,-226),new Vector2(-150,-216),line);
+            var track=Panel("Progress track",progress,new Vector2(0,-10),new Vector2(0,0),ink);
+            progressFill=Image("Progress fill",track,VoidToyPalette.Health);Stretch(progressFill.rectTransform);
+            homeProgress=Label("Campaign progress label",root,"",16,new Vector2(20,-258),new Vector2(-20,-232),muted);homeProgress.alignment=TextAnchor.MiddleCenter;
+            // Hero showcase: the Scout stands on a raised cube tile with a cyan edge light.
+            var pedestal=Panel("Hero pedestal",root,new Vector2(130,-578),new Vector2(-130,-522),line);
+            var edge=Panel("Hero edge light",pedestal,new Vector2(10,-8),new Vector2(-10,-2),VoidToyPalette.Cyan);
+            Icon("Hero scout",root,art.scout,new Vector2(130,-580),new Vector2(-130,-276));
+            var arsenal=Button("Open arsenal",root,"SİLAH",new Vector2(16,-500),new Vector2(102,-406),14);QuickIcon(arsenal,art.arsenal);
+            var pilot=Button("Open pilot",root,"PİLOT",new Vector2(438,-500),new Vector2(-16,-406),14);QuickIcon(pilot,art.pilot);
+            var card=Panel("Mission card",root,new Vector2(16,-0),new Vector2(-16,-0),panel);Bottom(card,258,338);
+            Label("Mission caption",card,"SIRADAKİ GÖREV",14,new Vector2(20,-30),new Vector2(-20,-8),muted);
+            homeMission=Label("Current mission",card,"",26,new Vector2(20,-72),new Vector2(-20,-30),white);
+            var launch=Button("Play campaign",root,"",new Vector2(16,-807),new Vector2(-16,-718),34,true);homeLaunch=launch.GetComponentInChildren<Text>();Bottom((RectTransform)launch.transform,142,240);
+        }
+        // Seven missions as a horizontal row of cube tiles; boss slot reads last. Rails sit behind tiles.
+        void BuildStrip(Transform root,P2ContentCatalog catalog)
+        {
+            var view=Rect("Road viewport",root,new Vector2(0,1),new Vector2(1,1),new Vector2(12,-206),new Vector2(-12,-136));
+            var scroll=view.gameObject.AddComponent<ScrollRect>();scroll.viewport=view;scroll.horizontal=false;scroll.vertical=false;
+            var touch=view.gameObject.AddComponent<Image>();touch.color=Color.clear;touch.raycastTarget=false;
+            var content=Rect("Road nodes",view,Vector2.zero,Vector2.one,Vector2.zero,Vector2.zero);scroll.content=content;
+            int count=catalog.missions.Length;var nodes=new Button[count];var rings=new Image[count];var numbers=new Text[count];
+            float spacing=Mathf.Min(68,440f/Mathf.Max(1,count-1)),start=258-spacing*(count-1)*.5f;
+            for(int i=1;i<count;i++)
+            {
+                var rail=Image("Route rail",content,line);var rect=rail.rectTransform;rect.anchorMin=rect.anchorMax=new Vector2(0,.5f);
+                rect.sizeDelta=new Vector2(spacing,8);rect.anchoredPosition=new Vector2(start+spacing*(i-.5f),0);
+            }
+            for(int i=0;i<count;i++)
+            {
+                var button=Button("Level "+i,content,"",Vector2.zero,Vector2.one,20);var body=(RectTransform)button.transform;
+                body.anchorMin=body.anchorMax=new Vector2(0,.5f);body.pivot=new Vector2(.5f,.5f);body.sizeDelta=Vector2.one*(i==count-1?60:50);body.anchoredPosition=new Vector2(start+spacing*i,0);
+                nodes[i]=button;rings[i]=button.GetComponent<Image>();numbers[i]=button.GetComponentInChildren<Text>();
+            }
+            homeNodes=nodes;homeRings=rings;homeNumbers=numbers;homeScroll=scroll;
         }
         void QuickIcon(Button button,Sprite sprite)
         {
@@ -61,23 +90,32 @@ namespace CubeInvasion.Prototype
         }
         void BuildArsenal(P2ContentCatalog catalog)
         {
-            var root=pages[2].transform;Heading(root,"SİLAHLAR","Seç, kuşan, gücünü artır!");
-            var detail=Panel("Weapon detail",root,new Vector2(20,-393),new Vector2(-20,-176),panel);
-            var pedestal=Panel("Weapon pedestal",detail,new Vector2(12,-191),new Vector2(231,-19),new Color(.04f,.23f,.38f));
-            weaponHero=Icon("Weapon hero",pedestal,art.weapons[0],new Vector2(4,-163),new Vector2(-4,5));
-            weaponTitle=Label("Weapon title",detail,"",26,new Vector2(244,-61),new Vector2(-12,-18),gold);
-            weaponDescription=Label("Weapon description",detail,"",16,new Vector2(244,-143),new Vector2(-12,-67),white);
-            weaponStats=Label("Weapon stats",detail,"",16,new Vector2(244,-204),new Vector2(-12,-147),muted);
-            weaponCards=new Button[4];weaponNames=new Text[4];weaponTags=new Text[4];weaponPictures=new Image[4];weaponUpgrades=new Button[3];
+            var root=pages[2].transform;
+            var heading=Label("Page title",root,"Silahlar",32,new Vector2(20,-150),new Vector2(-20,-104),white);
+            var detail=Panel("Weapon detail",root,new Vector2(16,-404),new Vector2(-16,-160),panel);
+            var pedestal=Panel("Weapon pedestal",detail,new Vector2(16,-226),new Vector2(214,-24),line);
+            weaponHero=Icon("Weapon hero",pedestal,art.weapons[0],new Vector2(10,-190),new Vector2(-10,-10));
+            weaponTitle=Label("Weapon title",detail,"",28,new Vector2(230,-62),new Vector2(-14,-22),white);
+            weaponDescription=Label("Weapon description",detail,"",16,new Vector2(230,-150),new Vector2(-14,-66),muted);
+            weaponStats=Label("Weapon stats",detail,"",16,new Vector2(230,-224),new Vector2(-14,-156),VoidToyPalette.CyanText);
+            weaponUpgrades=new Button[3];weaponUpgradeInfo=new Text[3];
+            for(int i=0;i<3;i++)
+            {
+                float y=-416-i*80;var row=Panel("Upgrade row "+i,root,new Vector2(16,y-70),new Vector2(-16,y),panel);
+                weaponUpgradeInfo[i]=Label("Upgrade info",row,"",18,new Vector2(18,-66),new Vector2(-140,-4),white);
+                var price=Button("Weapon upgrade "+i,row,"",new Vector2(380,-60),new Vector2(-10,-10),24,true);
+                price.GetComponent<Image>().color=gold;weaponUpgrades[i]=price;
+            }
+            buyWeapon=Button("Buy weapon",root,"",new Vector2(16,-500),new Vector2(-16,-416),26,true);buyWeapon.GetComponent<Image>().color=gold;
+            var collection=Label("Collection",root,"KOLEKSİYON",15,new Vector2(20,-674),new Vector2(-20,-652),muted);
+            weaponCards=new Button[4];weaponNames=new Text[4];weaponTags=new Text[4];weaponPictures=new Image[4];
             for(int i=0;i<4;i++)
             {
-                float x=15+i*129;var card=Button("Weapon card "+i,root,"",new Vector2(x,-550),new Vector2(x+122,-411),14);weaponCards[i]=card;
-                weaponPictures[i]=Icon("Weapon model",card.transform,art.weapons[i],new Vector2(5,-82),new Vector2(-5,-1));
-                weaponNames[i]=Label("Weapon name",card.transform,catalog.weapons[i].title,14,new Vector2(3,-111),new Vector2(-3,-82),white);weaponNames[i].alignment=TextAnchor.MiddleCenter;
-                weaponTags[i]=Label("Weapon status",card.transform,"",13,new Vector2(2,-134),new Vector2(-2,-111),gold);weaponTags[i].alignment=TextAnchor.MiddleCenter;
+                float x=16+i*128;var card=Button("Weapon card "+i,root,"",new Vector2(x,-804),new Vector2(x+120,-678),14);weaponCards[i]=card;
+                weaponPictures[i]=Icon("Weapon model",card.transform,art.weapons[i],new Vector2(8,-72),new Vector2(-8,-6));
+                weaponNames[i]=Label("Weapon name",card.transform,catalog.weapons[i].title,14,new Vector2(3,-98),new Vector2(-3,-74),white);weaponNames[i].alignment=TextAnchor.MiddleCenter;
+                weaponTags[i]=Label("Weapon status",card.transform,"",13,new Vector2(2,-122),new Vector2(-2,-98),gold);weaponTags[i].alignment=TextAnchor.MiddleCenter;
             }
-            for(int i=0;i<3;i++)weaponUpgrades[i]=Button("Weapon upgrade "+i,root,"",new Vector2(27,-642-i*80),new Vector2(-27,-571-i*80),20,true);
-            buyWeapon=Button("Buy weapon",root,"",new Vector2(45,-751),new Vector2(-45,-634),25,true);
         }
         void BuildPilot()
         {

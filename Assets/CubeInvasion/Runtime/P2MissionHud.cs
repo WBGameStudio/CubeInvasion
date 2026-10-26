@@ -53,6 +53,7 @@ namespace CubeInvasion.Prototype
             loadout.SetActive(true);result.SetActive(false);BuildBossPanel();ApplyVoidToyStyle();
         }
         [SerializeField] Image resultEmblem;
+        Image reasonChip;Text reasonLabel;
         [SerializeField] Sprite victoryEmblem,failureEmblem;
         public void ConfigureResultEmblem(Image image,Sprite won,Sprite failed) { resultEmblem=image;victoryEmblem=won;failureEmblem=failed; }
         public void SetMetaMode(bool enabled)
@@ -115,7 +116,9 @@ namespace CubeInvasion.Prototype
             }
             if(ended)
             {
-                resultTitle.text=won?"TEMİZLENDİ!":"KÜP ÇÖKTÜ";resultTitle.color=won?VoidToyPalette.Gold:VoidToyPalette.DangerText;
+                bool timeout=!won&&reason!=null&&reason.Contains("saniye"),fell=!won&&reason!=null&&reason.Contains("düştün");
+                resultTitle.text=won?"TEMİZLENDİ!":timeout?"KÜP ÇÖKTÜ":fell?"DÜŞTÜN":"TEKRAR DENE";resultTitle.color=won?VoidToyPalette.Gold:VoidToyPalette.DangerText;
+                if(reasonChip) {reasonChip.color=won?VoidToyPalette.Health:VoidToyPalette.DangerText;reasonLabel.text=won?"GÖREV TAMAM":timeout?"TIME OUT":fell?"KENAR":"CAN BİTTİ";}
                 // One cyan primary per state: advance after a win, retry after a fail.
                 bool canAdvance=won&&missionIndex<count-1;
                 Paint(advance,true);Paint(retry,!canAdvance);Paint(menu,false);
@@ -130,7 +133,19 @@ namespace CubeInvasion.Prototype
         {
             var art=Resources.Load<FrontEndArt>("FrontEndArt");Sprite tile=art?art.casualButton:null;
             var modal=result?result.GetComponent<Image>():null;
-            if(modal) {VoidToyStyle.Surface(modal,tile,VoidToyPalette.Panel,1.5f);}
+            if(modal)
+            {
+                VoidToyStyle.Surface(modal,tile,VoidToyPalette.Panel,1.5f);
+                var font=resultTitle?resultTitle.font:null;
+                // Reason chip replaces the old emblem; a summary tile holds the attempt details.
+                if(resultEmblem)resultEmblem.gameObject.SetActive(false);
+                reasonChip=VoidToyStyle.Tile("Reason chip",result.transform,tile,VoidToyPalette.Danger,new Vector2(.5f,1),new Vector2(.5f,1),new Vector2(-96,-78),new Vector2(96,-34));
+                reasonLabel=VoidToyStyle.Label("Reason",reasonChip.transform,font,20,TextAnchor.MiddleCenter,VoidToyPalette.Ink);
+                var summary=VoidToyStyle.Tile("Result summary",result.transform,tile,VoidToyPalette.Void,new Vector2(0,1),new Vector2(1,1),new Vector2(24,-292),new Vector2(-24,-170));
+                summary.transform.SetAsFirstSibling();
+                if(resultTitle) {VoidToyStyle.Place(resultTitle.rectTransform,new Vector2(0,1),new Vector2(1,1),new Vector2(16,-160),new Vector2(-16,-88));resultTitle.fontSize=44;resultTitle.alignment=TextAnchor.MiddleCenter;}
+                if(resultDescription) {VoidToyStyle.Place(resultDescription.rectTransform,new Vector2(0,1),new Vector2(1,1),new Vector2(40,-286),new Vector2(-40,-176));resultDescription.fontSize=19;resultDescription.alignment=TextAnchor.MiddleCenter;}
+            }
             var dim=transform.Find("Result dim");if(dim)dim.GetComponent<Image>().color=VoidToyPalette.WithAlpha(VoidToyPalette.Void,.8f);
             if(resultDescription)resultDescription.color=VoidToyPalette.Text;
             if(bossPanel)
