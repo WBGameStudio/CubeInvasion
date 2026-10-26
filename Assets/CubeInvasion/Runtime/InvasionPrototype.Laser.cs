@@ -27,6 +27,8 @@ namespace CubeInvasion.Prototype
                     source=foe.animation.VisualRoot.Find("DOTween Reactions/RightArm/RightHand")
                         ??foe.animation.VisualRoot.Find("DOTween Reactions/Gunner barrel")
                         ??foe.animation.VisualRoot.Find("DOTween Reactions/Twin cannon")
+                        ??foe.animation.VisualRoot.Find("DOTween Reactions/RightHand")
+                        ??foe.animation.VisualRoot.Find("DOTween Reactions/Head/RightHand")
                         ??foe.animation.VisualRoot.Find("DOTween Reactions/Core");
                 if(source)
                 {

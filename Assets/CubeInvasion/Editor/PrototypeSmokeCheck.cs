@@ -373,8 +373,8 @@ public static class PrototypeSmokeCheck
     public static void CaptureAnimationReview(ToyArtLibrary library)
     {
         const string folder="/tmp/cube-animation-frames";Directory.CreateDirectory(folder);
-        library.TryGet("Armored body",out var activeModel);
-        var prefab=AssetDatabase.LoadAssetAtPath<GameObject>(activeModel.integratedFace?CuteArtBuilder.Root+"/Prefabs/"+CuteArtBuilder.Slug("Armored body")+".prefab":"Assets/CubeInvasion/Art/Prefabs/Scout_Robot.prefab");
+        library.TryGet("Armored body",out var activeModel);bool voidToy=VoidToyArtBuilder.IsActive(activeModel);
+        var prefab=AssetDatabase.LoadAssetAtPath<GameObject>(voidToy?VoidToyArtBuilder.Prefab("Armored body"):activeModel.integratedFace?CuteArtBuilder.Root+"/Prefabs/"+CuteArtBuilder.Slug("Armored body")+".prefab":"Assets/CubeInvasion/Art/Prefabs/Scout_Robot.prefab");
         if(!prefab)prefab=AssetDatabase.LoadAssetAtPath<GameObject>("Assets/CubeInvasion/Art/Prefabs/Scout_Robot.prefab");
         var actor=Object.Instantiate(prefab);actor.name="Animation review";actor.transform.position=Vector3.zero;actor.transform.rotation=Quaternion.identity;
         var animator=actor.GetComponent<ToyActorAnimator>();if(!animator)animator=actor.AddComponent<ToyActorAnimator>();animator.enabled=false;
@@ -405,6 +405,7 @@ public static class PrototypeSmokeCheck
         if(gait.IsActive()||idleTween.IsActive())throw new System.Exception("Actor destruction left locomotion tweens active");
         Debug.Log("CUBE_ANIMATION_CLEANUP_OK");
         Debug.Log("CUBE_ANIMATION_REVIEW_OK: "+folder);
-        if(activeModel.integratedFace)CuteArtReview.Animation();
+        if(voidToy)VoidToyArtReview.Animation();
+        else if(activeModel.integratedFace)CuteArtReview.Animation();
     }
 }

@@ -143,6 +143,8 @@ namespace CubeInvasion.Prototype
             foreach(var joint in joints)
             {
                 joint.pivot.localPosition=joint.rest;
+                // Bolted-on armour (boss panels) rides the reaction root but never swings.
+                if(joint.name.EndsWith("Armor"))continue;
                 if(joint.name.EndsWith("Eye")) {joint.pivot.localScale=new Vector3(1,blink,1);continue;}
                 if(joint.name=="Head") { joint.pivot.localRotation=Quaternion.Euler(-weight*2+breathe*1.2f,Mathf.Sin(idlePhase*Mathf.PI*2+.8f)*3,breathe*2-weight*localDirection.x*3);continue; }
                 if(joint.name.EndsWith("Ear")) {float lag=Mathf.Sin(gaitPhase*Mathf.PI*2-.55f);joint.pivot.localRotation=Quaternion.Euler(lag*weight*17+breathe*3,0,(joint.left?-1:1)*(weight*7+lag*weight*6));continue;}

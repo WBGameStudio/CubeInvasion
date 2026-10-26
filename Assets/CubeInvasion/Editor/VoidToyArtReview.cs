@@ -1,0 +1,186 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using UnityEditor;
+using UnityEditor.SceneManagement;
+using UnityEngine;
+using CubeInvasion.Prototype;
+using Object=UnityEngine.Object;
+
+public static class VoidToyArtReview
+{
+    const string Previews="Documentation/Previews/VoidToy";
+    static GameObject Load(string key,UnityEngine.SceneManagement.Scene scene)
+    {
+        var prefab=AssetDatabase.LoadAssetAtPath<GameObject>(VoidToyArtBuilder.Prefab(key));
+        if(!prefab)throw new InvalidOperationException("Missing Void Toy prefab "+key);
+        return (GameObject)PrefabUtility.InstantiatePrefab(prefab,scene);
+    }
+    static Camera Camera(UnityEngine.SceneManagement.Scene scene,Color background)
+    {
+        var obj=new GameObject("Void Toy studio camera");UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(obj,scene);var camera=obj.AddComponent<Camera>();
+        camera.scene=scene;camera.clearFlags=CameraClearFlags.SolidColor;camera.backgroundColor=background;camera.orthographic=true;camera.allowHDR=false;
+        camera.transform.rotation=Quaternion.Euler(30,215,0);return camera;
+    }
+    static Bounds Bounds(GameObject obj)
+    {
+        var renderers=obj.GetComponentsInChildren<Renderer>();var b=renderers[0].bounds;foreach(var r in renderers)if(r.enabled)b.Encapsulate(r.bounds);return b;
+    }
+    static TextMesh Label(UnityEngine.SceneManagement.Scene scene,Camera camera,string text,Vector3 at,int size,Color color)
+    {
+        var font=AssetDatabase.LoadAssetAtPath<Font>("Assets/CubeInvasion/Art/UI/Reference/CubeRounded-Bold.ttf");
+        var obj=new GameObject("Label");UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(obj,scene);var label=obj.AddComponent<TextMesh>();
+        if(font) {label.font=font;obj.GetComponent<MeshRenderer>().sharedMaterial=font.material;}
+        label.text=text;label.fontSize=size;label.characterSize=.032f;label.anchor=TextAnchor.MiddleCenter;label.color=color;obj.transform.rotation=camera.transform.rotation;obj.transform.position=at;return label;
+    }
+    static Texture2D Grab(Camera camera,int width,int height)
+    {
+        var target=new RenderTexture(width,height,24,RenderTextureFormat.ARGB32);camera.targetTexture=target;camera.Render();var old=RenderTexture.active;RenderTexture.active=target;
+        var texture=new Texture2D(width,height,TextureFormat.RGB24,false);texture.ReadPixels(new Rect(0,0,width,height),0,0);texture.Apply();
+        camera.targetTexture=null;RenderTexture.active=old;Object.DestroyImmediate(target);return texture;
+    }
+    static void Write(Texture2D texture,string path)
+    {Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(path)));File.WriteAllBytes(path,texture.EncodeToPNG());}
+    [MenuItem("Cube Invasion/Art/Void Toy/Render Void Toy Model Catalog")]
+    public static void Catalog()
+    {
+        var keys=new List<string>(VoidToyArtGeometry.Actors);keys.AddRange(VoidToyArtGeometry.Weapons);
+        var library=AssetDatabase.LoadAssetAtPath<ToyArtLibrary>(VoidToyArtBuilder.SnapshotPath);
+        var scene=EditorSceneManager.NewPreviewScene();
+        try
+        {
+            var camera=Camera(scene,VoidToyPalette.Floor);camera.orthographicSize=6.2f;camera.aspect=1;camera.transform.position=-camera.transform.forward*30;
+            var ink=VoidToyPalette.Ink;
+            for(int i=0;i<keys.Count;i++)
+            {
+                var obj=Load(keys[i],scene);
+                // Weapons are shown at the fire anchor's in-game length (0.65 / 0.2).
+                if(VoidToyArtGeometry.Weapon(keys[i]))obj.transform.localScale=new Vector3(1,1,3.25f);
+                var b=Bounds(obj);
+                // Actors keep their relative gameplay size; weapons are enlarged so their silhouettes read.
+                float fit=VoidToyArtGeometry.Weapon(keys[i])?2f/Mathf.Max(b.size.x,Mathf.Max(b.size.y,b.size.z)):1.55f;obj.transform.localScale*=fit;b=Bounds(obj);
+                var point=camera.transform.right*((i%4-1.5f)*3.05f)+camera.transform.up*((1-i/4)*3.7f+.25f);obj.transform.position+=point-b.center;
+                library.TryGet(keys[i],out var model);int triangles=model.mesh.triangles.Length/3;
+                string title=keys[i]=="Armored body"?"SCOUT MK-II":keys[i].ToUpperInvariant();
+                Label(scene,camera,title,point-camera.transform.up*1.45f,56,ink);
+                Label(scene,camera,triangles+" tris"+(model.rig.Length>0?" · "+model.rig.Length+" parts":""),point-camera.transform.up*1.8f,40,VoidToyPalette.Side);
+            }
+            var image=Grab(camera,2048,2048);Write(image,Previews+"/Model_Catalog.png");Write(image,"/tmp/cube-voidtoy-catalog.png");Object.DestroyImmediate(image);
+        }
+        finally {EditorSceneManager.ClosePreviewScene(scene);}
+        Debug.Log("CUBE_VOIDTOY_CATALOG_OK: "+Previews+"/Model_Catalog.png");
+    }
+    // One assembled combat cube in the gameplay layout of InvasionPrototype.Arena(), props tinted the way Shape() tints them.
+    [MenuItem("Cube Invasion/Art/Void Toy/Render Void Toy Arena Kit")]
+    public static void ArenaKit()
+    {
+        var library=AssetDatabase.LoadAssetAtPath<ToyArtLibrary>(VoidToyArtBuilder.SnapshotPath);
+        var scene=EditorSceneManager.NewPreviewScene();var animators=new List<ToyActorAnimator>();
+        try
+        {
+            var root=new GameObject("Combat cube").transform;UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(root.gameObject,scene);
+            Transform Spawn(string key,Vector3 at,Transform parent,Color tint,Vector3? scale=null)
+            {
+                var obj=Load(key,scene);obj.transform.SetParent(parent,false);obj.transform.localPosition=at;if(scale.HasValue)obj.transform.localScale=scale.Value;
+                library.TryGet(key,out var model);
+                if(model.useRuntimeTint) {var block=new MaterialPropertyBlock();block.SetColor("_Color",tint);obj.GetComponent<Renderer>().SetPropertyBlock(block);}
+                return obj.transform;
+            }
+            Spawn("Deep sides",new Vector3(0,-1.2f,0),root,Color.white);Spawn("Arena surface",new Vector3(0,-.04f,0),root,Color.white);
+            for(int i=0;i<4;i++)
+            {
+                bool alongX=i<2;
+                Spawn("Edge light",new Vector3(alongX?0:(i==2?-4.45f:4.45f),.03f,alongX?(i==0?-4.45f:4.45f):0),root,i==0?VoidToyPalette.Warm:VoidToyPalette.Cyan,alongX?new Vector3(9,.06f,.07f):new Vector3(.07f,.06f,9));
+            }
+            Spawn("Low cover",new Vector3(0,.45f,.6f),root,Color.white);
+            var barrel=Spawn("Explosive barrel",new Vector3(2.7f,.3f,-.6f),root,Color.white);Spawn("Explosive band",new Vector3(0,.2f,0),barrel,Color.white);
+            var health=Spawn("Health +20",new Vector3(-2.6f,.25f,-1.4f),root,Color.white);Spawn("Health cross H",new Vector3(0,.6f,0),health,Color.white);Spawn("Health cross V",new Vector3(0,.6f,0),health,Color.white);
+            for(int i=0;i<4;i++)Spawn("Gold pickup",new Vector3(-2.9f+i*.6f,.08f,2.6f),root,Color.white);
+            var gate=new GameObject("Gate").transform;gate.SetParent(root,false);gate.localPosition=new Vector3(2.4f,0,3.6f);
+            Spawn("Gate left post",new Vector3(-1,1,0),gate,VoidToyPalette.Health);Spawn("Gate right post",new Vector3(1,1,0),gate,VoidToyPalette.Health);Spawn("Gate header",new Vector3(0,2,0),gate,VoidToyPalette.Health);
+            Spawn("Locked until clear",new Vector3(0,1,0),gate,VoidToyPalette.Danger);
+            Spawn("Right bridge",new Vector3(6,-.05f,0),root,VoidToyPalette.Cyan);
+            Spawn("Reward beacon",new Vector3(-2.6f,1.6f,3.6f),root,VoidToyPalette.Gold);Spawn("Reward beacon vertical",new Vector3(-2.6f,1.6f,3.6f),root,VoidToyPalette.Gold);
+            foreach(var actor in new[]{("Armored body",new Vector3(0,.65f,-2.4f),0f),("Grunt",new Vector3(-1.4f,.6f,1.6f),180f),("Gunner",new Vector3(1.3f,.6f,1.9f),200f),("Pusher",new Vector3(-.2f,.6f,2.8f),180f)})
+            {
+                var obj=Load(actor.Item1,scene);obj.transform.SetParent(root,false);obj.transform.localPosition=actor.Item2;obj.transform.localRotation=Quaternion.Euler(0,actor.Item3,0);
+                var animator=obj.GetComponent<ToyActorAnimator>();animator.enabled=false;var accessories=new List<Transform>();foreach(Transform child in obj.transform)accessories.Add(child);
+                library.TryGet(actor.Item1,out var model);animator.Bind(model,obj.transform);foreach(var child in accessories)animator.Attach(child);animator.TickPose(Vector3.zero,1f/24,false);animators.Add(animator);
+            }
+            var camera=Camera(scene,VoidToyPalette.Void);camera.transform.rotation=Quaternion.Euler(42,24,0);camera.orthographicSize=6.4f;camera.aspect=4f/3;camera.transform.position=new Vector3(.8f,0,.6f)-camera.transform.forward*40;
+            var image=Grab(camera,1600,1200);Write(image,Previews+"/Arena_Kit.png");Object.DestroyImmediate(image);
+        }
+        finally
+        {
+            foreach(var animator in animators)if(animator)animator.SendMessage("OnDestroy",SendMessageOptions.DontRequireReceiver);
+            EditorSceneManager.ClosePreviewScene(scene);
+        }
+        Debug.Log("CUBE_VOIDTOY_ARENA_OK: "+Previews+"/Arena_Kit.png");
+    }
+    // Drives every actor through idle / walk / run+fire / windup / slam / hit and checks the rig contract.
+    [MenuItem("Cube Invasion/Art/Void Toy/Render Void Toy Animation Review")]
+    public static void Animation()
+    {
+        var library=Resources.Load<ToyArtLibrary>("ToyArtLibrary");VoidToyArtBuilder.Validate(library);
+        var keys=VoidToyArtGeometry.Actors;var scene=EditorSceneManager.NewPreviewScene();var animators=new List<ToyActorAnimator>();
+        var roots=new List<Transform>();var positions=new List<Vector3>();var blinked=new bool[keys.Length];var moved=new bool[keys.Length];
+        var fire=new List<Transform>();var firePositions=new List<Vector3>();
+        int[] sheetFrames={12,40,78,104,114,130};string[] sheetTitles={"IDLE","WALK","RUN + FIRE","WINDUP","SLAM","HIT"};
+        Texture2D sheet=null;
+        try
+        {
+            var camera=Camera(scene,VoidToyPalette.Floor);camera.orthographicSize=3.4f;camera.aspect=16f/9;camera.transform.position=-camera.transform.forward*30;
+            for(int i=0;i<keys.Length;i++)
+            {
+                var obj=Load(keys[i],scene);var bounds=Bounds(obj);obj.transform.localScale*=1.4f;bounds=Bounds(obj);
+                var point=camera.transform.right*((i%4-1.5f)*2.9f)+camera.transform.up*((.5f-i/4)*2.9f-.2f);obj.transform.position+=point-bounds.center;
+                roots.Add(obj.transform);positions.Add(obj.transform.position);
+                var animator=obj.GetComponent<ToyActorAnimator>();animator.enabled=false;
+                var accessories=new List<Transform>();foreach(Transform child in obj.transform)accessories.Add(child);
+                library.TryGet(keys[i],out var model);animator.Bind(model,obj.transform);foreach(var child in accessories)animator.Attach(child);
+                var anchor=obj.transform.Find("Pulse pistol");fire.Add(anchor);firePositions.Add(anchor?anchor.localPosition:Vector3.zero);
+                animators.Add(animator);
+                Label(scene,camera,keys[i]=="Armored body"?"SCOUT":keys[i].ToUpperInvariant(),point-camera.transform.up*1.25f,44,VoidToyPalette.Ink);
+            }
+            var title=Label(scene,camera,"",camera.transform.up*3f,60,VoidToyPalette.Ink);
+            sheet=new Texture2D(640*3,360*2,TextureFormat.RGB24,false);
+            for(int frame=0;frame<144;frame++)
+            {
+                bool walk=frame>=24&&frame<60,run=frame>=60&&frame<96;
+                title.text=frame<24?"IDLE / BLINK":walk?"WALK":run?"RUN / AUTO FIRE":frame<110?"ATTACK WINDUP":frame<122?"SLAM":"HIT / RECOVER";
+                for(int i=0;i<animators.Count;i++)
+                {
+                    var animator=animators[i];if(run&&frame%8==0)animator.Shoot();if(frame==96)animator.Telegraph(.6f);if(frame==110)animator.Slam();if(frame==122)animator.Hit();
+                    animator.TickPose(walk?Vector3.forward*1.2f:run?Vector3.forward*4.5f:Vector3.zero,1f/24,run);
+                    if(roots[i].position!=positions[i]||roots[i].rotation!=Quaternion.identity)throw new Exception("Animation moved gameplay root: "+keys[i]);
+                    if(fire[i]&&fire[i].localPosition!=firePositions[i])throw new Exception("Animation moved the fire anchor: "+keys[i]);
+                    if(!float.IsFinite(animator.VisualRoot.localPosition.y))throw new Exception("Non-finite animation: "+keys[i]);
+                    foreach(var node in animator.VisualRoot.GetComponentsInChildren<Transform>())
+                    {
+                        if(node.name.EndsWith("Eye")&&node.localScale.y<.4f)blinked[i]=true;
+                        if(node.name.EndsWith("Leg")&&(walk||run)&&Quaternion.Angle(node.localRotation,Quaternion.identity)>5)moved[i]=true;
+                        if(node.name.EndsWith("Armor")&&node.localRotation!=Quaternion.identity)throw new Exception("Boss armour panel must stay fixed: "+node.name);
+                    }
+                }
+                int shot=Array.IndexOf(sheetFrames,frame);
+                if(shot>=0)
+                {
+                    title.text=sheetTitles[shot];var image=Grab(camera,640,360);
+                    sheet.SetPixels(shot%3*640,(1-shot/3)*360,640,360,image.GetPixels());Object.DestroyImmediate(image);
+                }
+            }
+            for(int i=0;i<keys.Length;i++)if(!blinked[i]||!moved[i])throw new Exception("Missing blink / leg motion: "+keys[i]);
+            // Enemy muzzle flashes come from these joints (InvasionPrototype.EnemyMuzzle).
+            foreach(var pair in new[]{new[]{"Sniper","DOTween Reactions/RightHand"},new[]{"Gunner","DOTween Reactions/Head/RightHand"},new[]{"Crusher","DOTween Reactions/RightHand"},new[]{"Bruiser","DOTween Reactions/RightArm/RightHand"}})
+                if(!animators[Array.IndexOf(keys,pair[0])].VisualRoot.Find(pair[1]))throw new Exception("Missing muzzle joint "+pair[0]);
+            sheet.Apply();Write(sheet,Previews+"/Animation_Review.png");
+            Debug.Log("CUBE_VOIDTOY_ANIMATION_OK: eight actors, blink, stride, recoil, windup, slam, hit; fixed roots, fire anchor and boss armour.");
+        }
+        finally
+        {
+            if(sheet)Object.DestroyImmediate(sheet);
+            foreach(var animator in animators)if(animator)animator.SendMessage("OnDestroy",SendMessageOptions.DontRequireReceiver);
+            EditorSceneManager.ClosePreviewScene(scene);
+        }
+    }
+}
