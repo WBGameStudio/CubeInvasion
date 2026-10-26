@@ -5,26 +5,27 @@ using CubeInvasion.ArtTools;
 
 // "Void Toy Arcade": bright plastic Scout, one graphite invader family with a single signature extension
 // and an emissive intent light each (pink melee, orange ranged). Chunky chamfered blocks, low poly.
-public static class VoidToyArtGeometry
+public static partial class VoidToyArtGeometry
 {
     static readonly Color Cobalt=VoidToyPalette.Cobalt,Cyan=VoidToyPalette.Cyan,White=VoidToyPalette.Text,Ink=VoidToyPalette.Ink,Navy=VoidToyPalette.Side,Gold=VoidToyPalette.Gold;
     // Graphite family: the token is the body; a deeper tone for feet/joints and a lifted tone for plates.
     static readonly Color Body=Color.Lerp(VoidToyPalette.Graphite,VoidToyPalette.Text,.08f),Dark=Color.Lerp(VoidToyPalette.Graphite,VoidToyPalette.Ink,.45f),Plate=Color.Lerp(VoidToyPalette.Graphite,VoidToyPalette.Text,.22f);
     static Color Glow(Color c)=>VoidToyMeshBuilder.Glow(c);
-    public static readonly string[] Actors={"Armored body","Grunt","Sprinter","Gunner","Pusher","Sniper","Bruiser","Crusher"};
+    public static readonly string[] Actors={"Armored body","Grunt","Sprinter","Gunner","Pusher","Sniper","Bruiser","Crusher","Shielder","Healer","Bomber"};
     public static readonly string[] Weapons={"Pulse pistol","Twin blasters","Scatter shot","Rapid smg"};
     // Arena kit: the library keys InvasionPrototype already spawns (Arena, gates, bridges, pickups, cover).
     public static readonly string[] Props={"Deep sides","Arena surface","Edge light","Low cover","Explosive barrel","Explosive band","Health +20","Health cross H","Health cross V","Gold pickup","Elite crown",
-        "Gate left post","Gate right post","Gate header","Locked until clear","Right bridge","Forward bridge","Reward beacon","Reward beacon vertical"};
+        "Gate left post","Gate right post","Gate header","Locked until clear","Right bridge","Forward bridge","Reward beacon","Reward beacon vertical",
+        "Gold crate","Jackpot chest","Spike tile","Spike tile spikes","Electric coil","Lava tile"};
     // These take their runtime colour (timer state, reward, risk) from the Shape() property block on masked vertices.
-    public static bool Tinted(string key)=>key=="Edge light"||key.StartsWith("Reward beacon")||key.StartsWith("Gate ")||key=="Locked until clear"||key.EndsWith("bridge");
-    public static bool Actor(string key)=>System.Array.IndexOf(Actors,key)>=0;
-    public static bool Weapon(string key)=>System.Array.IndexOf(Weapons,key)>=0;
+    public static bool Tinted(string key)=>HazardTinted(key)||key=="Edge light"||key.StartsWith("Reward beacon")||key.StartsWith("Gate ")||key=="Locked until clear"||key.EndsWith("bridge");
+    public static bool Actor(string key)=>System.Array.IndexOf(Actors,key)>=0||System.Array.IndexOf(ExpansionActors,key)>=0;
+    public static bool Weapon(string key)=>System.Array.IndexOf(Weapons,key)>=0||System.Array.IndexOf(ExpansionWeapons,key)>=0;
     // Gameplay transforms (InvasionPrototype.SpawnContentEnemy / scene player) the meshes are fitted to.
     public static Vector3 GameplayScale(string key)=>Props.Contains(key)?PropGameplayScale(key):key=="Armored body"?new Vector3(.65f,.55f,.65f):key=="Crusher"?Vector3.one*1.05f:key=="Bruiser"?Vector3.one*.85f:Weapon(key)?new Vector3(.2f,.2f,.65f):Vector3.one*.7f;
     static float RootHeight(string key)=>key=="Armored body"?.65f:key=="Crusher"?.95f:.6f;
-    public static Color Family(string key)=>key=="Scatter shot"?VoidToyPalette.Warm:key=="Twin blasters"?Cobalt:key=="Rapid smg"?VoidToyPalette.Violet:Cyan;
-    public static int Budget(string key)=>key=="Crusher"?6000:Weapon(key)?600:key=="Deep sides"||key=="Arena surface"?1200:Actor(key)?3000:600;
+    public static Color Family(string key)=>key.StartsWith("Expansion ")?ExpansionFamily(key):key=="Scatter shot"?VoidToyPalette.Warm:key=="Twin blasters"?Cobalt:key=="Rapid smg"?VoidToyPalette.Violet:Cyan;
+    public static int Budget(string key)=>key=="Crusher"?6000:Weapon(key)?600:key=="Deep sides"||key=="Arena surface"||HazardTile(key)?1200:Actor(key)?3000:600;
     public static VoidToyMeshBuilder Make(string key)
     {
         switch(key)
@@ -37,7 +38,7 @@ public static class VoidToyArtGeometry
             case "Sniper":return Sniper();
             case "Gunner":return Gunner();
             case "Crusher":return Crusher();
-            default:return Weapon(key)?Blaster(key):Prop(key);
+            default:return Expansion(key)??(Weapon(key)?Blaster(key):Prop(key));
         }
     }
     // Ground sits at y=0. Mechanical enemy rigs are lifted 0.22 mesh units by ToyActorAnimator; the offset cancels it.

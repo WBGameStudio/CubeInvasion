@@ -65,9 +65,29 @@ Model doğrulaması şunları kontrol eder: üçgen bütçesi, normal ve vertex 
 
 Önizlemeler: [model kataloğu](Previews/VoidToy/Model_Catalog.png), [arena kiti](Previews/VoidToy/Arena_Kit.png), [animasyon kareleri](Previews/VoidToy/Animation_Review.png).
 
+## Kampanya genişlemesi turu
+
+Genişleme içeriğindeki ödünç modeller Void Toy diliyle değiştirildi. Beş yeni boss bu turun dışında.
+
+- **Özel düşmanlar** (temel kütüphane): Shielder (önde büyük kalkan levha, mavi yay, pembe göz şeridi), Healer (mor halkalı anten, mor sırt ışığı ve vizör) ve Bomber (kadrodaki tek küre gövde, turuncu bel bandı, fitil topu). `InvasionPrototype.Content.cs` bu anahtarlar kütüphanede rig'li olarak varsa Grunt/Pusher yerine onları kullanır. Healer'ın havada duran sağlık haçı ve Bomber'ın sırt varili yalnız özel model yokken eklenir.
+- **Tehlike karoları**: Spike tile (ayrı yükselen diken mesh'i ile), Electric coil, Lava tile ve Void Toy "Frozen patch". `InvasionPrototype.HazardTiles.cs` her `HazardZone` altına karoyu yerleştirir. Uyarı halkası korunur. Durum ışık şeritlerinin rengiyle okunur: bekleme sönük, uyarıda yanıp söner, aktifken tam parlak. Elektrik aktifken titrer; dikenler uyarıda biraz görünür, aktifken tam çıkar. `Arenas.cs` içine yalnız iki çağrı satırı eklendi.
+- **Gold Rush**: altın kasa ve üç anahtar kilitli jackpot sandığı. `InvasionPrototype.GoldRush.cs`, anahtarlar kurulu değilse "Low cover" ile devam eder. Coin rozetleri ve anahtar sayacı aynı kalır.
+- **Genişleme silahları ve düşmanları**: 8 silah (beyaz gövde, kobalt üst plaka, `CampaignExpansionSettings.Colors` aile renginde namlu ve şerit), Summoner (camgöbeği çağırma çanağı), Phaser (mor faz halkaları, turuncu menzilli namlu) ve Elite (altın taç, pembe vizör, omuz pedleri). Bu anahtarlar `Art/Expansion/ExpansionArt.asset` içinde yerinde değiştirilir; çalışma anında temel kütüphaneden sonra birleştirildiği için onlar geçerli olur. Sıra korunur. Market küçük resimleri `CampaignExpansionBuilder.RefreshWeaponIcons` ile yeni modellerden yeniden renderlanır.
+
+| Model | Üçgen | Rig parçası |
+| --- | ---: | ---: |
+| Shielder / Healer / Bomber | 660 / 1.044 / 704 | 5 / 7 / 5 |
+| Summoner / Phaser / Elite | 616 / 968 / 704 | 7 / 5 / 7 |
+| Altın kasa / jackpot sandığı | 452 / 396 | — |
+| Spike tile (+ dikenler) / Electric coil / Lava tile / Frozen patch | 616 (+792) / 712 / 396 / 176 | — |
+| Genişleme silahları | 308–496 | — |
+
+Geri dönüş: `Restore Original Toy Models`, Void Toy'a özgü anahtarları temel kütüphaneden kaldırır. İlk kurulumda alınan `Art/VoidToy/ExpansionArtBackup.asset` yedeğiyle ExpansionArt kayıtlarını geri koyar ve market küçük resimlerini yeniler. Not: `CampaignExpansionBuilder.RefreshActors` çalıştırılırsa Summoner/Phaser/Elite eski genişleme modellerine döner. Void Toy için `Reinstall Built Void Toy Models` yeterli.
+
+Önizleme: [genişleme kataloğu](Previews/VoidToy/Expansion_Catalog.png).
+
 ## Açık noktalar
 
-- Ana menü ve marketteki Scout/silah küçük resimleri henüz eski modellerden.
 - Rapid SMG mermisi P2 içeriğinde yeşil tanımlı; namlusu tasarımdaki mor ailede. Mermi rengi ayrıca eşitlenmeli.
 - Telegraph sırasında niyet ışığının parlaması ve boss zırhının kırılınca düşmesi runtime işi olarak bekliyor. Modeller buna hazır: emisyon vertex alfasında, zırh ayrı eklemde.
 - Gerçek Android cihaz testi yapılmadı.

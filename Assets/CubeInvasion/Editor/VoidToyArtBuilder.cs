@@ -17,7 +17,9 @@ public static class VoidToyArtBuilder
     public const string SnapshotPath=Root+"/VoidToyLibrary.asset";
     public static string Slug(string key)=>key.Replace(' ','_').Replace("+","Plus");
     public static string Prefab(string key)=>Root+"/Prefabs/"+Slug(key)+".prefab";
-    static IEnumerable<string> Keys=>VoidToyArtGeometry.Actors.Concat(VoidToyArtGeometry.Weapons).Concat(VoidToyArtGeometry.Props);
+    static IEnumerable<string> Keys=>VoidToyArtGeometry.Actors.Concat(VoidToyArtGeometry.Weapons).Concat(VoidToyArtGeometry.Props)
+        .Concat(VoidToyArtGeometry.ExpansionActors).Concat(VoidToyArtGeometry.ExpansionWeapons).Append("Frozen patch");
+    const string PresentationPath="Assets/CubeInvasion/Resources/CampaignPresentation.asset",ExpansionBackupPath=Root+"/ExpansionArtBackup.asset";
     public static bool IsActive(ToyArtLibrary.Model model)=>model!=null&&model.mesh&&AssetDatabase.GetAssetPath(model.mesh).StartsWith(Root+"/");
     [MenuItem("Cube Invasion/Art/Void Toy/Build Void Toy Models")]
     public static ToyArtLibrary BuildAssets()
@@ -55,7 +57,7 @@ public static class VoidToyArtBuilder
         var scout=PrefabUtility.LoadPrefabContents(Prefab("Armored body"));snapshot.TryGet("Pulse pistol",out var pistol);scout.transform.Find("Pulse pistol").GetComponent<MeshFilter>().sharedMesh=pistol.mesh;
         PrefabUtility.SaveAsPrefabAsset(scout,Prefab("Armored body"));PrefabUtility.UnloadPrefabContents(scout);
         File.WriteAllText(Root+"/MeshBudget.csv",csv.ToString());AssetDatabase.SaveAssets();AssetDatabase.Refresh();Validate(snapshot);
-        Debug.Log("CUBE_VOIDTOY_ASSETS_OK: 8 articulated actors, 4 weapons and "+VoidToyArtGeometry.Props.Length+" arena kit props in "+Root);
+        Debug.Log("CUBE_VOIDTOY_ASSETS_OK: "+Keys.Count(VoidToyArtGeometry.Actor)+" articulated actors, "+Keys.Count(VoidToyArtGeometry.Weapon)+" weapons and "+Keys.Count(k=>!VoidToyArtGeometry.Actor(k)&&!VoidToyArtGeometry.Weapon(k))+" props / tiles in "+Root);
         return snapshot;
     }
     static Material Paint(string name,Shader shader,bool tint)
@@ -86,7 +88,7 @@ public static class VoidToyArtBuilder
             if(triangles<40||triangles>VoidToyArtGeometry.Budget(key))throw new Exception($"Triangle budget {key}: {triangles}/{VoidToyArtGeometry.Budget(key)}");
             if(model.mesh.colors.Length!=model.mesh.vertexCount||model.mesh.normals.Any(n=>!float.IsFinite(n.x)||n.sqrMagnitude<.9f))throw new Exception("Invalid palette / normals "+key);
             if(VoidToyArtGeometry.Tinted(key)!=model.useRuntimeTint||VoidToyArtGeometry.Tinted(key)&&!model.mesh.uv.Any(m=>m.x>.5f))throw new Exception("Runtime tint mask mismatch "+key);
-            if(VoidToyArtGeometry.Props.Contains(key))continue;
+            if(!VoidToyArtGeometry.Actor(key)&&!VoidToyArtGeometry.Weapon(key))continue;
             if(!model.mesh.colors.Any(c=>c.a<.5f))throw new Exception("Missing emissive intent / energy light "+key);
             if(!VoidToyArtGeometry.Actor(key))continue;
             if(!model.mechanicalRig||!model.integratedFace||model.rig.Length<5)throw new Exception("Incomplete rig "+key);
@@ -113,7 +115,8 @@ public static class VoidToyArtBuilder
     static void InstallFrom(ToyArtLibrary snapshot)
     {
         var library=AssetDatabase.LoadAssetAtPath<ToyArtLibrary>(LibraryPath);if(!library)throw new InvalidOperationException("Active art library is missing.");
-        var entries=library.models.Where(m=>m!=null&&!snapshot.models.Any(v=>v.key==m.key)).ToList();entries.AddRange(snapshot.models);
+        var own=snapshot.models.Where(m=>!VoidToyArtGeometry.ExpansionOwned(m.key)).ToList();InstallExpansion(snapshot);
+        var entries=library.models.Where(m=>m!=null&&!own.Any(v=>v.key==m.key)).ToList();entries.AddRange(own);
         library.models=entries.ToArray();library.InvalidateLookup();EditorUtility.SetDirty(library);
         var scene=EditorSceneManager.OpenScene("Assets/CubeInvasion/CubeInvasionPrototype.unity");
         var game=Object.FindAnyObjectByType<InvasionPrototype>();if(!game)throw new InvalidOperationException("Gameplay scene has no InvasionPrototype.");
@@ -133,9 +136,33 @@ public static class VoidToyArtBuilder
     public static void Restore()
     {
         OriginalToyRestore.Install();
-        // The restore keeps keys the original set never had; drop the Void Toy crown so elites go back to primitives.
+        // The restore keeps keys the original set never had; drop Void Toy-only keys so those fall back to the borrowed rigs / primitives.
         var library=AssetDatabase.LoadAssetAtPath<ToyArtLibrary>(LibraryPath);
-        library.models=library.models.Where(m=>m==null||!(m.key=="Elite crown"&&IsActive(m))).ToArray();library.InvalidateLookup();EditorUtility.SetDirty(library);AssetDatabase.SaveAssets();
+        library.models=library.models.Where(m=>m==null||!IsActive(m)).ToArray();library.InvalidateLookup();EditorUtility.SetDirty(library);
+        var presentation=AssetDatabase.LoadAssetAtPath<CampaignPresentation>(PresentationPath);var backup=AssetDatabase.LoadAssetAtPath<ToyArtLibrary>(ExpansionBackupPath);
+        if(presentation&&presentation.art&&backup)
+        {
+            var art=presentation.art.models;for(int i=0;i<art.Length;i++) {var old=backup.models.FirstOrDefault(m=>m.key==art[i].key);if(old!=null)art[i]=old;}
+            presentation.art.InvalidateLookup();EditorUtility.SetDirty(presentation.art);AssetDatabase.SaveAssets();CampaignExpansionBuilder.RefreshWeaponIcons();
+        }
+        AssetDatabase.SaveAssets();
+    }
+    // Expansion keys are replaced in place inside ExpansionArt (order matters: market icons read models[0..7]).
+    static void InstallExpansion(ToyArtLibrary snapshot)
+    {
+        var presentation=AssetDatabase.LoadAssetAtPath<CampaignPresentation>(PresentationPath);
+        if(!presentation||!presentation.art) {Debug.LogWarning("Campaign expansion is not installed; expansion restyles skipped.");return;}
+        var art=presentation.art;
+        if(!AssetDatabase.LoadAssetAtPath<ToyArtLibrary>(ExpansionBackupPath))
+        {
+            var backup=ScriptableObject.CreateInstance<ToyArtLibrary>();backup.models=art.models.Where(m=>VoidToyArtGeometry.ExpansionOwned(m.key)&&!IsActive(m)).ToArray();
+            AssetDatabase.CreateAsset(backup,ExpansionBackupPath);
+        }
+        var models=art.models;
+        for(int i=0;i<models.Length;i++)if(VoidToyArtGeometry.ExpansionOwned(models[i].key)&&snapshot.TryGet(models[i].key,out var restyled))models[i]=restyled;
+        var missing=snapshot.models.Where(m=>VoidToyArtGeometry.ExpansionOwned(m.key)&&!models.Any(a=>a.key==m.key));art.models=models.Concat(missing).ToArray();
+        art.InvalidateLookup();EditorUtility.SetDirty(art);AssetDatabase.SaveAssets();
+        CampaignExpansionBuilder.RefreshWeaponIcons();
     }
     public static void BuildInstallAndReview() {Install();VoidToyArtReview.Catalog();VoidToyArtReview.ArenaKit();VoidToyArtReview.Animation();}
 }

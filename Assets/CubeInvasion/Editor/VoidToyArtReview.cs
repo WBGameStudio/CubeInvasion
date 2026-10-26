@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -44,31 +45,40 @@ public static class VoidToyArtReview
     [MenuItem("Cube Invasion/Art/Void Toy/Render Void Toy Model Catalog")]
     public static void Catalog()
     {
-        var keys=new List<string>(VoidToyArtGeometry.Actors);keys.AddRange(VoidToyArtGeometry.Weapons);
+        CatalogSheet(VoidToyArtGeometry.Actors.Take(8).Concat(VoidToyArtGeometry.Weapons).ToList(),4,"Model_Catalog.png");
+        CatalogSheet(new List<string>{"Shielder","Healer","Bomber","Summoner","Phaser","Elite","Gold crate","Jackpot chest","Spike tile","Electric coil","Lava tile","Frozen patch"}.Concat(VoidToyArtGeometry.ExpansionWeapons).ToList(),5,"Expansion_Catalog.png");
+    }
+    static void CatalogSheet(List<string> keys,int columns,string file)
+    {
         var library=AssetDatabase.LoadAssetAtPath<ToyArtLibrary>(VoidToyArtBuilder.SnapshotPath);
-        var scene=EditorSceneManager.NewPreviewScene();
+        var scene=EditorSceneManager.NewPreviewScene();int rows=(keys.Count+columns-1)/columns;
         try
         {
-            var camera=Camera(scene,VoidToyPalette.Floor);camera.orthographicSize=6.2f;camera.aspect=1;camera.transform.position=-camera.transform.forward*30;
+            var camera=Camera(scene,VoidToyPalette.Floor);camera.orthographicSize=Mathf.Max(columns*3.05f,rows*3.7f)*.5f+.4f;camera.aspect=1;camera.transform.position=-camera.transform.forward*30;
             var ink=VoidToyPalette.Ink;
             for(int i=0;i<keys.Count;i++)
             {
                 var obj=Load(keys[i],scene);
                 // Weapons are shown at the fire anchor's in-game length (0.65 / 0.2).
                 if(VoidToyArtGeometry.Weapon(keys[i]))obj.transform.localScale=new Vector3(1,1,3.25f);
+                if(keys[i]=="Frozen patch")obj.transform.localScale=new Vector3(1.9f,.03f,1.9f);
+                if(keys[i]=="Spike tile")Load("Spike tile spikes",scene).transform.SetParent(obj.transform,false);
+                // Hazard tiles shown in their active tint, as InvasionPrototype.HazardTiles paints them.
+                var tint=keys[i]=="Spike tile"?VoidToyPalette.Danger:keys[i]=="Electric coil"?VoidToyPalette.CyanText:VoidToyPalette.Warm;
+                if(VoidToyArtGeometry.Tinted(keys[i])) {var block=new MaterialPropertyBlock();block.SetColor("_Color",tint);obj.GetComponent<Renderer>().SetPropertyBlock(block);}
                 var b=Bounds(obj);
-                // Actors keep their relative gameplay size; weapons are enlarged so their silhouettes read.
-                float fit=VoidToyArtGeometry.Weapon(keys[i])?2f/Mathf.Max(b.size.x,Mathf.Max(b.size.y,b.size.z)):1.55f;obj.transform.localScale*=fit;b=Bounds(obj);
-                var point=camera.transform.right*((i%4-1.5f)*3.05f)+camera.transform.up*((1-i/4)*3.7f+.25f);obj.transform.position+=point-b.center;
+                // Actors keep their relative gameplay size; weapons and props are fitted so their silhouettes read.
+                float fit=!VoidToyArtGeometry.Actor(keys[i])?2f/Mathf.Max(b.size.x,Mathf.Max(b.size.y,b.size.z)):1.55f;obj.transform.localScale*=fit;b=Bounds(obj);
+                var point=camera.transform.right*((i%columns-(columns-1)*.5f)*3.05f)+camera.transform.up*(((rows-1)*.5f-i/columns)*3.7f+.25f);obj.transform.position+=point-b.center;
                 library.TryGet(keys[i],out var model);int triangles=model.mesh.triangles.Length/3;
                 string title=keys[i]=="Armored body"?"SCOUT MK-II":keys[i].ToUpperInvariant();
                 Label(scene,camera,title,point-camera.transform.up*1.45f,56,ink);
                 Label(scene,camera,triangles+" tris"+(model.rig.Length>0?" · "+model.rig.Length+" parts":""),point-camera.transform.up*1.8f,40,VoidToyPalette.Side);
             }
-            var image=Grab(camera,2048,2048);Write(image,Previews+"/Model_Catalog.png");Write(image,"/tmp/cube-voidtoy-catalog.png");Object.DestroyImmediate(image);
+            var image=Grab(camera,2048,2048);Write(image,Previews+"/"+file);Object.DestroyImmediate(image);
         }
         finally {EditorSceneManager.ClosePreviewScene(scene);}
-        Debug.Log("CUBE_VOIDTOY_CATALOG_OK: "+Previews+"/Model_Catalog.png");
+        Debug.Log("CUBE_VOIDTOY_CATALOG_OK: "+Previews+"/"+file);
     }
     // One assembled combat cube in the gameplay layout of InvasionPrototype.Arena(), props tinted the way Shape() tints them.
     [MenuItem("Cube Invasion/Art/Void Toy/Render Void Toy Arena Kit")]
@@ -121,28 +131,29 @@ public static class VoidToyArtReview
     [MenuItem("Cube Invasion/Art/Void Toy/Render Void Toy Animation Review")]
     public static void Animation()
     {
-        var library=Resources.Load<ToyArtLibrary>("ToyArtLibrary");VoidToyArtBuilder.Validate(library);
-        var keys=VoidToyArtGeometry.Actors;var scene=EditorSceneManager.NewPreviewScene();var animators=new List<ToyActorAnimator>();
+        // The snapshot holds every Void Toy actor, including the restyles installed into ExpansionArt.
+        var library=AssetDatabase.LoadAssetAtPath<ToyArtLibrary>(VoidToyArtBuilder.SnapshotPath);VoidToyArtBuilder.Validate(library);
+        var keys=VoidToyArtGeometry.Actors.Concat(VoidToyArtGeometry.ExpansionActors).ToArray();var scene=EditorSceneManager.NewPreviewScene();var animators=new List<ToyActorAnimator>();
         var roots=new List<Transform>();var positions=new List<Vector3>();var blinked=new bool[keys.Length];var moved=new bool[keys.Length];
         var fire=new List<Transform>();var firePositions=new List<Vector3>();
         int[] sheetFrames={12,40,78,104,114,130};string[] sheetTitles={"IDLE","WALK","RUN + FIRE","WINDUP","SLAM","HIT"};
         Texture2D sheet=null;
         try
         {
-            var camera=Camera(scene,VoidToyPalette.Floor);camera.orthographicSize=3.4f;camera.aspect=16f/9;camera.transform.position=-camera.transform.forward*30;
+            var camera=Camera(scene,VoidToyPalette.Floor);camera.orthographicSize=4.3f;camera.aspect=16f/9;camera.transform.position=-camera.transform.forward*30;
             for(int i=0;i<keys.Length;i++)
             {
-                var obj=Load(keys[i],scene);var bounds=Bounds(obj);obj.transform.localScale*=1.4f;bounds=Bounds(obj);
-                var point=camera.transform.right*((i%4-1.5f)*2.9f)+camera.transform.up*((.5f-i/4)*2.9f-.2f);obj.transform.position+=point-bounds.center;
+                var obj=Load(keys[i],scene);var bounds=Bounds(obj);obj.transform.localScale*=1.2f;bounds=Bounds(obj);
+                var point=camera.transform.right*((i%5-2)*2.75f)+camera.transform.up*((1-i/5)*2.55f-.1f);obj.transform.position+=point-bounds.center;
                 roots.Add(obj.transform);positions.Add(obj.transform.position);
                 var animator=obj.GetComponent<ToyActorAnimator>();animator.enabled=false;
                 var accessories=new List<Transform>();foreach(Transform child in obj.transform)accessories.Add(child);
                 library.TryGet(keys[i],out var model);animator.Bind(model,obj.transform);foreach(var child in accessories)animator.Attach(child);
                 var anchor=obj.transform.Find("Pulse pistol");fire.Add(anchor);firePositions.Add(anchor?anchor.localPosition:Vector3.zero);
                 animators.Add(animator);
-                Label(scene,camera,keys[i]=="Armored body"?"SCOUT":keys[i].ToUpperInvariant(),point-camera.transform.up*1.25f,44,VoidToyPalette.Ink);
+                Label(scene,camera,keys[i]=="Armored body"?"SCOUT":keys[i].ToUpperInvariant(),point-camera.transform.up*1.08f,40,VoidToyPalette.Ink);
             }
-            var title=Label(scene,camera,"",camera.transform.up*3f,60,VoidToyPalette.Ink);
+            var title=Label(scene,camera,"",camera.transform.up*3.95f,56,VoidToyPalette.Ink);
             sheet=new Texture2D(640*3,360*2,TextureFormat.RGB24,false);
             for(int frame=0;frame<144;frame++)
             {
@@ -171,7 +182,7 @@ public static class VoidToyArtReview
             }
             for(int i=0;i<keys.Length;i++)if(!blinked[i]||!moved[i])throw new Exception("Missing blink / leg motion: "+keys[i]);
             // Enemy muzzle flashes come from these joints (InvasionPrototype.EnemyMuzzle).
-            foreach(var pair in new[]{new[]{"Sniper","DOTween Reactions/RightHand"},new[]{"Gunner","DOTween Reactions/Head/RightHand"},new[]{"Crusher","DOTween Reactions/RightHand"},new[]{"Bruiser","DOTween Reactions/RightArm/RightHand"}})
+            foreach(var pair in new[]{new[]{"Sniper","DOTween Reactions/RightHand"},new[]{"Gunner","DOTween Reactions/Head/RightHand"},new[]{"Crusher","DOTween Reactions/RightHand"},new[]{"Phaser","DOTween Reactions/RightHand"},new[]{"Bruiser","DOTween Reactions/RightArm/RightHand"}})
                 if(!animators[Array.IndexOf(keys,pair[0])].VisualRoot.Find(pair[1]))throw new Exception("Missing muzzle joint "+pair[0]);
             sheet.Apply();Write(sheet,Previews+"/Animation_Review.png");
             Debug.Log("CUBE_VOIDTOY_ANIMATION_OK: eight actors, blink, stride, recoil, windup, slam, hit; fixed roots, fire anchor and boss armour.");

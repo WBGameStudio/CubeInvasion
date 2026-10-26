@@ -7,6 +7,9 @@ Pusher,960,440,3000,6,Core LeftLeg RightLeg LeftEye RightEye ShieldHand
 Sniper,960,440,3000,7,Core LeftFrontLeg RightFrontLeg LeftBackLeg RightBackLeg RightHand LensEye
 Bruiser,1248,572,3000,8,Core LeftLeg RightLeg Head VisorEye LeftArm RightArm RightHand
 Crusher,2107,1168,6000,9,Core LeftLeg RightLeg LeftArmor RightArmor LeftHand RightHand Head VisorEye
+Shielder,1440,660,3000,5,Core LeftLeg RightLeg ShieldHand VisorEye
+Healer,2119,1044,3000,7,Core LeftLeg RightLeg VisorEye Head LeftArm RightArm
+Bomber,806,704,3000,5,Core LeftLeg RightLeg VisorEye Head
 Pulse pistol,576,264,600,0,
 Twin blasters,864,396,600,0,
 Scatter shot,672,308,600,0,
@@ -30,3 +33,21 @@ Right bridge,384,176,600,0,
 Forward bridge,384,176,600,0,
 Reward beacon,288,132,600,0,
 Reward beacon vertical,288,132,600,0,
+Gold crate,840,452,600,0,
+Jackpot chest,864,396,600,0,
+Spike tile,1344,616,1200,0,
+Spike tile spikes,1728,792,1200,0,
+Electric coil,1074,712,1200,0,
+Lava tile,864,396,1200,0,
+Summoner,1344,616,3000,7,Core LeftLeg RightLeg VisorEye Head LeftArm RightArm
+Phaser,2112,968,3000,5,Core LeftLeg RightLeg VisorEye RightHand
+Elite,1536,704,3000,7,Core LeftLeg RightLeg VisorEye Head LeftArm RightArm
+Expansion PierceRifle,864,396,600,0,
+Expansion RicochetGun,672,308,600,0,
+Expansion ArcLauncher,941,496,600,0,
+Expansion RocketPod,960,440,600,0,
+Expansion FlameSprayer,714,344,600,0,
+Expansion CryoBeam,768,352,600,0,
+Expansion OrbitDrones,960,440,600,0,
+Expansion NovaCannon,606,328,600,0,
+Frozen patch,384,176,1200,0,

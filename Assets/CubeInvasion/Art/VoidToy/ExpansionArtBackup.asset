@@ -1,0 +1,210 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 807608c1d63942e4b44412fb84930395, type: 3}
+  m_Name: ExpansionArtBackup
+  m_EditorClassIdentifier: Assembly-CSharp::CubeInvasion.Prototype.ToyArtLibrary
+  models:
+  - key: Expansion PierceRifle
+    mesh: {fileID: 4300000, guid: 2ed5767d3ebad41b8a49387f5098b5a8, type: 2}
+    lodMesh: {fileID: 0}
+    rig: []
+    trim: {fileID: 0}
+    accent: {fileID: 0}
+    surface: {fileID: 2100000, guid: a773c2fe4f04640ad9937aad47fb771a, type: 2}
+    integratedFace: 0
+    useRuntimeTint: 0
+    mechanicalRig: 0
+  - key: Expansion RicochetGun
+    mesh: {fileID: 4300000, guid: 53c90283a482f4201b74f45d35c058d1, type: 2}
+    lodMesh: {fileID: 0}
+    rig: []
+    trim: {fileID: 0}
+    accent: {fileID: 0}
+    surface: {fileID: 2100000, guid: a773c2fe4f04640ad9937aad47fb771a, type: 2}
+    integratedFace: 0
+    useRuntimeTint: 0
+    mechanicalRig: 0
+  - key: Expansion ArcLauncher
+    mesh: {fileID: 4300000, guid: d3d9151f3b84b4f86bd5a0b886235dd0, type: 2}
+    lodMesh: {fileID: 0}
+    rig: []
+    trim: {fileID: 0}
+    accent: {fileID: 0}
+    surface: {fileID: 2100000, guid: a773c2fe4f04640ad9937aad47fb771a, type: 2}
+    integratedFace: 0
+    useRuntimeTint: 0
+    mechanicalRig: 0
+  - key: Expansion RocketPod
+    mesh: {fileID: 4300000, guid: 84c5bbd7ef5e04259b29dc2ee3816a99, type: 2}
+    lodMesh: {fileID: 0}
+    rig: []
+    trim: {fileID: 0}
+    accent: {fileID: 0}
+    surface: {fileID: 2100000, guid: a773c2fe4f04640ad9937aad47fb771a, type: 2}
+    integratedFace: 0
+    useRuntimeTint: 0
+    mechanicalRig: 0
+  - key: Expansion FlameSprayer
+    mesh: {fileID: 4300000, guid: 30421e055a4384225a2e7a29a49f3411, type: 2}
+    lodMesh: {fileID: 0}
+    rig: []
+    trim: {fileID: 0}
+    accent: {fileID: 0}
+    surface: {fileID: 2100000, guid: a773c2fe4f04640ad9937aad47fb771a, type: 2}
+    integratedFace: 0
+    useRuntimeTint: 0
+    mechanicalRig: 0
+  - key: Expansion CryoBeam
+    mesh: {fileID: 4300000, guid: 5d5d796a57d2845f7881664d256fcfa5, type: 2}
+    lodMesh: {fileID: 0}
+    rig: []
+    trim: {fileID: 0}
+    accent: {fileID: 0}
+    surface: {fileID: 2100000, guid: a773c2fe4f04640ad9937aad47fb771a, type: 2}
+    integratedFace: 0
+    useRuntimeTint: 0
+    mechanicalRig: 0
+  - key: Expansion OrbitDrones
+    mesh: {fileID: 4300000, guid: 521fbb5594e174d6d8076b91313b6ba0, type: 2}
+    lodMesh: {fileID: 0}
+    rig: []
+    trim: {fileID: 0}
+    accent: {fileID: 0}
+    surface: {fileID: 2100000, guid: a773c2fe4f04640ad9937aad47fb771a, type: 2}
+    integratedFace: 0
+    useRuntimeTint: 0
+    mechanicalRig: 0
+  - key: Expansion NovaCannon
+    mesh: {fileID: 4300000, guid: 34f02b645c9334222b694db6227537fb, type: 2}
+    lodMesh: {fileID: 0}
+    rig: []
+    trim: {fileID: 0}
+    accent: {fileID: 0}
+    surface: {fileID: 2100000, guid: a773c2fe4f04640ad9937aad47fb771a, type: 2}
+    integratedFace: 0
+    useRuntimeTint: 0
+    mechanicalRig: 0
+  - key: Summoner
+    mesh: {fileID: 4300000, guid: 3983cbdc281a544788a91010bda30837, type: 2}
+    lodMesh: {fileID: 0}
+    rig:
+    - name: Core
+      parent: 
+      mesh: {fileID: 4300000, guid: 879a6cbb92c0843a099a0d87dbffd494, type: 2}
+      lodMesh: {fileID: 0}
+      pivot: {x: 0, y: -0.71428573, z: 0}
+    - name: LeftArm
+      parent: 
+      mesh: {fileID: 4300000, guid: dae62b869c1654b73aeccfbe0345d65d, type: 2}
+      lodMesh: {fileID: 0}
+      pivot: {x: -0.6428572, y: -0.07142859, z: 0}
+    - name: LeftLeg
+      parent: 
+      mesh: {fileID: 4300000, guid: ff4fdca6800c14454993f331576ff03e, type: 2}
+      lodMesh: {fileID: 0}
+      pivot: {x: -0.27857143, y: -0.5714286, z: 0}
+    - name: RightArm
+      parent: 
+      mesh: {fileID: 4300000, guid: 1becf4bfb26be4172924ab0d4fd0e3d6, type: 2}
+      lodMesh: {fileID: 0}
+      pivot: {x: 0.6428572, y: -0.07142859, z: 0}
+    - name: RightLeg
+      parent: 
+      mesh: {fileID: 4300000, guid: e565d11a88c9343329ff9b6c7a820025, type: 2}
+      lodMesh: {fileID: 0}
+      pivot: {x: 0.27857143, y: -0.5714286, z: 0}
+    trim: {fileID: 0}
+    accent: {fileID: 0}
+    surface: {fileID: 2100000, guid: a773c2fe4f04640ad9937aad47fb771a, type: 2}
+    integratedFace: 1
+    useRuntimeTint: 0
+    mechanicalRig: 1
+  - key: Phaser
+    mesh: {fileID: 4300000, guid: b9dc455ba6ae04a639ce4fecb059d5d6, type: 2}
+    lodMesh: {fileID: 0}
+    rig:
+    - name: Core
+      parent: 
+      mesh: {fileID: 4300000, guid: 3eea3c92c391f419b9da62747d4e0fa2, type: 2}
+      lodMesh: {fileID: 0}
+      pivot: {x: 0, y: -0.71428573, z: 0}
+    - name: LeftArm
+      parent: 
+      mesh: {fileID: 4300000, guid: 5f95cfb2afd064e13b84ab2bbaa99661, type: 2}
+      lodMesh: {fileID: 0}
+      pivot: {x: -0.6428572, y: -0.07142859, z: 0}
+    - name: LeftLeg
+      parent: 
+      mesh: {fileID: 4300000, guid: 697bd858d98164db8b5f3af46d24fa0c, type: 2}
+      lodMesh: {fileID: 0}
+      pivot: {x: -0.27857143, y: -0.5714286, z: 0}
+    - name: RightArm
+      parent: 
+      mesh: {fileID: 4300000, guid: 8deaf3f4fc449482da936de037ac2d98, type: 2}
+      lodMesh: {fileID: 0}
+      pivot: {x: 0.6428572, y: -0.07142859, z: 0}
+    - name: RightLeg
+      parent: 
+      mesh: {fileID: 4300000, guid: cefa6285fc9ac4e1d88a4e0fd8544348, type: 2}
+      lodMesh: {fileID: 0}
+      pivot: {x: 0.27857143, y: -0.5714286, z: 0}
+    trim: {fileID: 0}
+    accent: {fileID: 0}
+    surface: {fileID: 2100000, guid: a773c2fe4f04640ad9937aad47fb771a, type: 2}
+    integratedFace: 1
+    useRuntimeTint: 0
+    mechanicalRig: 1
+  - key: Elite
+    mesh: {fileID: 4300000, guid: 2c4730a9bfec04abaa1a385892538df7, type: 2}
+    lodMesh: {fileID: 0}
+    rig:
+    - name: Core
+      parent: 
+      mesh: {fileID: 4300000, guid: b756fcab1cd514026a70eede53c3e0a4, type: 2}
+      lodMesh: {fileID: 0}
+      pivot: {x: 0, y: -0.71428573, z: 0}
+    - name: LeftArm
+      parent: 
+      mesh: {fileID: 4300000, guid: 77424bfc0227e49bb9a71270455fa4a1, type: 2}
+      lodMesh: {fileID: 0}
+      pivot: {x: -0.6428572, y: -0.07142859, z: 0}
+    - name: LeftLeg
+      parent: 
+      mesh: {fileID: 4300000, guid: 48f83ac79b8b848ea9876c70f70e0798, type: 2}
+      lodMesh: {fileID: 0}
+      pivot: {x: -0.27857143, y: -0.5714286, z: 0}
+    - name: RightArm
+      parent: 
+      mesh: {fileID: 4300000, guid: ab9800db649a3482f8a27218ffc5e418, type: 2}
+      lodMesh: {fileID: 0}
+      pivot: {x: 0.6428572, y: -0.07142859, z: 0}
+    - name: RightLeg
+      parent: 
+      mesh: {fileID: 4300000, guid: 5275e53d2a1164f63a17428a4cc0a9e5, type: 2}
+      lodMesh: {fileID: 0}
+      pivot: {x: 0.27857143, y: -0.5714286, z: 0}
+    trim: {fileID: 0}
+    accent: {fileID: 0}
+    surface: {fileID: 2100000, guid: a773c2fe4f04640ad9937aad47fb771a, type: 2}
+    integratedFace: 1
+    useRuntimeTint: 0
+    mechanicalRig: 1
+  - key: Frozen patch
+    mesh: {fileID: 4300000, guid: 4f560f48f556a43f0b95438025ecbefe, type: 2}
+    lodMesh: {fileID: 0}
+    rig: []
+    trim: {fileID: 0}
+    accent: {fileID: 0}
+    surface: {fileID: 2100000, guid: a773c2fe4f04640ad9937aad47fb771a, type: 2}
+    integratedFace: 0
+    useRuntimeTint: 0
+    mechanicalRig: 0
