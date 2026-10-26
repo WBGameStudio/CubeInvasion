@@ -18,7 +18,7 @@ public static class BranchEconomyCheck
         string dir=Path.Combine(Path.GetTempPath(),"cube-branch-economy-"+Guid.NewGuid().ToString("N"));Directory.CreateDirectory(dir);
         SessionState.SetString(Key+"env",Environment.GetEnvironmentVariable(Env)??"");SessionState.SetString(Key+"dir",dir);Environment.SetEnvironmentVariable(Env,Path.Combine(dir,"profile.json"));
         var rules=AssetDatabase.LoadAssetAtPath<P3MetaSettings>("Assets/CubeInvasion/Resources/P3MetaSettings.asset");new MetaProfileStore(Path.Combine(dir,"profile.json"),rules,7,0);
-        EditorSceneManager.OpenScene("Assets/CubeInvasion/CubeInvasionPrototype.unity");SessionState.SetBool(Key,true);EditorApplication.isPlaying=true;
+        EditorSceneManager.OpenScene("Assets/CubeInvasion/CubeInvasionPrototype.unity");ExpansionTestFixture.Legacy();SessionState.SetBool(Key,true);EditorApplication.isPlaying=true;
     }
     static object Get(string n)=>typeof(InvasionPrototype).GetField(n,F).GetValue(game);
     static void Set(string n,object v)=>typeof(InvasionPrototype).GetField(n,F).SetValue(game,v);

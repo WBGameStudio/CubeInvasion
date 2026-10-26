@@ -7,7 +7,7 @@ namespace CubeInvasion.Prototype
         void BuildHome(P2ContentCatalog catalog)
         {
             var root=pages[0].transform;
-            var biome=Label("Biome",root,"BİYOM 1 · NEON YARD",17,new Vector2(20,-128),new Vector2(-20,-102),VoidToyPalette.CyanText);biome.alignment=TextAnchor.MiddleCenter;
+            homeBiome=Label("Biome",root,"BİYOM 1 · NEON YARD",17,new Vector2(20,-128),new Vector2(-20,-102),VoidToyPalette.CyanText);homeBiome.alignment=TextAnchor.MiddleCenter;
             BuildStrip(root,catalog);
             var progress=Panel("Campaign progress",root,new Vector2(150,-226),new Vector2(-150,-216),line);
             var track=Panel("Progress track",progress,new Vector2(0,-10),new Vector2(0,0),ink);
@@ -53,7 +53,7 @@ namespace CubeInvasion.Prototype
         }
         void BuildRoad(P2ContentCatalog catalog)
         {
-            var root=pages[1].transform;Heading(root,"BÖLÜM YOLU","Bir düğüme dokun, görevini seç.");BuildMap(root,catalog,false);
+            var root=pages[1].transform;Heading(root,"Bölüm yolu","Bir düğüme dokun, görevini seç.");BuildMap(root,catalog,false);
             var info=Panel("Selected mission",root,new Vector2(26,-721),new Vector2(-26,-586),panel);
             roadTitle=Label("Selected mission title",info,"",26,new Vector2(18,-46),new Vector2(-18,-8),gold);
             roadDescription=Label("Selected mission description",info,"",16,new Vector2(18,-126),new Vector2(-18,-49),white);
@@ -98,20 +98,29 @@ namespace CubeInvasion.Prototype
             weaponTitle=Label("Weapon title",detail,"",28,new Vector2(230,-62),new Vector2(-14,-22),white);
             weaponDescription=Label("Weapon description",detail,"",16,new Vector2(230,-150),new Vector2(-14,-66),muted);
             weaponStats=Label("Weapon stats",detail,"",16,new Vector2(230,-224),new Vector2(-14,-156),VoidToyPalette.CyanText);
-            weaponUpgrades=new Button[3];weaponUpgradeInfo=new Text[3];
-            for(int i=0;i<3;i++)
+            bool expanded=catalog.weapons.Length>4;int upgradeCount=expanded?5:3;
+            if(expanded) {Top((RectTransform)detail,new Vector2(16,-350),new Vector2(-16,-160));Top((RectTransform)pedestal,new Vector2(16,-178),new Vector2(214,-12));Top(weaponDescription.rectTransform,new Vector2(230,-122),new Vector2(-14,-66));Top(weaponStats.rectTransform,new Vector2(230,-178),new Vector2(-14,-126));}
+            weaponUpgrades=new Button[upgradeCount];weaponUpgradeInfo=new Text[upgradeCount];
+            for(int i=0;i<upgradeCount;i++)
             {
-                float y=-416-i*80;var row=Panel("Upgrade row "+i,root,new Vector2(16,y-70),new Vector2(-16,y),panel);
-                weaponUpgradeInfo[i]=Label("Upgrade info",row,"",18,new Vector2(18,-66),new Vector2(-140,-4),white);
-                var price=Button("Weapon upgrade "+i,row,"",new Vector2(380,-60),new Vector2(-10,-10),24,true);
+                float y=expanded?-362-i*56:-416-i*80;var row=Panel("Upgrade row "+i,root,new Vector2(16,y-(expanded?50:70)),new Vector2(-16,y),panel);
+                weaponUpgradeInfo[i]=Label("Upgrade info",row,"",18,new Vector2(18,expanded?-48:-66),new Vector2(-140,-4),white);
+                var price=Button("Weapon upgrade "+i,row,"",new Vector2(380,expanded?-44:-60),new Vector2(-10,-6),24,true);
                 price.GetComponent<Image>().color=gold;weaponUpgrades[i]=price;
             }
             buyWeapon=Button("Buy weapon",root,"",new Vector2(16,-500),new Vector2(-16,-416),26,true);buyWeapon.GetComponent<Image>().color=gold;
             var collection=Label("Collection",root,"KOLEKSİYON",15,new Vector2(20,-674),new Vector2(-20,-652),muted);
-            weaponCards=new Button[4];weaponNames=new Text[4];weaponTags=new Text[4];weaponPictures=new Image[4];
-            for(int i=0;i<4;i++)
+            int total=catalog.weapons.Length;weaponCards=new Button[total];weaponNames=new Text[total];weaponTags=new Text[total];weaponPictures=new Image[total];
+            Transform collectionRoot=root;
+            if(expanded)
             {
-                float x=16+i*128;var card=Button("Weapon card "+i,root,"",new Vector2(x,-804),new Vector2(x+120,-678),14);weaponCards[i]=card;
+                var viewport=Rect("Weapon collection viewport",root,new Vector2(0,1),new Vector2(1,1),new Vector2(16,-812),new Vector2(-16,-678));viewport.gameObject.AddComponent<RectMask2D>();
+                var scroll=viewport.gameObject.AddComponent<ScrollRect>();scroll.horizontal=true;scroll.vertical=false;scroll.viewport=viewport;scroll.movementType=ScrollRect.MovementType.Clamped;
+                var row=Rect("Weapon collection",viewport,new Vector2(0,0),new Vector2(0,1),Vector2.zero,Vector2.zero);row.pivot=new Vector2(0,.5f);row.sizeDelta=new Vector2(total*128,0);scroll.content=row;collectionRoot=row;
+            }
+            for(int i=0;i<total;i++)
+            {
+                float x=(expanded?0:16)+i*128;var card=Button("Weapon card "+i,collectionRoot,"",new Vector2(x,expanded?-126:-804),new Vector2(x+120,expanded?0:-678),14);weaponCards[i]=card;
                 weaponPictures[i]=Icon("Weapon model",card.transform,art.weapons[i],new Vector2(8,-72),new Vector2(-8,-6));
                 weaponNames[i]=Label("Weapon name",card.transform,catalog.weapons[i].title,14,new Vector2(3,-98),new Vector2(-3,-74),white);weaponNames[i].alignment=TextAnchor.MiddleCenter;
                 weaponTags[i]=Label("Weapon status",card.transform,"",13,new Vector2(2,-122),new Vector2(-2,-98),gold);weaponTags[i].alignment=TextAnchor.MiddleCenter;
@@ -119,26 +128,26 @@ namespace CubeInvasion.Prototype
         }
         void BuildPilot()
         {
-            var root=pages[3].transform;Heading(root,"SCOUT GELİŞTİR","Her geliştirme, yeni bir avantaj.");
+            var root=pages[3].transform;Heading(root,"Pilot","Her geliştirme oyunda gerçek bir avantaj.");
             var hero=Panel("Scout card",root,new Vector2(20,-442),new Vector2(-20,-177),panel);
             Icon("Scout portrait",hero,art.scout,new Vector2(30,-246),new Vector2(255,-5));
-            Label("Scout name",hero,"SCOUT",35,new Vector2(270,-72),new Vector2(-8,-20),gold);
-            Label("Scout role",hero,"KÜP AVCISI",18,new Vector2(270,-106),new Vector2(-8,-72),white);
-            pilotStats=Label("Pilot stats",hero,"",19,new Vector2(270,-236),new Vector2(-12,-122),white);
+            Label("Scout name",hero,"Scout Mk-II",30,new Vector2(270,-68),new Vector2(-8,-20),white);
+            Label("Scout role",hero,"Küp avcısı",17,new Vector2(270,-100),new Vector2(-8,-70),muted);
+            pilotStats=Label("Pilot stats",hero,"",19,new Vector2(270,-236),new Vector2(-12,-122),VoidToyPalette.CyanText);
             characterNames=new Text[3];characterLevels=new Text[3];characterUpgrades=new Button[3];string[] names={"YAŞAM ÇEKİRDEĞİ","HAREKET SİSTEMİ","TOPLAMA ALANI"};string[] badges={"CAN","HIZ","ALAN"};
             for(int i=0;i<3;i++)
             {
                 float y=-466-i*117;var card=Panel("Character upgrade card "+i,root,new Vector2(20,y-105),new Vector2(-20,y),panel);
-                var badge=Panel("Upgrade badge",card,new Vector2(10,-88),new Vector2(77,-16),i==0?new Color(.88f,.2f,.3f):i==1?new Color(.96f,.61f,.05f):new Color(.45f,.3f,.86f));
-                var symbol=Label("Upgrade symbol",badge,badges[i],18,Vector2.zero,Vector2.zero,white);Stretch(symbol.rectTransform);symbol.alignment=TextAnchor.MiddleCenter;
-                characterNames[i]=Label("Upgrade name",card,names[i],18,new Vector2(87,-38),new Vector2(360,-8),gold);
-                characterLevels[i]=Label("Upgrade levels",card,"",16,new Vector2(87,-96),new Vector2(360,-40),white);
-                characterUpgrades[i]=Button("Buy character upgrade "+i,card,"",new Vector2(366,-93),new Vector2(-9,-12),18,true);
+                var badge=Panel("Upgrade badge",card,new Vector2(10,-88),new Vector2(77,-16),i==0?VoidToyPalette.Health:i==1?VoidToyPalette.Cobalt:gold);
+                var symbol=Label("Upgrade symbol",badge,badges[i],18,Vector2.zero,Vector2.zero,i==2?VoidToyPalette.Ink:white);Stretch(symbol.rectTransform);symbol.alignment=TextAnchor.MiddleCenter;
+                characterNames[i]=Label("Upgrade name",card,names[i],18,new Vector2(87,-38),new Vector2(360,-8),white);
+                characterLevels[i]=Label("Upgrade levels",card,"",16,new Vector2(87,-96),new Vector2(360,-40),muted);
+                characterUpgrades[i]=Button("Buy character upgrade "+i,card,"",new Vector2(380,-80),new Vector2(-10,-24),24,true);characterUpgrades[i].GetComponent<Image>().color=gold;
             }
         }
         void BuildSettings()
         {
-            var root=pages[4].transform;Heading(root,"AYARLAR","Oyun senin ritminde.");
+            var root=pages[4].transform;Heading(root,"Ayarlar","Ses, titreşim ve kare hızı.");
             var sound=Panel("Audio settings",root,new Vector2(24,-447),new Vector2(-24,-183),panel);
             Icon("Audio icon",sound,art.settings,new Vector2(12,-53),new Vector2(63,0));
             Label("Sound section",sound,"SES VE MÜZİK",23,new Vector2(75,-46),new Vector2(-20,-6),gold);
@@ -148,7 +157,11 @@ namespace CubeInvasion.Prototype
             frameToggle=Toggle("Frame rate",root,"60 FPS","Kapalı: pil dostu 30 FPS",-692);
         }
         void Heading(Transform parent,string title,string subtitle)
-        { var heading=Label("Page title",parent,title,31,new Vector2(24,-137),new Vector2(-24,-96),gold);heading.alignment=TextAnchor.MiddleCenter;var sub=Label("Page subtitle",parent,subtitle,16,new Vector2(24,-169),new Vector2(-24,-138),muted);sub.alignment=TextAnchor.MiddleCenter; }
+        {
+            // Same heading as the Weapons page: left-aligned white title, muted one-line hint under it.
+            var heading=Label("Page title",parent,title,32,new Vector2(20,-146),new Vector2(-20,-104),white);heading.alignment=TextAnchor.MiddleLeft;
+            var sub=Label("Page subtitle",parent,subtitle,15,new Vector2(21,-172),new Vector2(-20,-148),muted);sub.alignment=TextAnchor.MiddleLeft;
+        }
         Slider Slider(string name,Transform parent,string title,float y,out Text value)
         {
             Label(name+" title",parent,title,22,new Vector2(22,y-32),new Vector2(260,y),white);

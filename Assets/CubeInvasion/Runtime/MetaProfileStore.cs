@@ -9,9 +9,9 @@ namespace CubeInvasion.Prototype
     [Serializable] public sealed class WeaponProgress
     {
         public bool owned;
-        public int damage, fireRate, range;
-        public int Level(WeaponUpgrade kind)=>kind==WeaponUpgrade.Damage?damage:kind==WeaponUpgrade.FireRate?fireRate:range;
-        public void Add(WeaponUpgrade kind) { if(kind==WeaponUpgrade.Damage)damage++;else if(kind==WeaponUpgrade.FireRate)fireRate++;else range++; }
+        public int damage, fireRate, range,special,cooldown;
+        public int Level(WeaponUpgrade kind)=>kind==WeaponUpgrade.Damage?damage:kind==WeaponUpgrade.FireRate?fireRate:kind==WeaponUpgrade.Special?special:kind==WeaponUpgrade.Cooldown?cooldown:range;
+        public void Add(WeaponUpgrade kind) { if(kind==WeaponUpgrade.Damage)damage++;else if(kind==WeaponUpgrade.FireRate)fireRate++;else if(kind==WeaponUpgrade.Special)special++;else if(kind==WeaponUpgrade.Cooldown)cooldown++;else range++; }
     }
     [Serializable] public sealed class RunRecord
     {
@@ -78,7 +78,7 @@ namespace CubeInvasion.Prototype
             if(value.selectedWeapon<0||value.selectedWeapon>=value.weapons.Length||value.selectedMission<0||value.selectedMission>=missionCount||value.highestMission<0||value.highestMission>=missionCount)return false;
             if(value.selectedMission>value.highestMission||value.weapons[value.selectedWeapon]==null||!value.weapons[value.selectedWeapon].owned||value.weapons[0]==null||!value.weapons[0].owned)return false;
             foreach(var weapon in value.weapons)
-                if(weapon==null||weapon.damage<0||weapon.damage>settings.damageCap||weapon.fireRate<0||weapon.fireRate>settings.fireRateCap||weapon.range<0||weapon.range>settings.rangeCap||(!weapon.owned&&(weapon.damage+weapon.fireRate+weapon.range)>0))return false;
+                if(weapon==null||weapon.damage<0||weapon.damage>settings.damageCap||weapon.fireRate<0||weapon.fireRate>settings.fireRateCap||weapon.range<0||weapon.range>settings.rangeCap||weapon.special<0||weapon.special>3||weapon.cooldown<0||weapon.cooldown>5||(!weapon.owned&&(weapon.damage+weapon.fireRate+weapon.range+weapon.special+weapon.cooldown)>0))return false;
             return (value.run==null||ValidRun(value.run))&&(value.lastResult==null||ValidRun(value.lastResult));
         }
         bool ValidRun(RunRecord run)=>!string.IsNullOrEmpty(run.id)&&run.mission>=0&&run.mission<missionCount&&run.weapon>=0&&run.weapon<settings.unlockPrices.Length&&run.cubes>=0&&run.gold>=0&&run.kills>=0&&!float.IsNaN(run.seconds)&&!float.IsInfinity(run.seconds)&&run.seconds>=0;
@@ -95,9 +95,21 @@ namespace CubeInvasion.Prototype
                 if(record==null||record.format!=1||string.IsNullOrEmpty(record.payload)||record.checksum!=Hash(record.payload))return false;
                 profile=Decode(record.payload);
                 if(profile!=null&&profile.version>2) { incompatible=true;return false; }
+                ExpandLegacyCollections(profile);
                 return Valid(profile);
             }
             catch(Exception e) when(e is IOException||e is UnauthorizedAccessException||e is ArgumentException) { return false; }
+        }
+        void ExpandLegacyCollections(MetaProfile value)
+        {
+            // Only the known 4-weapon/7-mission release may grow; never truncate a future save.
+            if(value==null||value.version!=2||value.weapons==null||value.completed==null)return;
+            if(settings.unlockPrices.Length==12&&missionCount==60&&value.weapons.Length==4&&value.completed.Length==7)
+            {
+                Array.Resize(ref value.weapons,12);for(int i=4;i<12;i++)value.weapons[i]=new WeaponProgress();
+                bool finishedLegacyCampaign=value.highestMission==6&&value.completed[6];
+                Array.Resize(ref value.completed,60);if(finishedLegacyCampaign)value.highestMission=7;
+            }
         }
         bool Persist(MetaProfile profile)
         {
@@ -163,7 +175,7 @@ namespace CubeInvasion.Prototype
             if(!IsOwned(weapon)) { Message="Önce silahı aç.";return false; }
             int level=Data.weapons[weapon].Level(kind);
             if(level>=settings.Cap(kind)) { Message="Maksimum seviyede.";return false; }
-            int cost=settings.UpgradeCost(kind,level);
+            int cost=settings.unlockPrices.Length==12&&weapon==0&&kind==WeaponUpgrade.Damage&&level==0&&Data.highestMission>=2?0:settings.UpgradeCost(kind,level);
             if(Data.gold<cost) { Message=$"{cost-Data.gold} altın daha gerekli.";return false; }
             var next=Copy();next.gold-=cost;next.weapons[weapon].Add(kind);return Commit(next);
         }

@@ -83,6 +83,7 @@ namespace CubeInvasion.Prototype
                     case 6:message="KIRMIZI İŞARETLERDEN KAÇ · BOSS ÜÇ FAZLI";break;
                 }
             }
+            if((HasCrusherObjectives||(HasGoldRushVariants&&GoldVariant!=GoldRushVariant.CoinSprint))&&phase==Phase.Combat)message=""; // The existing objective pill carries the phase instruction.
             if(onboardingHint.text!=message)onboardingHint.text=message;
             if(onboardingHint.gameObject.activeSelf!=(message.Length>0))onboardingHint.gameObject.SetActive(message.Length>0);
         }

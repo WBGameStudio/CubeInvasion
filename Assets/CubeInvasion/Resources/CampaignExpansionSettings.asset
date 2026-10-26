@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 674b51093c9db4aabbfe8d71fa0f0d47, type: 3}
+  m_Name: CampaignExpansionSettings
+  m_EditorClassIdentifier: Assembly-CSharp::CubeInvasion.Prototype.CampaignExpansionSettings
+  enabled: 1
+  seed: 2601026
+  catalog: {fileID: 11400000, guid: f14b5c90962034e6392ed8fc50e07df9, type: 2}
+  unlockPrices: 00000000960000005e01000058020000520300007e040000dc0500006c070000fc080000f00a0000480d000068100000

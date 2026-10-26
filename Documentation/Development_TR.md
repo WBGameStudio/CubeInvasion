@@ -101,3 +101,23 @@ Verilen örneklere göre ana bölüm yolu, kaynak şeridi, ikon dock, silah/pilo
 ## GDD v1.1 — Dallanan rota sistemi
 
 Sekiz ödül, seçilen kapıya bağlı karşılaşma, risk/tehdit önizlemesi, süreli güçlendirmeler, koşullu altın ve yerel rota olayları eklendi. Seçim yürüyerek yapılır; sahne, karakter ve kamera sürekliliği korunur. Tasarım ayarları, doğrulama ve kapsam sınırları: [Dallanan küpler](Branch_Routes_TR.md).
+
+## GDD — Crusher faz hedefleri
+
+Void Toy görsel seti korunarak iki ayrı zırh hedefi, üç desteğin koruduğu boss ve açık çekirdek fazı bağlandı. Otomatik hedefleme, itme konisi, ortak can bütçesi ve rota sürekliliği güncellendi. [Mekanikler, kurulum ve doğrulama](Crusher_Phases_TR.md).
+
+## GDD — Gold Rush varyantları
+
+Mevcut Coin Sprint'e altı kasa kırma, beş altın taşıyıcısı ve üç anahtarlı Jackpot hedefleri eklendi. Son iki varyant kapılara ayrı ayrı bağlandı; otomatik hedefleme kasaları destekler. [Kurulum, ekonomi ve kontroller](GoldRush_Variants_TR.md).
+
+## GDD — Bombacı karşılaşmaları
+
+Son Hat'ın iki karşılaşmasına Bombacı eklendi. Ölüm sonrası uyarılı patlama, zincirleme hasar, dört silahla isabet ve hedef tamamlanınca güvenli temizlik bağlandı. Görsel/katalog/kayıt düzeni korunur. [Davranış, ayarlar ve kontroller](Bomber_Encounters_TR.md).
+
+## GDD — Kalkanlı ve Tamirci
+
+Son Hat'ın son iki küpüne yönlü kalkan ve kesilebilir iyileştirme eklendi. Mevcut görseller, kamera kurulumu ve Bombacı küpleri korundu. [Davranış, süre bütçesi ve kontroller](Support_Enemies_TR.md).
+
+## GDD — 60 bölüm / tam kampanya genişletmesi
+
+60 bölüm, 12 silah, Summoner/Phaser/davranış birleşimli Elite, beş ek boss, çevresel tehlikeler ve özel bölüm kuralları eklendi. Eski yedi görev ve kayıt indeksleri korunur. Yeni katalog, sanat, ses, URP kurulumu, doğrulamalar ve saha testi sınırları: [Genişletilmiş kampanya](Full_Campaign_TR.md).

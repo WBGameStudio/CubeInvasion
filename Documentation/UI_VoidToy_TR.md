@@ -31,3 +31,19 @@ Stil her `Initialize` çağrısında tekrar uygulanır ve idempotenttir; builder
 - Sayaç ve sayılar için tasarımdaki Chakra Petch eklenmedi; tüm metin mevcut Cube Rounded (Fredoka) ile kalır.
 - Canvas'taki yeni 3D kadro (Scout Mk-II, grafit istilacı silüetleri, küp kiti varyantları) bu adımda modellenmedi; yalnız mevcut modellerin renkleri değişti.
 - Ana üs/Silahlar sayfalarının yerleşimi korunarak yeniden renklendirildi; canvas'taki yeni ana üs kompozisyonu (hero küp vitrini, 10'lu bölüm şeridi) ayrı iş.
+
+## Genişletilmiş kampanya düzeltmeleri — 27 Ekim 2026
+
+Analiz ve tasarımlar canvas'ın "Analiz ve düzeltmeler" satırındadır (12–16).
+
+- **60 bölümde ana üs şeridi:** artık bütün görevleri tek satıra sığdırmıyor; yalnız aktif biyomun 10 bölümünü gösteriyor, sondaki boss karosu daha büyük. Etiket `BİYOM 3 · CIRCUIT ABYSS · 21–30` biçiminde. Kısa katalogda (7 görev) hepsi görünür. `FullCampaignCheck` 10 karonun göründüğünü ve `Home60` görüntüsünü kontrol eder.
+- **Hedef etiketi:** uzun boss/Gold Rush hedefleri tek satıra sığacak kadar küçülür.
+- **Boss barı:** hedef etiketinin hemen altında, 312×24 ince bar; arenanın ve kapıların üstüne binmez.
+- **Kapı tabelaları:** rotalı görevlerde savaş sırasında gizli; rota açılınca oyun fontuyla görünür.
+- **Altın:** her yerde Türkçe binlik ayırıcı (`30.645`).
+- **Duraklatma:** tam ekran karartma + kart: büyük DEVAM, ses aç/kapat (savaş ekranından kaldırılan SES burada), küp ve kalan süre. Yalnız savaşta açılır.
+- **Sayfa başlıkları:** Yol, Pilot, Ayarlar da Silahlar gibi solda beyaz başlık. Pilot geliştirmeleri altın fiyat butonu; rozetler can turkuaz, hız kobalt, alan altın.
+- **Biyom kenar ışığı:** küp kenarı biyomun rengini alır (Lava turuncu, Void mor…). Zemin/yan yüz Void Toy materyali renk almadığı için değişmez.
+- **Niyet rengi:** Tamirci ve Summoner mor, Bombacı turuncu (önceden pembe).
+
+3D tarafı (Kalkanlı/Tamirci/Bombacı modelleri, tehlike karoları, altın kasası/jackpot sandığı, genişleme silahları ve Summoner/Phaser/Elite restyle) [VoidToy_Art_TR.md](VoidToy_Art_TR.md) içindedir. Birleştirmeden sonra `VoidToyArtBuilder.Reinstall` çalıştırılmalı; `CampaignExpansionBuilder.RefreshActors` eski Summoner/Phaser/Elite'i geri getirir, ardından Reinstall tekrar gerekir.

@@ -1,0 +1,81 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b548c936875c47e098ab41bc7644fd6, type: 3}
+  m_Name: CampaignPresentation
+  m_EditorClassIdentifier: Assembly-CSharp::CubeInvasion.Prototype.CampaignPresentation
+  art: {fileID: 11400000, guid: 3412e2aa1551947d0b0396ef59be4be8, type: 2}
+  weapons:
+  - {fileID: 21300000, guid: 4d9c3683e5c894426b2963af0316205d, type: 3}
+  - {fileID: 21300000, guid: a2d493a3a15544bb9bf1f635e79be431, type: 3}
+  - {fileID: 21300000, guid: 12494f37133d54c5ca2a180aa25ef51e, type: 3}
+  - {fileID: 21300000, guid: 9c7db5bc993034eccb1d2de0c3c2242f, type: 3}
+  - {fileID: 21300000, guid: 4d6bb278de1fe4f5a8d0fce9f6901779, type: 3}
+  - {fileID: 21300000, guid: c80d14234891f4666b1e99973e205985, type: 3}
+  - {fileID: 21300000, guid: 8dfcff6d4d8ad46adb68417075c00958, type: 3}
+  - {fileID: 21300000, guid: e846c1a10e28c48e7913abdc5f1515d1, type: 3}
+  biomeMusic:
+  - {fileID: 8300000, guid: 2ddb23494a8964d3d88aad08b1b91360, type: 3}
+  - {fileID: 8300000, guid: e14eeff8f296d45b89750482420e5cf0, type: 3}
+  - {fileID: 8300000, guid: 114a46508be0f4b65b30b7b28df90ee4, type: 3}
+  - {fileID: 8300000, guid: d1d69d2781fc045c9b038daf563a01c1, type: 3}
+  - {fileID: 8300000, guid: 2c41db7355be04c679042f2c74be218e, type: 3}
+  - {fileID: 8300000, guid: 25ae9a8ee1d5a4b39ab4c887b6a73266, type: 3}
+  - {fileID: 8300000, guid: 4a05fb4961c71415390440eb5ec8aba6, type: 3}
+  sounds:
+  - cue: 19
+    variants:
+    - {fileID: 8300000, guid: f36d771e6f9644cc7937b64b1e10458f, type: 3}
+    - {fileID: 8300000, guid: fffa6348aa2594ea8aa1f268015e44c8, type: 3}
+  - cue: 20
+    variants:
+    - {fileID: 8300000, guid: dc33d1eacef2b4ac8ace3085f34ee14f, type: 3}
+    - {fileID: 8300000, guid: 6e6bb9d8735664f858b099f374b5d9c1, type: 3}
+  - cue: 21
+    variants:
+    - {fileID: 8300000, guid: e27249be770fe43ec83c9098b508d852, type: 3}
+    - {fileID: 8300000, guid: 7d76f8d8691374c069ca5d2242d81d73, type: 3}
+  - cue: 22
+    variants:
+    - {fileID: 8300000, guid: f497f081b54964b95a43f3d29c5b0564, type: 3}
+    - {fileID: 8300000, guid: 92255e5573ae74083bddfe88281a64b4, type: 3}
+  - cue: 23
+    variants:
+    - {fileID: 8300000, guid: e19a06fc5d2e24954b100030e857acb6, type: 3}
+    - {fileID: 8300000, guid: b2ac44d0eb7d64c558059df333c67ce5, type: 3}
+  - cue: 24
+    variants:
+    - {fileID: 8300000, guid: 60ac1164339be40edacf515ba2f64d53, type: 3}
+    - {fileID: 8300000, guid: a42387f46985e406ab5ce592aebbbf89, type: 3}
+  - cue: 25
+    variants:
+    - {fileID: 8300000, guid: 1fd24d3a6e5854e338d3108bc30b5db5, type: 3}
+    - {fileID: 8300000, guid: d2c461162c2d94b089c705ec0a7aa1ab, type: 3}
+  - cue: 26
+    variants:
+    - {fileID: 8300000, guid: c0d3f0d4b6dd24b019dc5b884adbfdc0, type: 3}
+    - {fileID: 8300000, guid: 0605055e8c5524436a7b94ac56bb4651, type: 3}
+  - cue: 27
+    variants:
+    - {fileID: 8300000, guid: 6224cec42b9a64f12aedc9ed09663c53, type: 3}
+    - {fileID: 8300000, guid: db980cee789954f18b44b1998f482316, type: 3}
+  - cue: 28
+    variants:
+    - {fileID: 8300000, guid: 9eaacb3e74a2547f5b27f288dffe66b8, type: 3}
+    - {fileID: 8300000, guid: c7cb6bc7e071340b88b285954f376fd6, type: 3}
+  - cue: 29
+    variants:
+    - {fileID: 8300000, guid: 6dca82bafcc0840c0b09df67c3a14451, type: 3}
+    - {fileID: 8300000, guid: ee761410ce34f450bbd129ee9c80d5be, type: 3}
+  - cue: 30
+    variants:
+    - {fileID: 8300000, guid: a31b993fbbae34994960deed8b204fd9, type: 3}
+    - {fileID: 8300000, guid: 958d30ecf7ae44024a6be5531912003a, type: 3}

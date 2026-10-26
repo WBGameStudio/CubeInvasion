@@ -17,7 +17,7 @@ public static class BranchRoutesCheck
     public static void Run()
     {
         SessionState.SetBool(Key+"exists",PlayerPrefs.HasKey("CI.Wallet"));SessionState.SetInt(Key+"wallet",PlayerPrefs.GetInt("CI.Wallet"));
-        EditorSceneManager.OpenScene("Assets/CubeInvasion/CubeInvasionPrototype.unity");var data=new SerializedObject(Object.FindAnyObjectByType<InvasionPrototype>());data.FindProperty("metaSettings").objectReferenceValue=null;data.ApplyModifiedPropertiesWithoutUndo();
+        EditorSceneManager.OpenScene("Assets/CubeInvasion/CubeInvasionPrototype.unity");ExpansionTestFixture.Legacy();var data=new SerializedObject(Object.FindAnyObjectByType<InvasionPrototype>());data.FindProperty("metaSettings").objectReferenceValue=null;data.ApplyModifiedPropertiesWithoutUndo();
         SessionState.SetBool(Key,true);EditorApplication.isPlaying=true;
     }
     static object Get(string n)=>typeof(InvasionPrototype).GetField(n,F).GetValue(game);

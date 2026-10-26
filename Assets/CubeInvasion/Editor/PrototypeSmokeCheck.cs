@@ -30,7 +30,7 @@ public static class PrototypeSmokeCheck
     {
         walletExisted=PlayerPrefs.HasKey("CI.Wallet"); savedWallet=PlayerPrefs.GetInt("CI.Wallet",0);
         SessionState.SetInt("CI.Smoke.Wallet",savedWallet); SessionState.SetBool("CI.Smoke.WalletExisted",walletExisted);
-        EditorSceneManager.OpenScene("Assets/CubeInvasion/CubeInvasionPrototype.unity");
+        EditorSceneManager.OpenScene("Assets/CubeInvasion/CubeInvasionPrototype.unity");ExpansionTestFixture.Legacy();
         var runtime=Object.FindAnyObjectByType<InvasionPrototype>();
         var setup=new SerializedObject(runtime);setup.FindProperty("content").objectReferenceValue=null;setup.ApplyModifiedPropertiesWithoutUndo();
         SessionState.SetBool(Key,true); EditorApplication.isPlaying=true;

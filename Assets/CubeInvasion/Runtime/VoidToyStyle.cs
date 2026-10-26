@@ -38,6 +38,13 @@ namespace CubeInvasion.Prototype
             text.horizontalOverflow=HorizontalWrapMode.Wrap;text.verticalOverflow=VerticalWrapMode.Overflow;return text;
         }
 
+        public static Button Button(string name,Transform parent,Sprite tile,Color color,Vector2 min,Vector2 max,Vector2 low,Vector2 high,Font font,int size,Color ink,out Text label)
+        {
+            var image=Tile(name,parent,tile,color,min,max,low,high);image.raycastTarget=true;image.pixelsPerUnitMultiplier=8;
+            var button=image.GetComponent<UnityEngine.UI.Button>();if(!button) {button=image.gameObject.AddComponent<UnityEngine.UI.Button>();button.targetGraphic=image;}
+            if(!image.GetComponent<CasualButtonMotion>())image.gameObject.AddComponent<CasualButtonMotion>();
+            label=Label("Label",image.transform,font,size,TextAnchor.MiddleCenter,ink);Outline(label);return button;
+        }
         public static void Ink(Text text,Font font,Color color) { if(!text)return;if(font)text.font=font;text.color=color;Outline(text); }
 
         // Thin dark contour keeps labels readable over the bright arena floor.

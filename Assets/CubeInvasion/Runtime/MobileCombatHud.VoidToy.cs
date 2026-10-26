@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,6 +14,8 @@ namespace CubeInvasion.Prototype
         [SerializeField] Text objectiveText;
         [SerializeField] Image timerTile,timerHalo,objectivePill;
         RectTransform healthTrack;
+        Action pauseAction,muteAction;
+        Text pauseInfo,pauseSound;
         Camera sceneCamera;
         Vector3 playerAnchor;bool hasPlayerAnchor;
         static readonly Color ChoiceTile=VoidToyPalette.Hex(0x0E3B39);
@@ -47,9 +50,11 @@ namespace CubeInvasion.Prototype
             VoidToyStyle.Place(track,Vector2.zero,new Vector2(1,0),new Vector2(28,12),new Vector2(-28,20));
             track.GetComponent<Image>().color=VoidToyPalette.Raised;
 
-            objectivePill=VoidToyStyle.Tile("Objective pill",band,tile,VoidToyPalette.Glass,new Vector2(.5f,1),new Vector2(.5f,1),new Vector2(-140,-180),new Vector2(140,-134));
+            objectivePill=VoidToyStyle.Tile("Objective pill",band,tile,VoidToyPalette.Glass,new Vector2(.5f,1),new Vector2(.5f,1),new Vector2(-156,-180),new Vector2(156,-134));
             if(!objectiveText)objectiveText=VoidToyStyle.Label("Objective",objectivePill.transform,uiFont,22,TextAnchor.MiddleCenter,VoidToyPalette.Text);
-            Fit(objectiveText,(RectTransform)objectivePill.transform,new Vector2(10,0),new Vector2(-10,0),22,TextAnchor.MiddleCenter,VoidToyPalette.Text);
+            Fit(objectiveText,(RectTransform)objectivePill.transform,new Vector2(12,0),new Vector2(-12,0),22,TextAnchor.MiddleCenter,VoidToyPalette.Text);
+            // Long boss/Gold Rush objectives shrink onto one line instead of spilling out of the pill.
+            objectiveText.verticalOverflow=VerticalWrapMode.Truncate;objectiveText.resizeTextForBestFit=true;objectiveText.resizeTextMinSize=12;objectiveText.resizeTextMaxSize=22;
 
             var goldChip=VoidToyStyle.Tile("Gold chip",band,tile,VoidToyPalette.Glass,new Vector2(1,1),new Vector2(1,1),new Vector2(-180,-76),new Vector2(-86,-16));
             var coin=goldChip.transform.Find("Coin") as RectTransform;
@@ -91,8 +96,18 @@ namespace CubeInvasion.Prototype
             }
             if(pauseOverlay)
             {
-                VoidToyStyle.Surface(pauseOverlay.GetComponent<Image>(),tile,VoidToyPalette.Panel);
-                foreach(var text in pauseOverlay.GetComponentsInChildren<Text>(true))VoidToyStyle.Ink(text,uiFont,VoidToyPalette.Text);
+                // Pause is a full-screen dim with a card: big resume plus the sound toggle that left the combat HUD.
+                var overlay=(RectTransform)pauseOverlay.transform;VoidToyStyle.Place(overlay,Vector2.zero,Vector2.one,Vector2.zero,Vector2.zero);overlay.SetAsLastSibling();
+                var dim=pauseOverlay.GetComponent<Image>();dim.sprite=null;dim.type=Image.Type.Simple;dim.color=VoidToyPalette.WithAlpha(VoidToyPalette.Void,.8f);dim.raycastTarget=true;
+                var card=VoidToyStyle.Tile("Pause card",overlay,tile,VoidToyPalette.Panel,new Vector2(.5f,.5f),new Vector2(.5f,.5f),new Vector2(-226,-170),new Vector2(226,190));
+                var title=pauseOverlay.transform.Find("Pause label")?.GetComponent<Text>();
+                if(title) {title.transform.SetParent(card.transform,false);VoidToyStyle.Place(title.rectTransform,new Vector2(0,1),new Vector2(1,1),new Vector2(20,-86),new Vector2(-20,-26));title.text="Duraklatıldı";title.fontSize=40;title.alignment=TextAnchor.MiddleCenter;VoidToyStyle.Ink(title,uiFont,VoidToyPalette.Text);}
+                pauseInfo=VoidToyStyle.Label("Pause info",card.transform,uiFont,19,TextAnchor.MiddleCenter,VoidToyPalette.Muted);
+                VoidToyStyle.Place(pauseInfo.rectTransform,new Vector2(0,1),new Vector2(1,1),new Vector2(20,-128),new Vector2(-20,-90));VoidToyStyle.Outline(pauseInfo);
+                var resume=VoidToyStyle.Button("Resume",card.transform,tile,VoidToyPalette.Cyan,new Vector2(0,1),new Vector2(1,1),new Vector2(24,-232),new Vector2(-24,-148),uiFont,32,VoidToyPalette.Ink,out var resumeLabel);
+                resumeLabel.text="DEVAM";resume.onClick.RemoveAllListeners();resume.onClick.AddListener(()=>pauseAction?.Invoke());
+                var sound=VoidToyStyle.Button("Sound toggle",card.transform,tile,VoidToyPalette.Raised,new Vector2(0,1),new Vector2(1,1),new Vector2(24,-322),new Vector2(-24,-252),uiFont,22,VoidToyPalette.Text,out pauseSound);
+                pauseSound.text="SES  ·  AÇIK";sound.onClick.RemoveAllListeners();sound.onClick.AddListener(()=>muteAction?.Invoke());
             }
             if(result)VoidToyStyle.Surface(result.GetComponent<Image>(),tile,VoidToyPalette.Panel);
             foreach(var text in GetComponentsInChildren<Text>(true))

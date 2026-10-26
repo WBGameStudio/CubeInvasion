@@ -29,7 +29,7 @@ public static class P3SmokeCheck
         SessionState.SetString(Key+".Directory",directory);Environment.SetEnvironmentVariable(Env,file);
         var rules=AssetDatabase.LoadAssetAtPath<P3MetaSettings>("Assets/CubeInvasion/Resources/P3MetaSettings.asset");
         new MetaProfileStore(file,rules,7,0);
-        EditorSceneManager.OpenScene("Assets/CubeInvasion/CubeInvasionPrototype.unity");
+        EditorSceneManager.OpenScene("Assets/CubeInvasion/CubeInvasionPrototype.unity");ExpansionTestFixture.Legacy();
         var legacyRoutes=new SerializedObject(Object.FindAnyObjectByType<InvasionPrototype>());legacyRoutes.FindProperty("branchSettings").objectReferenceValue=null;legacyRoutes.ApplyModifiedPropertiesWithoutUndo();SessionState.SetBool(Key,true);EditorApplication.isPlaying=true;
     }
     static object Get(string name)=>typeof(InvasionPrototype).GetField(name,Flags).GetValue(game);

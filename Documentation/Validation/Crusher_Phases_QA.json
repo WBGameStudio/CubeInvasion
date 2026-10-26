@@ -1,0 +1,66 @@
+{
+  "unity": "6000.4.8f1",
+  "platform": "Android ARM64 IL2CPP portrait Development",
+  "bossRuns": 8,
+  "weapons": 4,
+  "gateDirections": 2,
+  "bossRouteOffers": 2048,
+  "checks": {
+    "budget": {
+      "passed": true,
+      "marker": "CUBE_CRUSHER_BUDGET_OK",
+      "log": "/tmp/cube-crusher-budget.log"
+    },
+    "boss_full_runs_and_blast_chain": {
+      "passed": true,
+      "marker": "CUBE_CRUSHER_PHASES_OK",
+      "log": "/tmp/cube-crusher-ship-CrusherPhaseCheck.log"
+    },
+    "core": {
+      "passed": true,
+      "marker": "CUBE_P0_SMOKE_OK",
+      "log": "/tmp/cube-crusher-final-PrototypeSmokeCheck.log"
+    },
+    "feel": {
+      "passed": true,
+      "marker": "CUBE_P1_SMOKE_OK",
+      "log": "/tmp/cube-crusher-final-PrototypeSmokeCheck.log"
+    },
+    "campaign": {
+      "passed": true,
+      "marker": "CUBE_P2_SMOKE_OK",
+      "log": "/tmp/cube-crusher-final-P2SmokeCheck.log"
+    },
+    "branch_director": {
+      "passed": true,
+      "marker": "CUBE_BRANCH_DIRECTOR_OK",
+      "log": "/tmp/cube-crusher-final-BranchDirectorCheck.log"
+    },
+    "branch_gameplay": {
+      "passed": true,
+      "marker": "CUBE_BRANCH_ROUTES_OK",
+      "log": "/tmp/cube-crusher-final-BranchRoutesCheck.log"
+    },
+    "branch_economy": {
+      "passed": true,
+      "marker": "CUBE_BRANCH_ECONOMY_OK",
+      "log": "/tmp/cube-crusher-final-BranchEconomyCheck.log"
+    },
+    "combat_pressure": {
+      "passed": true,
+      "marker": "CUBE_PRESSURE_SMOKE_OK",
+      "log": "/tmp/cube-crusher-final-CombatPressureSmokeCheck.log"
+    },
+    "android": {
+      "passed": true,
+      "marker": "CUBE_P4_ANDROID_BUILD_OK",
+      "log": "/tmp/cube-crusher-ship-P4AndroidBuild.log"
+    }
+  },
+  "preservedArtAndContentFiles": 267,
+  "preservedUserPreview": true,
+  "sceneChange": "Only crusherPhases reference; all prior serialized values preserved",
+  "apkBytes": 43763642,
+  "apkSha256": "1d6ab181e975e2b5c41f7ac3db96015920905382bafd05be6ee91c16151d33f9",
+  "physicalDeviceTest": false
+}

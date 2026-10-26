@@ -23,7 +23,7 @@ namespace CubeInvasion.Prototype
         void TickAnimations(float dt)
         {
             bool active=phase==Phase.Combat||phase==Phase.Choice||phase==Phase.Transfer;
-            if(playerAnimation)playerAnimation.TickFromRoot(dt,paused,active,phase==Phase.Combat&&currentTarget!=null);
+            if(playerAnimation)playerAnimation.TickFromRoot(dt,paused,active,phase==Phase.Combat&&HasAimTarget);
             foreach(var foe in foes)if(foe.animation)foe.animation.TickFromRoot(dt,paused,phase==Phase.Combat,foe.kind==EnemyKind.Gunner);
             if(paused)return;
             for(int i=worldTweens.Count-1;i>=0;i--)
@@ -50,8 +50,9 @@ namespace CubeInvasion.Prototype
         }
         void AnimatePickup(Transform pickup)
         {
-            WorldTween(pickup.DOMoveY(pickup.position.y+.12f,.6f).SetEase(Ease.InOutSine).SetLoops(-1,LoopType.Yoyo)).SetLink(pickup.gameObject);
-            WorldTween(pickup.DOLocalRotate(new Vector3(0,360,0),1.6f,RotateMode.FastBeyond360).SetEase(Ease.Linear).SetLoops(-1)).SetLink(pickup.gameObject);
+            var hover=WorldTween(pickup.DOMoveY(pickup.position.y+.12f,.6f).SetEase(Ease.InOutSine).SetLoops(-1,LoopType.Yoyo)).SetLink(pickup.gameObject);
+            var spin=WorldTween(pickup.DOLocalRotate(new Vector3(0,360,0),1.6f,RotateMode.FastBeyond360).SetEase(Ease.Linear).SetLoops(-1)).SetLink(pickup.gameObject);
+            if(Expanded)pickupTweens[pickup]=new List<Tween>{hover,spin};
         }
         void ClearAnimationTweens()
         {

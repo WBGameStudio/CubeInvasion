@@ -31,14 +31,14 @@ namespace CubeInvasion.Prototype
         void PrepareBranchOffers(int target)
         {
             if(!HasBranches)return;
-            var pair=RouteDirector.Pair(branchSettings,Mission,missionIndex,target,health/MaxHealth,RouteBudgetDps);
+            var pair=RouteDirector.Pair(branchSettings,Mission,missionIndex,target,health/MaxHealth,RouteBudgetDps,HasCrusherObjectives,HasGoldRushVariants?goldRushVariants:null);
             rightOffer=pair[0];forwardOffer=pair[1];offersRevealed=false;
         }
         void RevealBranchOffers()
         {
             if(!HasBranches||offersRevealed||stage>=CubeCount)return;
             // Candidate geometry rises during combat; the final offers lock once the objective clears.
-            var pair=RouteDirector.Pair(branchSettings,Mission,missionIndex,stage+1,health/MaxHealth,RouteBudgetDps);
+            var pair=RouteDirector.Pair(branchSettings,Mission,missionIndex,stage+1,health/MaxHealth,RouteBudgetDps,HasCrusherObjectives,HasGoldRushVariants?goldRushVariants:null);
             rightOffer=pair[0];forwardOffer=pair[1];offersRevealed=true;routeDecisionSeconds=0;
             UpdateBranchView(rightGate,rightOffer);UpdateBranchView(forwardGate,forwardOffer);
             rightPreviewCard=BranchPreviewCard(rightOffer,true);forwardPreviewCard=BranchPreviewCard(forwardOffer,false);
@@ -69,14 +69,14 @@ namespace CubeInvasion.Prototype
         void ConfigureRouteEnemy(Foe foe,int index)
         {
             if(!HasBranches||activeOffer==null||activeOffer.stage!=stage||index!=activeOffer.eliteIndex)return;
-            foe.hp*=branchSettings.eliteHealth;foe.speed*=1.1f;foe.attackPower=1.15f;foe.body.localScale*=1.08f;
+            foe.hp*=branchSettings.eliteHealth;foe.maxHp=foe.hp;foe.speed*=1.1f;foe.attackPower=1.15f;foe.body.localScale*=1.08f;
             var parent=foe.animation?foe.animation.VisualRoot:foe.body;
             float y=foe.body.GetComponent<MeshFilter>().sharedMesh.bounds.max.y+.18f;
             for(int i=-1;i<=1;i++)Shape("Elite crown",PrimitiveType.Cube,new Vector3(i*.16f,y+(i==0?.09f:0),0),new Vector3(.1f,.25f,.12f),new Color(1,.65f,.1f),parent);
         }
         Vector3 SafeBranchSpawn(Vector3 desired,ContentEnemy kind)
         {
-            if(!HasBranches)return desired;
+            if(!HasBranches&&!HasGoldRushVariants)return desired;
             if(SpawnFree(desired,kind))return desired;
             Vector3 best=desired;float score=float.PositiveInfinity;
             for(int z=0;z<4;z++)for(int x=0;x<4;x++)
@@ -89,7 +89,7 @@ namespace CubeInvasion.Prototype
         }
         bool SpawnFree(Vector3 point,ContentEnemy kind)
         {
-            if(FlatDistance(point,player.position)<1.8f||CoverHit(point,point,.4f,out _))return false;
+            if(Mathf.Abs(point.x-centre.x)>ArenaHalfX-.5f||GoldSpawnBlocked(point)||FlatDistance(point,player.position)<1.8f||CoverHit(point,point,.4f,out _))return false;
             foreach(var foe in foes)if(FlatDistance(point,foe.body.position)<(kind==ContentEnemy.Crusher||foe.kind==EnemyKind.Crusher?1.6f:.85f))return false;
             return true;
         }

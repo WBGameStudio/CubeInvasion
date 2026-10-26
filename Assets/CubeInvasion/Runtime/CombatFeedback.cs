@@ -6,7 +6,7 @@ namespace CubeInvasion.Prototype
     /// <summary>Bounded, reusable visual and audio voices. No time-scale hit stop.</summary>
     public sealed partial class CombatFeedback : MonoBehaviour
     {
-        public enum Cue { Shot, Hit, Hurt, Explosion, Gold, Heal, Clear, Alarm, Fail, Gate, Twin, Scatter, Rapid, Telegraph, BossPhase, BossSlam, Unlock, Upgrade, Denied }
+        public enum Cue { Shot, Hit, Hurt, Explosion, Gold, Heal, Clear, Alarm, Fail, Gate, Twin, Scatter, Rapid, Telegraph, BossPhase, BossSlam, Unlock, Upgrade, Denied, Pierce, Ricochet, Arc, Rocket, Flame, Cryo, Drone, Nova, Summon, Teleport, ShieldBlock, Repair }
         sealed class Effect { public Transform body; public float age, duration, size; public Vector3 origin; public bool ring; }
         readonly List<Effect> effects=new List<Effect>();
         readonly Stack<Transform> ringPool=new Stack<Transform>(), sparkPool=new Stack<Transform>();
@@ -15,8 +15,16 @@ namespace CubeInvasion.Prototype
         [SerializeField] P2AudioBank audioBank;
         readonly List<AudioClip> ownedClips=new List<AudioClip>();
         AudioSource[] voices;
-        AudioSource music;
+        AudioSource music,pressureMusic;
+        public void SetCampaignMusic(int biome,bool boss,bool gold)
+        {
+            var bank=Resources.Load<CampaignPresentation>("CampaignPresentation");if(!bank||bank.biomeMusic==null||bank.biomeMusic.Length<7)return;
+            if(!music)SetMusic(MissionMode.Combat);music.clip=bank.biomeMusic[Mathf.Clamp(biome,0,5)];music.pitch=boss?1.08f:gold?1.04f:1;music.Play();
+            if(!pressureMusic) {pressureMusic=gameObject.AddComponent<AudioSource>();pressureMusic.loop=true;pressureMusic.playOnAwake=false;pressureMusic.spatialBlend=0;}pressureMusic.clip=bank.biomeMusic[6];pressureMusic.volume=0;pressureMusic.Play();
+        }
+        public void SetPressure(float weight) {if(pressureMusic) {pressureMusic.volume=Mathf.Clamp01(weight)*.7f*MusicLevel;pressureMusic.mute=Muted;}}
         int variation;
+        CampaignPresentation campaignSounds;
         float duck;
         public void ConfigureAudio(P2AudioBank bank) { audioBank=bank; }
         public void SetMusic(MissionMode mode)
@@ -45,7 +53,7 @@ namespace CubeInvasion.Prototype
         {
             if(voices!=null)return;
             lineMaterial=new Material(Shader.Find("Sprites/Default")); materials.Add(lineMaterial);
-            sparkMaterial=new Material(Shader.Find("Standard")); materials.Add(sparkMaterial);
+            sparkMaterial=new Material(Shader.Find(UnityEngine.Rendering.GraphicsSettings.defaultRenderPipeline?"Universal Render Pipeline/Unlit":"Standard")); materials.Add(sparkMaterial);
             voices=new AudioSource[6];
             for(int i=0;i<voices.Length;i++) { voices[i]=gameObject.AddComponent<AudioSource>(); voices[i].playOnAwake=false; voices[i].spatialBlend=0; }
             foreach(Cue cue in System.Enum.GetValues(typeof(Cue)))
@@ -54,6 +62,7 @@ namespace CubeInvasion.Prototype
                 if(!clip) { clip=Synthesize(cue);ownedClips.Add(clip); }
                 clips[cue]=clip;
             }
+            campaignSounds=Resources.Load<CampaignPresentation>("CampaignPresentation");
             Muted=PlayerPrefs.GetInt("CI.Muted",0)==1;
             MusicLevel=PlayerPrefs.GetFloat("CI.MusicVolume",1);SfxLevel=PlayerPrefs.GetFloat("CI.SfxVolume",1);
         }
@@ -79,9 +88,7 @@ namespace CubeInvasion.Prototype
         public void ToggleMute() { SetLevels(MusicLevel,SfxLevel,!Muted); }
         public void Play(Cue cue)
         {
-#if UNITY_ANDROID && !UNITY_EDITOR
-            if(!frozen&&PlayerPrefs.GetInt("CI.Haptics",0)==1&&(cue==Cue.Hurt||cue==Cue.Unlock||cue==Cue.Upgrade))Handheld.Vibrate();
-#endif
+            if(!frozen)MobileHaptics.Play(cue);
             if(Muted||frozen||voices==null)return;
             if((cue==Cue.Shot||cue==Cue.Rapid||cue==Cue.Twin) && Time.unscaledTime-lastShotSound<.08f)return;
             if(cue==Cue.Shot||cue==Cue.Rapid||cue==Cue.Twin)lastShotSound=Time.unscaledTime;
@@ -89,8 +96,9 @@ namespace CubeInvasion.Prototype
             foreach(var voice in voices)if(!voice.isPlaying) { selected=voice;break; }
             if(!selected) { if(cue==Cue.Shot||cue==Cue.Hit||cue==Cue.Gold)return; selected=voices[0]; }
             var variant=audioBank?audioBank.Find(cue,variation++):null;
+            if(campaignSounds&&campaignSounds.sounds!=null)foreach(var entry in campaignSounds.sounds)if(entry.cue==cue&&entry.variants.Length>0) {variant=entry.variants[variation%entry.variants.Length];break;}
             selected.clip=variant?variant:clips[cue];selected.pitch=1;
-            selected.volume=(cue==Cue.Shot||cue==Cue.Rapid||cue==Cue.Twin?.26f:cue==Cue.Telegraph?.42f:.6f)*SfxLevel;selected.Play();
+            selected.volume=(cue==Cue.Shot||cue==Cue.Rapid||cue==Cue.Twin||cue>=Cue.Pierce&&cue<=Cue.Nova?.26f:cue==Cue.Telegraph?.42f:.6f)*SfxLevel;selected.Play();
 
             if(cue==Cue.Explosion||cue==Cue.BossSlam)duck=.25f;
         }
@@ -101,6 +109,7 @@ namespace CubeInvasion.Prototype
             if(voices==null)return;
             foreach(var voice in voices) { if(value)voice.Pause();else voice.UnPause(); }
             if(music) { if(value)music.Pause();else music.UnPause(); }
+            if(pressureMusic) {if(value)pressureMusic.Pause();else pressureMusic.UnPause();}
         }
         public void Burst(Vector3 position, Color color, float size=.5f, float duration=.2f, bool ring=false)
         {
@@ -122,7 +131,7 @@ namespace CubeInvasion.Prototype
             }
             body.gameObject.SetActive(true);body.position=position;body.localScale=Vector3.one*.05f;
             if(ring) { var line=body.GetComponent<LineRenderer>();line.startColor=line.endColor=color; }
-            else { var block=new MaterialPropertyBlock();block.SetColor("_Color",color);body.GetComponent<Renderer>().SetPropertyBlock(block); }
+            else { var block=new MaterialPropertyBlock();block.SetColor("_Color",color);block.SetColor("_BaseColor",color);body.GetComponent<Renderer>().SetPropertyBlock(block); }
             effects.Add(new Effect { body=body,duration=duration,size=size,origin=position,ring=ring });
         }
         public void Tick(float dt)

@@ -96,12 +96,14 @@ namespace CubeInvasion.Prototype
             bossFill.rectTransform.anchorMax=new Vector2(Mathf.Clamp01(health/Mathf.Max(1,total)),1);
             bossLabel.text=$"THE CRUSHER · {Mathf.CeilToInt(health)}/{total:0} · "+(phase==1?"ZIRH":phase==2?"SİLAH SİSTEMİ":"ÇEKİRDEK");
         }
+        public void SetBossCaption(string caption) {if(bossLabel)bossLabel.text=caption;}
         public void Bind(Action<int> mission,Action<int> weapon,Action start,Action restart,Action following,Action select)
         {
             Bind(previous,()=>mission(-1));Bind(next,()=>mission(1));Bind(deploy,start);Bind(retry,restart);Bind(advance,following);Bind(menu,select);
             for(int i=0;i<weapons.Length;i++) { int index=i;Bind(weapons[i],()=>weapon(index)); }
         }
         static void Bind(Button button,Action action) { button.onClick.RemoveAllListeners();button.onClick.AddListener(()=>action()); }
+        public void SetObjectiveDescription(string text) {if(missionDescription&&missionDescription.text!=text)missionDescription.text=text;}
         public void Refresh(MissionSpec mission,WeaponSpec weapon,int missionIndex,int count,int weaponIndex,string phase,string reason,int wallet)
         {
             bool choosing=phase=="Loadout",won=phase=="Won",ended=won||phase=="Failed";
@@ -150,8 +152,11 @@ namespace CubeInvasion.Prototype
             if(resultDescription)resultDescription.color=VoidToyPalette.Text;
             if(bossPanel)
             {
-                VoidToyStyle.Surface(bossPanel.GetComponent<Image>(),tile,VoidToyPalette.WithAlpha(VoidToyPalette.Void,.9f),14);
-                VoidToyStyle.Surface(bossFill,tile,VoidToyPalette.Danger,14);
+                // Boss bar hangs right under the objective pill, off the arena and the gates.
+                var bar=(RectTransform)bossPanel.transform;bar.anchorMin=bar.anchorMax=bar.pivot=new Vector2(.5f,1);bar.sizeDelta=new Vector2(312,24);bar.anchoredPosition=new Vector2(0,-186);
+                VoidToyStyle.Surface(bossPanel.GetComponent<Image>(),tile,VoidToyPalette.WithAlpha(VoidToyPalette.Void,.92f),20);
+                VoidToyStyle.Surface(bossFill,tile,VoidToyPalette.Danger,20);
+                if(bossLabel) {bossLabel.fontSize=14;bossLabel.resizeTextForBestFit=true;bossLabel.resizeTextMinSize=10;bossLabel.resizeTextMaxSize=14;bossLabel.color=VoidToyPalette.Text;}
             }
             foreach(var text in GetComponentsInChildren<Text>(true))VoidToyStyle.Outline(text);
         }

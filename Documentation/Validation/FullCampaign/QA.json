@@ -1,0 +1,178 @@
+{
+  "unity": "6000.4.8f1",
+  "platform": "Android portrait / IL2CPP ARM64 / Development / Burst AOT enabled",
+  "missions": 60,
+  "campaignCubes": 255,
+  "weapons": 12,
+  "normalEnemyArchetypes": 12,
+  "bossIdentities": 6,
+  "legacyMissionSlotsPreserved": 7,
+  "newWeaponMeshes": 8,
+  "newActorRigs": 8,
+  "biomeMusicLoops": 6,
+  "pressureMusicLoops": 1,
+  "newSfxVariations": 24,
+  "budgetOffers": 97920,
+  "budgetSeedsPerWeapon": 16,
+  "fullCampaignRuns": 60,
+  "focusedFinalAssertions": 80,
+  "checks": {
+    "campaign": {
+      "passed": true,
+      "marker": "CUBE_FULL_CAMPAIGN_OK",
+      "log": "/tmp/cube-expansion-release-FullCampaignCheck-Run.log"
+    },
+    "finalMechanics": {
+      "passed": true,
+      "marker": "CUBE_FULL_UNITS_OK",
+      "log": "/tmp/cube-expansion-delivery-FullCampaignCheck-RunUnits.log"
+    },
+    "budget": {
+      "passed": true,
+      "marker": "CUBE_FULL_BUDGET_OK",
+      "log": "/tmp/cube-expansion-release-FullCampaignBudgetCheck-Run.log"
+    },
+    "core": {
+      "passed": true,
+      "marker": "CUBE_P0_SMOKE_OK",
+      "log": "/tmp/cube-expansion-delivery-PrototypeSmokeCheck-Run.log"
+    },
+    "feel": {
+      "passed": true,
+      "marker": "CUBE_P1_SMOKE_OK",
+      "log": "/tmp/cube-expansion-delivery-PrototypeSmokeCheck-Run.log"
+    },
+    "fall": {
+      "passed": true,
+      "marker": "CUBE_FALL_SMOKE_OK",
+      "log": "/tmp/cube-expansion-delivery-PrototypeSmokeCheck-Run.log"
+    },
+    "legacyCampaign": {
+      "passed": true,
+      "marker": "CUBE_P2_SMOKE_OK",
+      "log": "/tmp/cube-expansion-delivery-P2SmokeCheck-Run.log"
+    },
+    "profile": {
+      "passed": true,
+      "marker": "CUBE_P3_STORE_OK",
+      "log": "/tmp/cube-expansion-delivery-P3ProfileCheck-Run.log"
+    },
+    "profileGameplay": {
+      "passed": true,
+      "marker": "CUBE_P3_SMOKE_OK",
+      "log": "/tmp/cube-expansion-delivery-P3SmokeCheck-Run.log"
+    },
+    "branchRoutes": {
+      "passed": true,
+      "marker": "CUBE_BRANCH_ROUTES_OK",
+      "log": "/tmp/cube-expansion-final-BranchRoutesCheck-Run.log"
+    },
+    "branchEconomy": {
+      "passed": true,
+      "marker": "CUBE_BRANCH_ECONOMY_OK",
+      "log": "/tmp/cube-expansion-verified-BranchEconomyCheck-Run.log"
+    },
+    "bomber": {
+      "passed": true,
+      "marker": "CUBE_BOMBER_OK",
+      "log": "/tmp/cube-expansion-verified-BomberCheck-Run.log"
+    },
+    "support": {
+      "passed": true,
+      "marker": "CUBE_SUPPORT_OK",
+      "log": "/tmp/cube-expansion-final-SupportEnemyCheck-Run.log"
+    },
+    "goldrush": {
+      "passed": true,
+      "marker": "CUBE_GOLDRUSH_VARIANTS_OK",
+      "log": "/tmp/cube-expansion-final-GoldRushVariantCheck-Run.log"
+    },
+    "crusher": {
+      "passed": true,
+      "marker": "CUBE_CRUSHER_PHASES_OK",
+      "log": "/tmp/cube-expansion-final-CrusherPhaseCheck-Run.log"
+    },
+    "pressure": {
+      "passed": true,
+      "marker": "CUBE_PRESSURE_SMOKE_OK",
+      "log": "/tmp/cube-expansion-final-CombatPressureSmokeCheck-Run.log"
+    },
+    "ui": {
+      "passed": true,
+      "marker": "CUBE_REFERENCE_UI_SMOKE_OK",
+      "log": "/tmp/cube-expansion-final-FrontEndSmokeCheck-Run.log"
+    },
+    "diagnostics": {
+      "passed": true,
+      "marker": "CUBE_P4_CHECK_OK",
+      "log": "/tmp/cube-expansion-verified-P4ValidationCheck-Run.log"
+    },
+    "urp": {
+      "passed": true,
+      "marker": "CUBE_MOBILE_URP_OK",
+      "log": "/tmp/cube-full-urp.log"
+    },
+    "newSounds": {
+      "passed": true,
+      "marker": "CUBE_EXPANSION_SOUNDS_OK",
+      "log": "/tmp/cube-expansion-final-CampaignSoundBuilder-Build.log"
+    },
+    "android": {
+      "passed": true,
+      "marker": "CUBE_P4_ANDROID_BUILD_OK",
+      "log": "/tmp/cube-expansion-delivery-P4AndroidBuild-Run.log"
+    },
+    "mainCompile": {
+      "passed": true,
+      "marker": "CUBE_P3_MAIN_COMPILE_OK"
+    }
+  },
+  "physicalDeviceTest": false,
+  "connectedAdbDevices": 0,
+  "realPlayerBalanceValidated": false,
+  "analytics": "Local 30-day JSONL + filtered dashboard; no external service configured",
+  "editorTestNote": "One native Burst compiler crash occurred; editor checks were rerun with Burst JIT disabled. Final Android build ran without that switch and includes the Burst AOT library. Existing UnityEditor.Search startup exceptions are not gameplay failures.",
+  "protectedFilesUnchanged": 270,
+  "sceneChange": "Only campaignExpansion reference; previous serialized lines unchanged",
+  "apk": {
+    "path": "/Users/furkanelmali/Documents/GitHub/CubeInvasion/CubeInvasion-FullCampaign.apk",
+    "bytes": 70100622,
+    "sha256": "41629bdd5f1e09ad509a83a252f1a0ad72a73747c401f00a76dc01654c0f0994",
+    "arm64": true,
+    "burstAot": true,
+    "portrait": true,
+    "vibratePermission": true,
+    "symbolsVerified": [
+      "CubeCombatClock",
+      "AdvancedEnemyController",
+      "WeaponRuntimeStats",
+      "TemporaryBuffController",
+      "CampaignExpansionSettings",
+      "WeaponModelPreview",
+      "MobileHaptics",
+      "CampaignTelemetryArchive",
+      "Summoner",
+      "Phaser",
+      "FurnaceKing",
+      "MotherboardHydra",
+      "GlacierWarden",
+      "MagmaTitan",
+      "VoidArchitect",
+      "PreparePreviewGeometry",
+      "SetArenaWidth"
+    ]
+  },
+  "generatedUtc": "2026-10-26T21:25:02.726261+00:00",
+  "completedLegacyCampaignUnlocksLevelEight": true,
+  "newBossPhaseHealth": [
+    72,
+    84,
+    96
+  ],
+  "pureServices": [
+    "CubeCombatClock",
+    "AdvancedEnemyController",
+    "WeaponRuntimeStats",
+    "TemporaryBuffController"
+  ]
+}

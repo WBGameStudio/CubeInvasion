@@ -25,8 +25,8 @@ public static class P2SmokeCheck
     public static void Run()
     {
         SessionState.SetBool(Key+".WalletExists",PlayerPrefs.HasKey("CI.Wallet"));SessionState.SetInt(Key+".Wallet",PlayerPrefs.GetInt("CI.Wallet",0));
-        EditorSceneManager.OpenScene("Assets/CubeInvasion/CubeInvasionPrototype.unity");
-        var legacyRoutes=new SerializedObject(Object.FindAnyObjectByType<InvasionPrototype>());legacyRoutes.FindProperty("branchSettings").objectReferenceValue=null;legacyRoutes.ApplyModifiedPropertiesWithoutUndo();
+        EditorSceneManager.OpenScene("Assets/CubeInvasion/CubeInvasionPrototype.unity");ExpansionTestFixture.Legacy();
+        var legacyRoutes=new SerializedObject(Object.FindAnyObjectByType<InvasionPrototype>());legacyRoutes.FindProperty("branchSettings").objectReferenceValue=null;legacyRoutes.FindProperty("crusherPhases").objectReferenceValue=null;legacyRoutes.FindProperty("goldRushVariants").objectReferenceValue=null;legacyRoutes.FindProperty("bomberSettings").objectReferenceValue=null;legacyRoutes.FindProperty("supportSettings").objectReferenceValue=null;legacyRoutes.ApplyModifiedPropertiesWithoutUndo();
         var settings=new SerializedObject(Object.FindAnyObjectByType<InvasionPrototype>());
         settings.FindProperty("metaSettings").objectReferenceValue=null;settings.ApplyModifiedPropertiesWithoutUndo();
         SessionState.SetBool(Key,true);EditorApplication.isPlaying=true;

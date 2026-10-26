@@ -27,6 +27,7 @@ namespace CubeInvasion.Prototype
             if(!frontEnd||!HasMeta||profile==null)return;
             if(phase==Phase.Loadout)frontEnd.SyncSettings(feedback.MusicLevel,feedback.SfxLevel,feedback.Muted,PlayerPrefs.GetInt("CI.Haptics",0)==1,PlayerPrefs.GetInt("CI.HighFrames",1)==1);
             frontEnd.Refresh(profile.Data,metaSettings,content,missionIndex,inspectedWeapon,weaponIndex,phase.ToString(),metaNotice);
+            if(HasGoldRushVariants&&phase==Phase.Loadout&&missionIndex<=profile.Data.highestMission)frontEnd.SetObjectiveDescription(GoldMissionDescription);
         }
         void SelectFrontMission(int index)
         {

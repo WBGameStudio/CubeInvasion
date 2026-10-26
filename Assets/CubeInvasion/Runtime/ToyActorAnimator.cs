@@ -198,6 +198,11 @@ namespace CubeInvasion.Prototype
             reactionRoot.localScale=Vector3.one*.05f;
             reactions.Add(reactionRoot.DOScale(Vector3.one,.35f).SetEase(Ease.OutBack).SetUpdate(UpdateType.Manual));
         }
+        public void ResetForReuse(Transform root)
+        {
+            foreach(var tween in reactions)tween.Kill();reactions.Clear();windup?.Kill();recoil?.Kill();anticipation=kick=weight=0;previous=root.position;visible=true;
+            if(reactionRoot) {reactionRoot.localPosition=Vector3.zero;reactionRoot.localRotation=Quaternion.identity;reactionRoot.localScale=Vector3.one;}SetVisible(true);if(CoreRenderer)CoreRenderer.SetPropertyBlock(null);
+        }
         public Transform DetachVisual(Transform parent)
         {
             if(!ready)return null;

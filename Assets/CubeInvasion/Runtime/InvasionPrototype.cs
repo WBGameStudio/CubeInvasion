@@ -15,7 +15,7 @@ namespace CubeInvasion.Prototype
         sealed class Foe
         {
             public Transform body;
-            public float hp, speed, attack;
+            public float hp, speed, attack,maxHp,slow;
             public float attackPower=1;
             public EnemyKind kind;
             public Transform warning;
@@ -32,6 +32,7 @@ namespace CubeInvasion.Prototype
             public Transform body;
             public Vector3 direction;
             public float life = 1f, damage;
+            public ContentWeapon kind;public int remainingHits;public readonly HashSet<Foe> hitEnemies=new HashSet<Foe>();
         }
         readonly List<Pulse> pulses = new List<Pulse>();
         Transform rightGate, forwardGate, rightBarrier, forwardBarrier;
@@ -68,7 +69,7 @@ namespace CubeInvasion.Prototype
         Material Mat(Color color)
         {
             if(materialCache.TryGetValue(color,out var shared))return shared;
-            var material = new Material(Shader.Find("Standard"));
+            var material = new Material(Shader.Find(UnityEngine.Rendering.GraphicsSettings.defaultRenderPipeline?"Universal Render Pipeline/Unlit":"Standard"));
             material.color = color;
             materials.Add(material);
             materialCache[color]=material;
@@ -96,12 +97,20 @@ namespace CubeInvasion.Prototype
             if(obj.TryGetComponent<Collider>(out var collider))Destroy(collider);
             return obj.transform;
         }
+        // Expanded campaign cubes take their biome's floor, side and edge colors (canvas 11).
+        int ArenaBiome=>HasContent&&Expanded?Mathf.Clamp(Mission.biome,0,5):0;
+        void ApplyGateFont(TextMesh label)
+        {
+            var font=frontEndArt?frontEndArt.uiFont:null;if(!font)return;
+            label.font=font;label.GetComponent<MeshRenderer>().sharedMaterial=font.material;
+        }
         Transform Arena(Vector3 at, bool preview, Color accent)
         {
             var root = new GameObject(preview ? "Route preview" : "Combat cube").transform;
             root.SetParent(dynamicRoot?dynamicRoot:world); root.position = at;
-            Shape("Deep sides", PrimitiveType.Cube, new Vector3(0,-1.2f,0), new Vector3(9,2.4f,9), VoidToyPalette.Side,root);
-            Shape("Arena surface", PrimitiveType.Cube, new Vector3(0,-.04f,0), new Vector3(9,.16f,9),VoidToyPalette.Floor,root);
+            int biome=ArenaBiome;if(!preview&&accent==VoidToyPalette.Cyan)accent=VoidToyPalette.BiomeEdge(biome);
+            Shape("Deep sides", PrimitiveType.Cube, new Vector3(0,-1.2f,0), new Vector3(9,2.4f,9), VoidToyPalette.BiomeSide(biome),root);
+            Shape("Arena surface", PrimitiveType.Cube, new Vector3(0,-.04f,0), new Vector3(9,.16f,9),VoidToyPalette.BiomeFloor(biome),root);
             for(int i=0;i<4;i++)
             {
                 bool alongX = i < 2;
@@ -169,6 +178,7 @@ namespace CubeInvasion.Prototype
         void BeginCombat(CubeRouteDefinition route)
         {
             remaining=20; shot=0; invulnerability=1.3f; phase=Phase.Combat;
+            PrepareInitialExpandedEncounter();
             SetupEncounterFeel();
             if(HasContent) { SpawnContentEncounter();BeginValidationCube();return; }
             int grunts=route?route.grunts:2, runners=route?route.sprinters:0;
@@ -185,7 +195,7 @@ namespace CubeInvasion.Prototype
                 var animation=AnimateActor(body,body,gunner?"Gunner":runner?"Sprinter":"Grunt",crest,cannon);
                 if(animation)animation.Spawn();
                 var warning=WarningRing(body.position,runner?1:1.5f,color);warning.gameObject.SetActive(false);
-                foes.Add(new Foe {body=body,hp=gunner?21:runner?12:18,speed=runner?2.2f:1.05f,attack=0,
+                foes.Add(new Foe {body=body,hp=gunner?21:runner?12:18,maxHp=gunner?21:runner?12:18,speed=runner?2.2f:1.05f,attack=0,
                     color=color,visual=animation?animation.CoreRenderer:body.GetComponent<Renderer>(),animation=animation,kind=gunner?EnemyKind.Gunner:runner?EnemyKind.Sprinter:EnemyKind.Grunt,warning=warning});
                 feedback.Burst(new Vector3(body.position.x,.1f,body.position.z),color,1,.65f,true);
             }
@@ -196,6 +206,7 @@ namespace CubeInvasion.Prototype
             routesReady=false; settledPreviews=0;
             rightPreview=Arena(origin+Vector3.right*12+Vector3.down*14,true,new Color(.09f,.66f,.54f));
             forwardPreview=Arena(origin+Vector3.forward*12+Vector3.down*14,true,cyan);
+            PreparePreviewGeometry(rightPreview,phase==Phase.Transfer?stage+2:stage+1);PreparePreviewGeometry(forwardPreview,phase==Phase.Transfer?stage+2:stage+1);
             rightGate=CreateGate(owner,true,OfferedRoute(true),out rightBarrier);
             forwardGate=CreateGate(owner,false,OfferedRoute(false),out forwardBarrier);
             StartCoroutine(RaiseCube(rightPreview,origin+Vector3.right*12,0));
@@ -227,7 +238,7 @@ namespace CubeInvasion.Prototype
         {
             var root=new GameObject(right?"Right upgrade gate":"Forward upgrade gate").transform;
             root.SetParent(owner,false);
-            root.localPosition=right?new Vector3(4.15f,0,0):new Vector3(0,0,4.15f);
+            root.localPosition=right?new Vector3(owner.Find("Arena surface").localScale.x*.5f-.35f,0,0):new Vector3(0,0,4.15f);
             root.localRotation=Quaternion.Euler(0,right?90:0,0);
             Color color=right?new Color(.09f,.66f,.54f):cyan;
             Shape("Gate left post",PrimitiveType.Cube,new Vector3(-1,1,0),new Vector3(.18f,2,.2f),color,root);
@@ -239,6 +250,9 @@ namespace CubeInvasion.Prototype
             label.transform.rotation=view.transform.rotation;
             label.text=HasBranches?"ÖNCE KÜPÜ TEMİZLE":RewardLabel(route); label.anchor=TextAnchor.MiddleCenter; label.alignment=TextAlignment.Center;
             label.fontSize=64; label.characterSize=.035f; label.color=Color.white;
+            // Route cards carry the info during combat; the sign only appears once offers are revealed.
+            if(IsBoss||HasBranches)label.GetComponent<Renderer>().enabled=false;
+            ApplyGateFont(label);
             return root;
         }
         string RewardLabel(CubeRouteDefinition route)
@@ -297,7 +311,7 @@ namespace CubeInvasion.Prototype
             var direction=right*input.x-forward*input.y;
             if(direction.sqrMagnitude>.01f)player.rotation=Quaternion.LookRotation(direction);
             Vector3 before=player.position;
-            player.position+=direction*MoveSpeed*dt;
+            player.position+=direction*MoveSpeed*ArenaMoveMultiplier*dt;
             if(phase==Phase.Combat&&CoverHit(before,player.position,.3f,out _))
             {
                 var x=new Vector3(player.position.x,before.y,before.z);var z=new Vector3(before.x,before.y,player.position.z);
@@ -308,7 +322,7 @@ namespace CubeInvasion.Prototype
                 if(!routesReady)
                 {
                     var blocked=player.position-centre;
-                    if(Mathf.Abs(blocked.z)<1.15f)blocked.x=Mathf.Min(blocked.x,3.85f);
+                    if(Mathf.Abs(blocked.z)<1.15f)blocked.x=Mathf.Min(blocked.x,RightGateX-.3f);
                     if(Mathf.Abs(blocked.x)<1.15f)blocked.z=Mathf.Min(blocked.z,3.85f);
                     player.position=centre+blocked;
                 }
@@ -316,13 +330,13 @@ namespace CubeInvasion.Prototype
                 if(phase==Phase.Transfer)return;
                 // Cleared cubes are safe while walking to an exit.
                 var relative=player.position-centre;
-                relative.x=Mathf.Clamp(relative.x,-4.3f,4.3f); relative.z=Mathf.Clamp(relative.z,-4.3f,4.3f);
+                relative.x=Mathf.Clamp(relative.x,-ArenaHalfX+.2f,ArenaHalfX-.2f); relative.z=Mathf.Clamp(relative.z,-4.3f,4.3f);
                 player.position=centre+relative;
             }
             else if(stage<CubeCount)
             {
                 var relative=player.position-centre;
-                if(Mathf.Abs(relative.z)<1.15f && relative.x>3.85f)relative.x=3.85f;
+                if(Mathf.Abs(relative.z)<1.15f && relative.x>RightGateX-.3f)relative.x=RightGateX-.3f;
                 if(Mathf.Abs(relative.x)<1.15f && relative.z>3.85f)relative.z=3.85f;
                 player.position=centre+relative;
             }
@@ -330,16 +344,18 @@ namespace CubeInvasion.Prototype
         }
         bool AimAtNearestEnemy()
         {
-            currentTarget=null;
+            currentTarget=null;goldTarget=null;barrelTarget=null;
             float nearest=float.PositiveInfinity;
             foreach(var foe in foes)
             {
-                if(!foe.body || foe.hp<=0||CoverHit(player.position,foe.body.position,.09f,out _))continue;
-                var offset=foe.body.position-player.position;offset.y=0;
+                if(!foe.body || foe.hp<=0||!CrusherTargetable(foe)||!ExpandedBossTargetable(foe)||CoverHit(player.position,EnemyTargetPoint(foe),.09f,out _))continue;
+                var offset=EnemyTargetPoint(foe)-player.position;offset.y=0;
+                if(HasContent&&(int)Weapon.kind>=4&&offset.sqrMagnitude>Mathf.Pow(Weapon.EffectiveRange*(1+MetaRange),2))continue;
                 if(offset.sqrMagnitude<nearest) { nearest=offset.sqrMagnitude;currentTarget=foe; }
             }
-            if(currentTarget==null)return false;
-            var aim=currentTarget.body.position-player.position;aim.y=0;
+            AimAtGoldCrate(ref nearest);AimAtExpandedObject(ref nearest);
+            if(!HasAimTarget)return false;
+            var aim=AimPoint-player.position;aim.y=0;
             if(aim.sqrMagnitude>.0001f)player.rotation=Quaternion.LookRotation(aim);
             return true;
         }
@@ -347,9 +363,9 @@ namespace CubeInvasion.Prototype
         {
             if(phase!=Phase.Choice)return;
             Vector3 a=before-centre,b=after-centre;
-            if(a.x<4.15f && b.x>=4.15f)
+            if(a.x<RightGateX && b.x>=RightGateX)
             {
-                float z=Mathf.Lerp(a.z,b.z,(4.15f-a.x)/(b.x-a.x));
+                float z=Mathf.Lerp(a.z,b.z,(RightGateX-a.x)/(b.x-a.x));
                 if(Mathf.Abs(z)<.8f) { Select(true); return; }
             }
             if(a.z<4.15f && b.z>=4.15f)
@@ -365,22 +381,25 @@ namespace CubeInvasion.Prototype
             float dt=Time.deltaTime;
             if(phase==Phase.Combat)
             {
-                dt=Mathf.Min(dt,remaining);
+                var clock=new CubeCombatClock(remaining,dt);dt=clock.Delta;
                 if(HasMeta)runSeconds+=dt;
                 invulnerability-=dt;
                 MovePlayer(stick,dt);
-                if(Mathf.Abs(player.position.x-centre.x)>Half || Mathf.Abs(player.position.z-centre.z)>Half) { Fail("Kenardan düştün",FailureKind.EdgeFall); return; }
+                if(Mathf.Abs(player.position.x-centre.x)>ArenaHalfX || Mathf.Abs(player.position.z-centre.z)>Half) { Fail("Kenardan düştün",FailureKind.EdgeFall); return; }
+                TickExpandedArena(dt);
+                if(phase!=Phase.Combat)return;
                 TickEnemies(dt);
                 if(phase!=Phase.Combat)return;
+                TickAdvancedWeapons(dt);
                 TickAutoFire(dt);
                 TickPulses(dt);
                 TickWorldFeel(dt);
                 if(phase!=Phase.Combat)return;
-                if(Mathf.Abs(player.position.x-centre.x)>Half || Mathf.Abs(player.position.z-centre.z)>Half) { Fail("Kenardan düştün",FailureKind.EdgeFall); return; }
+                if(Mathf.Abs(player.position.x-centre.x)>ArenaHalfX || Mathf.Abs(player.position.z-centre.z)>Half) { Fail("Kenardan düştün",FailureKind.EdgeFall); return; }
                 // Resolve valid damage before timeout, using only the frame's remaining combat time.
-                remaining=Mathf.Max(0,remaining-dt);
-                if(ObjectiveComplete) Clear();
-                else if(remaining<=0) Fail("20 saniye doldu",FailureKind.Timeout);
+                remaining=clock.Remaining;
+                var outcome=clock.Resolve(ObjectiveComplete);if(outcome==CubeOutcome.Cleared)Clear();
+                else if(outcome==CubeOutcome.Timeout)Fail("20 saniye doldu",FailureKind.Timeout);
             }
             else if(phase==Phase.Choice)
             {
@@ -396,7 +415,7 @@ namespace CubeInvasion.Prototype
             var body=RentProjectile(pulsePool,"Forward pulse",SafeMuzzle(gun.position+player.forward*.35f),cyan,.18f);
             if(playerAnimation)playerAnimation.Shoot();
             feedback.Play(CombatFeedback.Cue.Shot);PlayerMuzzle(cyan);
-            var aim=currentTarget.body.position-body.position;aim.y=0;
+            var aim=AimPoint-body.position;aim.y=0;
             var direction=aim.sqrMagnitude>.0001f?aim.normalized:player.forward;body.GetComponent<LaserBoltVisual>().Fly(direction,0);
             pulses.Add(new Pulse {body=body,direction=direction,damage=6*(1+(damageCubes>0?damageBonus:0))});
         }
@@ -407,17 +426,23 @@ namespace CubeInvasion.Prototype
                 var pulse=pulses[i];
                 Vector3 start=pulse.body.position,end=start+pulse.direction*18*Mathf.Min(dt,Mathf.Max(0,pulse.life));
                 bool blocked=CoverHit(start,end,.09f,out float wallT);
-                Foe hit=null;Barrel hitBarrel=null;float nearest=blocked?wallT:float.PositiveInfinity;
+                Foe hit=null;int hitPanel=-1;GoldCrate hitCrate=null;Barrel hitBarrel=null;float nearest=blocked?wallT:float.PositiveInfinity;
                 foreach(var foe in foes)
-                    if(foe.body&&foe.hp>0&&CircleHit(start,end,foe.body.position,.55f,out float t)&&t<nearest) {nearest=t;hit=foe;}
+                    if(foe.body&&foe.hp>0&&!pulse.hitEnemies.Contains(foe)&&PlayerPulseHit(pulse,foe,start,end,out float t,out int panel)&&t<nearest) {nearest=t;hit=foe;hitPanel=panel;}
                 foreach(var barrel in barrels)
                     if(CircleHit(start,end,barrel.body.position,.45f,out float t)&&t<nearest) {nearest=t;hitBarrel=barrel;hit=null;}
+                foreach(var crate in goldCrates)
+                    if(crate.body&&CircleHit(start,end,crate.body.position,.5f,out float t)&&t<nearest) {nearest=t;hitCrate=crate;hitBarrel=null;hit=null;}
                 pulse.life-=dt;pulse.body.position=float.IsPositiveInfinity(nearest)?end:Vector3.Lerp(start,end,nearest);
                 pulse.body.GetComponent<LaserBoltVisual>().Fly(pulse.direction,Vector3.Distance(start,pulse.body.position));
-                if(hitBarrel!=null)HitBarrel(hitBarrel,pulse.damage);
-                else if(hit!=null)HitEnemy(hit,pulse.damage,pulse.direction);
-                else if(blocked)feedback.Burst(pulse.body.position,new Color(.55f,.8f,1),.15f,.08f);
-                if(blocked||hit!=null||hitBarrel!=null||pulse.life<=0)
+                bool continuePulse=false;
+                if(hitCrate!=null) {HitGoldCrate(hitCrate,pulse.damage);if(pulse.kind==ContentWeapon.RocketPod)AdvancedPulseHit(pulse,null,-1);}
+                else if(hitBarrel!=null) {HitBarrel(hitBarrel,pulse.damage);if(pulse.kind==ContentWeapon.RocketPod)AdvancedPulseHit(pulse,null,-1);}
+                else if(hit!=null) {if((int)pulse.kind>=4)continuePulse=AdvancedPulseHit(pulse,hit,hitPanel);else HitEnemyAt(hit,pulse.damage,pulse.direction,hitPanel);}
+                else if(blocked&&pulse.kind==ContentWeapon.RocketPod)AdvancedPulseHit(pulse,null,-1);
+                else if(blocked) {DamageExpandedCover(start,end,pulse.damage);feedback.Burst(pulse.body.position,new Color(.55f,.8f,1),.15f,.08f);}
+                if(continuePulse&&!blocked&&pulse.life>0) {pulse.body.position+=pulse.direction*.04f;continue;}
+                if(blocked||hit!=null||hitBarrel!=null||hitCrate!=null||pulse.life<=0)
                 { pulse.body.gameObject.SetActive(false);pulsePool.Push(pulse.body);pulses.RemoveAt(i); }
             }
         }
@@ -431,12 +456,12 @@ namespace CubeInvasion.Prototype
             if(phase!=Phase.Combat)return;
             ClearPulses();
             FinishEncounterFeel(true);
-            int bank=10+pendingGold+RouteClearBonus;
+            int bank=10+pendingGold+RouteClearBonus+(Expanded&&stage==CubeCount?(IsBoss?400+Mission.biome*120:IsGoldRush?300:50+Mission.biome*50):0);
             if(!BankMetaCube(bank))return;
             RecordValidation("cube_cleared",null,bank);
             if(activeOffer!=null)RecordBranch("branch_result",activeOffer,"cleared",RouteClearBonus);
             ExpireRouteBuffs();
-            if(IsGoldRush)RecordValidation("goldrush_completed",null,quotaGold);
+            if(IsGoldRush)RecordValidation("goldrush_completed",GoldVariant.ToString(),pendingGold);
             if(stage==CubeCount)RecordValidation("level_completed");
             pendingGold=0;
             damageCubes=Mathf.Max(0,damageCubes-1);
@@ -449,9 +474,11 @@ namespace CubeInvasion.Prototype
         {
             if(!rightBarrier || !rightBarrier.gameObject.activeSelf)return;
             rightBarrier.gameObject.SetActive(false); forwardBarrier.gameObject.SetActive(false);
+            if(IsBoss) {var a=rightGate.Find("Upgrade label");var b=forwardGate.Find("Upgrade label");if(a)a.GetComponent<Renderer>().enabled=true;if(b)b.GetComponent<Renderer>().enabled=true;}
             WorldTween(rightGate.DOPunchScale(Vector3.one*.06f,.3f,3,.4f)).SetLink(rightGate.gameObject);
             WorldTween(forwardGate.DOPunchScale(Vector3.one*.06f,.3f,3,.4f)).SetLink(forwardGate.gameObject);
-            Shape("Right bridge",PrimitiveType.Cube,new Vector3(6,-.05f,0),new Vector3(3.1f,.18f,1.8f),cyan,platform);
+            float destinationHalf=rightPreview?rightPreview.Find("Arena surface").localScale.x*.5f:4.5f;float bridgeEnd=12-destinationHalf;
+            Shape("Right bridge",PrimitiveType.Cube,new Vector3((ArenaHalfX+bridgeEnd)*.5f,-.05f,0),new Vector3(bridgeEnd-ArenaHalfX+.1f,.18f,1.8f),cyan,platform);
             Shape("Forward bridge",PrimitiveType.Cube,new Vector3(0,-.05f,6),new Vector3(1.8f,.18f,3.1f),cyan,platform);
         }
         void Select(bool right)
@@ -483,7 +510,8 @@ namespace CubeInvasion.Prototype
                 if(chosen.GetChild(i).name.StartsWith("Reward"))Destroy(chosen.GetChild(i).gameObject);
             Vector3 destination=chosen.position;
             var start=player.position;
-            var end=destination+(right?new Vector3(-3.6f,.65f,0):new Vector3(0,.65f,-3.6f));
+            float entryX=Expanded&&selected!=null&&selected.encounter.layout==ArenaLayout.Narrow?-2.1f:-3.6f;
+            var end=destination+(right?new Vector3(entryX,.65f,0):new Vector3(0,.65f,-3.6f));
             player.rotation=Quaternion.LookRotation(Vector3.ProjectOnPlane(end-start,Vector3.up));
             float elapsed=0;
             bool prepared=false, retired=false;
@@ -517,7 +545,7 @@ namespace CubeInvasion.Prototype
             if(IsBoss)RecordValidation("boss_phase_failed",kind.ToString());
             ClearPulses();
             FinishEncounterFeel(false);
-            reason=why;
+            reason=why+(Expanded?"\n"+FailureGuidance(kind):"");
             bool timeout=kind==FailureKind.Timeout;
             bool falling=kind==FailureKind.EdgeFall;
             phase=timeout?Phase.Collapse:falling?Phase.Falling:Phase.Dying;

@@ -39,7 +39,7 @@ namespace CubeInvasion.Prototype
         public void Record(Event value)
         {
             if(value==null||string.IsNullOrEmpty(value.name))return;
-            value.utc=DateTime.UtcNow.ToString("o");report.events.Add(value);Trim();Flush();
+            value.utc=DateTime.UtcNow.ToString("o");CampaignTelemetryArchive.Append(Path.GetDirectoryName(Path.GetFullPath(path)),value);report.events.Add(value);Trim();Flush();
         }
         void Trim() { if(report.events.Count>Capacity)report.events.RemoveRange(0,report.events.Count-Capacity); }
         public bool Flush()

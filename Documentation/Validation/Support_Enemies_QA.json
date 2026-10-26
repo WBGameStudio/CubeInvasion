@@ -1,0 +1,85 @@
+{
+  "unity": "6000.4.8f1",
+  "platform": "Android IL2CPP ARM64 portrait Development",
+  "budgetOffers": 2048,
+  "weaponsChecked": 4,
+  "fullMissionRuns": 8,
+  "mixedMissionCubes": 40,
+  "expandedMission": "Son Hat / index 4 / cubes 4 and 5",
+  "checks": {
+    "support": {
+      "passed": true,
+      "marker": "CUBE_SUPPORT_OK",
+      "log": "/tmp/cube-support-final-gameplay.log"
+    },
+    "budgets": {
+      "passed": true,
+      "marker": "CUBE_SUPPORT_BUDGET_OK",
+      "log": "/tmp/cube-support-budget.log"
+    },
+    "core": {
+      "passed": true,
+      "marker": "CUBE_P0_SMOKE_OK",
+      "log": "/tmp/cube-support-regression-PrototypeSmokeCheck.log"
+    },
+    "feel": {
+      "passed": true,
+      "marker": "CUBE_P1_SMOKE_OK",
+      "log": "/tmp/cube-support-regression-PrototypeSmokeCheck.log"
+    },
+    "campaign": {
+      "passed": true,
+      "marker": "CUBE_P2_SMOKE_OK",
+      "log": "/tmp/cube-support-regression-P2SmokeCheck.log"
+    },
+    "bomber": {
+      "passed": true,
+      "marker": "CUBE_BOMBER_OK",
+      "log": "/tmp/cube-support-regression-BomberCheck.log"
+    },
+    "goldrush": {
+      "passed": true,
+      "marker": "CUBE_GOLDRUSH_VARIANTS_OK",
+      "log": "/tmp/cube-support-regression-GoldRushVariantCheck.log"
+    },
+    "crusher": {
+      "passed": true,
+      "marker": "CUBE_CRUSHER_PHASES_OK",
+      "log": "/tmp/cube-support-regression-CrusherPhaseCheck.log"
+    },
+    "pressure": {
+      "passed": true,
+      "marker": "CUBE_PRESSURE_SMOKE_OK",
+      "log": "/tmp/cube-support-regression-CombatPressureSmokeCheck.log"
+    },
+    "ui": {
+      "passed": true,
+      "marker": "CUBE_UI_SMOKE_OK",
+      "log": "/tmp/cube-support-regression-FrontEndSmokeCheck.log"
+    },
+    "android": {
+      "passed": true,
+      "marker": "CUBE_P4_ANDROID_BUILD_OK",
+      "log": "/tmp/cube-support-android.log",
+      "metadataSymbols": [
+        "SupportEnemySettings",
+        "ShieldDamage",
+        "TickHealer",
+        "BomberSettings",
+        "GoldRushVariantSettings",
+        "CrusherPhaseSettings"
+      ]
+    },
+    "mainCompile": {
+      "passed": true,
+      "marker": "CUBE_P3_MAIN_COMPILE_OK"
+    }
+  },
+  "preservedFiles": 270,
+  "sceneChange": "Only supportSettings reference; every previous serialized line retained",
+  "profileSchemaChanged": false,
+  "physicalDeviceTest": false,
+  "budgetAssumption": "Full frontal shield damage plus one heal pulse; repeated healing requires target prioritization or flanking.",
+  "apkBytes": 43763642,
+  "apkSha256": "2c1e15a7e9156655559dba116730764d8e2959bbff3e542676296b9ba631a6b7"
+}

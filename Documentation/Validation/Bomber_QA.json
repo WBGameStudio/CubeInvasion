@@ -1,0 +1,60 @@
+{
+  "unity": "6000.4.8f1",
+  "platform": "Android IL2CPP ARM64 portrait Development",
+  "budgetOffers": 2048,
+  "weaponsChecked": 4,
+  "expandedMission": "Son Hat / index 4 / cubes 2 and 3",
+  "checks": {
+    "bomber": {
+      "passed": true,
+      "marker": "CUBE_BOMBER_OK",
+      "log": "/tmp/cube-bomber-final-BomberCheck.log"
+    },
+    "budgets": {
+      "passed": true,
+      "marker": "CUBE_BOMBER_BUDGET_OK",
+      "log": "/tmp/cube-bomber-final-BomberBudgetCheck.log"
+    },
+    "core": {
+      "passed": true,
+      "marker": "CUBE_P0_SMOKE_OK",
+      "log": "/tmp/cube-bomber-final-PrototypeSmokeCheck.log"
+    },
+    "feel": {
+      "passed": true,
+      "marker": "CUBE_P1_SMOKE_OK",
+      "log": "/tmp/cube-bomber-final-PrototypeSmokeCheck.log"
+    },
+    "campaign": {
+      "passed": true,
+      "marker": "CUBE_P2_SMOKE_OK",
+      "log": "/tmp/cube-bomber-final-P2SmokeCheck.log"
+    },
+    "goldrush": {
+      "passed": true,
+      "marker": "CUBE_GOLDRUSH_VARIANTS_OK",
+      "log": "/tmp/cube-bomber-final-GoldRushVariantCheck.log"
+    },
+    "crusher": {
+      "passed": true,
+      "marker": "CUBE_CRUSHER_PHASES_OK",
+      "log": "/tmp/cube-bomber-final-CrusherPhaseCheck.log"
+    },
+    "pressure": {
+      "passed": true,
+      "marker": "CUBE_PRESSURE_SMOKE_OK",
+      "log": "/tmp/cube-bomber-final-CombatPressureSmokeCheck.log"
+    },
+    "android": {
+      "passed": true,
+      "marker": "CUBE_P4_ANDROID_BUILD_OK",
+      "log": "/tmp/cube-bomber-final-P4AndroidBuild.log"
+    }
+  },
+  "preservedFiles": 269,
+  "sceneChange": "Only bomberSettings reference; all previous serialized values preserved",
+  "profileSchemaChanged": false,
+  "apkBytes": 43763642,
+  "apkSha256": "477a49e903427e8c086a440b43ca8b7b273629838d8f1a391c32515d3db175e6",
+  "physicalDeviceTest": false
+}

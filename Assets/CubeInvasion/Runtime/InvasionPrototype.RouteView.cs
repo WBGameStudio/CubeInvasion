@@ -3,11 +3,11 @@ namespace CubeInvasion.Prototype
 {
     public sealed partial class InvasionPrototype
     {
-        static string ThreatLabel(RouteOffer offer) => offer.eliteIndex>=0?"elit":System.Array.Exists(offer.encounter.enemies,e=>e==ContentEnemy.Crusher)?"boss":
+        static string ThreatLabel(RouteOffer offer) => offer.eliteIndex>=0?"elit":System.Array.Exists(offer.encounter.enemies,e=>e==ContentEnemy.Healer)?"tamirci + destek":System.Array.Exists(offer.encounter.enemies,e=>e==ContentEnemy.Shielder)?"kalkanlı":System.Array.Exists(offer.encounter.enemies,e=>e==ContentEnemy.Bomber)?"bombacı":System.Array.Exists(offer.encounter.enemies,e=>e==ContentEnemy.Crusher)?"boss":
             System.Array.Exists(offer.encounter.enemies,e=>e==ContentEnemy.Sniper||e==ContentEnemy.Gunner)?"menzilli":"yakın dövüş";
         BranchCard BranchPreviewCard(RouteOffer offer,bool right) => new BranchCard {
             direction=right?"SAĞ KAPI":"İLERİ KAPI",title=RewardLabel(offer.reward).Replace("\n"," · "),
-            detail=$"{offer.encounter.enemies.Length} hedef · {ThreatLabel(offer)}",
+            detail=HasGoldRushVariants?GoldRushVariantSettings.Name(offer.encounter.goldVariant)+$" · {offer.encounter.enemies.Length} düşman":$"{offer.encounter.enemies.Length} hedef · {ThreatLabel(offer)}",
             accent=VoidToyPalette.Reward(offer.reward.reward),risk=Mathf.Clamp(offer.reward.risk,1,3)};
         Material RouteIconMaterial()
         {
@@ -17,7 +17,7 @@ namespace CubeInvasion.Prototype
         void UpdateBranchView(Transform gate,RouteOffer offer)
         {
             if(!gate||offer==null)return;
-            var label=gate.GetComponentInChildren<TextMesh>();
+            var label=gate.GetComponentInChildren<TextMesh>();label.GetComponent<Renderer>().enabled=true;ApplyGateFont(label);
             label.text=(gate.name.StartsWith("Right")?"SAĞ · ":"İLERİ · ")+RewardLabel(offer.reward)+$"\nRİSK {offer.reward.risk}/3 · {offer.encounter.enemies.Length} HEDEF";
             label.fontSize=64;label.characterSize=.04f;
             // Gate color names the reward family (heal, power, gold, shield); risk stays on the pips and label.

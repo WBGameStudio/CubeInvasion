@@ -10,7 +10,7 @@ namespace CubeInvasion.Prototype
             if(!countdownCamera)return;
             bool active=!paused&&phase==Phase.Combat&&remaining>0&&remaining<5;
             bool beat=countdownCamera.DriveCountdown(remaining,active,dt);
-            TintArenaEdges(active?remaining<=3?VoidToyPalette.Danger:VoidToyPalette.Warm:VoidToyPalette.Cyan);
+            TintArenaEdges(active?remaining<=3?VoidToyPalette.Danger:VoidToyPalette.Warm:VoidToyPalette.BiomeEdge(ArenaBiome));
             if(beat&&feedback)feedback.Play(CombatFeedback.Cue.Alarm);
         }
         Transform tintedArena;Color arenaEdge;MaterialPropertyBlock edgeTint;

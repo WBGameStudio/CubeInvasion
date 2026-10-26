@@ -1,0 +1,75 @@
+{
+  "unity": "6000.4.8f1",
+  "platform": "Android IL2CPP ARM64 portrait Development",
+  "variants": 4,
+  "fullGoldRushRuns": 8,
+  "cubesTested": 24,
+  "weapons": 4,
+  "offersBudgeted": 2048,
+  "checks": {
+    "goldrush_gameplay": {
+      "passed": true,
+      "marker": "CUBE_GOLDRUSH_VARIANTS_OK",
+      "log": "/tmp/cube-goldrush-ship-GoldRushVariantCheck.log"
+    },
+    "goldrush_budgets": {
+      "passed": true,
+      "marker": "CUBE_GOLDRUSH_BUDGET_OK",
+      "log": "/tmp/cube-goldrush-final-GoldRushBudgetCheck.log"
+    },
+    "goldrush_economy": {
+      "passed": true,
+      "marker": "CUBE_GOLDRUSH_ECONOMY_OK",
+      "log": "/tmp/cube-goldrush-final-GoldRushEconomyCheck.log"
+    },
+    "core": {
+      "passed": true,
+      "marker": "CUBE_P0_SMOKE_OK",
+      "log": "/tmp/cube-goldrush-final-PrototypeSmokeCheck.log"
+    },
+    "feel": {
+      "passed": true,
+      "marker": "CUBE_P1_SMOKE_OK",
+      "log": "/tmp/cube-goldrush-final-PrototypeSmokeCheck.log"
+    },
+    "campaign": {
+      "passed": true,
+      "marker": "CUBE_P2_SMOKE_OK",
+      "log": "/tmp/cube-goldrush-final-P2SmokeCheck.log"
+    },
+    "crusher": {
+      "passed": true,
+      "marker": "CUBE_CRUSHER_PHASES_OK",
+      "log": "/tmp/cube-goldrush-final-CrusherPhaseCheck.log"
+    },
+    "branch_gameplay": {
+      "passed": true,
+      "marker": "CUBE_BRANCH_ROUTES_OK",
+      "log": "/tmp/cube-goldrush-final-BranchRoutesCheck.log"
+    },
+    "combat_pressure": {
+      "passed": true,
+      "marker": "CUBE_PRESSURE_SMOKE_OK",
+      "log": "/tmp/cube-goldrush-final-CombatPressureSmokeCheck.log"
+    },
+    "front_end": {
+      "passed": true,
+      "marker": "CUBE_REFERENCE_UI_SMOKE_OK",
+      "log": "/tmp/cube-goldrush-final-FrontEndSmokeCheck.log"
+    },
+    "android": {
+      "passed": true,
+      "marker": "CUBE_P4_ANDROID_BUILD_OK",
+      "log": "/tmp/cube-goldrush-ship-P4AndroidBuild.log"
+    }
+  },
+  "preservedFiles": 268,
+  "sceneChange": "Only goldRushVariants reference; previous fields preserved",
+  "apkBytes": 43763642,
+  "apkSha256": "04099a6b7511e335a7b1235864bf984dfbf7baada3afd73c668557d0c5c6d3ee",
+  "physicalDeviceTest": false,
+  "sourceCompile": {
+    "runtime": true,
+    "editor": true
+  }
+}

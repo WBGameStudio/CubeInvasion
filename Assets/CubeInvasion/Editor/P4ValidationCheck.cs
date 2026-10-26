@@ -29,7 +29,7 @@ public static class P4ValidationCheck
         Debug.Log("CUBE_P4_INSTALL_OK");
     }
     public static void InstallGameplayScene()
-    { EditorSceneManager.OpenScene("Assets/CubeInvasion/CubeInvasionPrototype.unity");Install(); }
+    { EditorSceneManager.OpenScene("Assets/CubeInvasion/CubeInvasionPrototype.unity");ExpansionTestFixture.Legacy();Install(); }
     [MenuItem("Cube Invasion/P4/Replay First Run Guidance")]
     public static void ResetGuidance() { PlayerPrefs.DeleteKey("CI.Onboarding.v1");PlayerPrefs.Save();Debug.Log("First-run guidance will appear on mission 1."); }
     [MenuItem("Cube Invasion/P4/Check Diagnostics and Balance")]

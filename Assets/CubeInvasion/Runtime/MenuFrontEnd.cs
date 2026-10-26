@@ -23,6 +23,7 @@ namespace CubeInvasion.Prototype
         [SerializeField] Text[] homeNumbers;
         [SerializeField] Text homeLaunch,homeMission;
         [SerializeField] Text[] weaponUpgradeInfo;
+        [SerializeField] Text homeBiome;
         [SerializeField] Image progressFill;
         [SerializeField] Slider musicSlider,sfxSlider;
         [SerializeField] Toggle muteToggle,hapticsToggle,frameToggle;
@@ -50,7 +51,7 @@ namespace CubeInvasion.Prototype
         {
             art=graphics;
             // A front end saved before the Void Toy layout (no upgrade info rows) is rebuilt in place.
-            bool current=weaponUpgradeInfo!=null&&weaponUpgradeInfo.Length==3&&weaponUpgradeInfo[0];
+            bool current=weaponUpgradeInfo!=null&&weaponUpgradeInfo.Length==(catalog.weapons.Length>4?5:3)&&weaponUpgradeInfo[0]&&weaponCards!=null&&weaponCards.Length==catalog.weapons.Length&&levelNodes!=null&&levelNodes.Length==catalog.missions.Length&&homeBiome;
             if(pages!=null&&pages.Length==5&&current) { background.raycastTarget=true;VoidToyStyle.Restyle(transform,art.uiFont);return; }
             if(pages!=null&&pages.Length==5)
             {
@@ -105,6 +106,7 @@ namespace CubeInvasion.Prototype
             for(int i=0;i<levelNodes.Length;i++) { int index=i;Wire(levelNodes[i],()=>selectMission?.Invoke(index));Wire(homeNodes[i],()=>selectMission?.Invoke(index)); }
             for(int i=0;i<3;i++)
             { var stat=(WeaponUpgrade)i;var pilot=(CharacterUpgrade)i;Wire(weaponUpgrades[i],()=>upgradeWeapon?.Invoke(stat));Wire(characterUpgrades[i],()=>upgradeCharacter?.Invoke(pilot)); }
+            for(int i=3;i<weaponUpgrades.Length;i++) {var stat=(WeaponUpgrade)i;Wire(weaponUpgrades[i],()=>upgradeWeapon?.Invoke(stat));}
             Wire(roadPlay,()=>launch?.Invoke());Wire(buyWeapon,()=>buy?.Invoke());
             musicSlider.onValueChanged.RemoveAllListeners();musicSlider.onValueChanged.AddListener(_=>SettingsEvent());
             sfxSlider.onValueChanged.RemoveAllListeners();sfxSlider.onValueChanged.AddListener(_=>SettingsEvent());
@@ -136,6 +138,7 @@ namespace CubeInvasion.Prototype
             }
             else { var group=pages[(int)page].GetComponent<CanvasGroup>();if(group)group.alpha=1; }
         }
+        public void SetObjectiveDescription(string text) {if(roadDescription&&roadDescription.text!=text)roadDescription.text=text;}
         public void Refresh(MetaProfile profile,P3MetaSettings rules,P2ContentCatalog content,int mission,int inspected,int equipped,string phase,string message)
         {
             bool visible=phase=="Loadout";
@@ -148,7 +151,7 @@ namespace CubeInvasion.Prototype
             if(activeMission!=mission)roadLayoutDirty=true;
             presentedProfile=profile;presentedMission=mission;presentedInspected=inspected;presentedEquipped=equipped;presentedPhase=phase;
             activeMission=mission;
-            wallet.text=$"{profile.gold:N0}";
+            wallet.text=VoidToyPalette.FormatGold(profile.gold);
             int completed=0;foreach(bool done in profile.completed)if(done)completed++;
             homeProgress.text=$"{completed} / {content.missions.Length} GÖREV";
             progressFill.rectTransform.anchorMax=new Vector2((float)completed/content.missions.Length,1);
@@ -164,8 +167,9 @@ namespace CubeInvasion.Prototype
                 nodeNumbers[i].fontSize=homeNumbers[i].fontSize=open?34:15;
                 nodeNumbers[i].color=homeNumbers[i].color=selected?VoidToyPalette.Ink:Color.white;
                 // Home shows the journey as a compact cube strip: numbers only, locked tiles stay blank.
-                homeNumbers[i].text=open||done?(i+1).ToString():"";homeNumbers[i].fontSize=selected?26:20;
+                homeNumbers[i].text=open||done||selected?(i+1).ToString():"";homeNumbers[i].fontSize=selected?22:16;
             }
+            LayoutHomeStrip(mission,content.missions.Length);
             var current=content.missions[mission];roadTitle.text=$"{mission+1:00}  {current.title}";
             roadDescription.text=mission>profile.highestMission?"Önce önceki görevi tamamla.":$"{current.cubes.Length} KÜP · HER KÜP 20 sn\n"+current.description;
             roadPlay.interactable=mission<=profile.highestMission&&profile.weapons[equipped].owned;
@@ -177,29 +181,57 @@ namespace CubeInvasion.Prototype
                 weaponTags[i].color=owned?cyan:gold;
             }
             var spec=content.weapons[inspected];var state=profile.weapons[inspected];
-            weaponHero.sprite=art.weapons[inspected];weaponTitle.text=spec.title;weaponDescription.text=spec.description;
-            weaponStats.text=$"DPS {spec.NominalDps*(1+state.damage*rules.damagePerLevel)*(1+state.fireRate*rules.fireRatePerLevel):0.0}   /   MENZİL {18*spec.projectileLife*(1+state.range*rules.rangePerLevel):0.0} m";
+            weaponHero.sprite=art.weapons[inspected];if(content.weapons.Length>4) {var preview=weaponHero.GetComponent<WeaponModelPreview>();if(!preview)preview=weaponHero.gameObject.AddComponent<WeaponModelPreview>();preview.Show(content.weapons[inspected]);}weaponTitle.text=spec.title;weaponDescription.text=spec.description;
+            var resolved=new WeaponRuntimeStats(spec,state,rules);weaponStats.text=$"DPS {resolved.Dps:0.0}   /   MENZİL {resolved.Range:0.0} m";
             buyWeapon.gameObject.SetActive(!state.owned);buyWeapon.interactable=profile.gold>=rules.Price(inspected);
             buyWeapon.GetComponentInChildren<Text>().text=$"SİLAHI AÇ  ·  {rules.Price(inspected)} ALTIN";
-            for(int i=0;i<3;i++)
+            for(int i=0;i<weaponUpgrades.Length;i++)
             {
-                var kind=(WeaponUpgrade)i;int level=state.Level(kind),cost=rules.UpgradeCost(kind,level);bool max=level>=rules.Cap(kind);
-                weaponUpgrades[i].gameObject.SetActive(state.owned);if(weaponUpgradeInfo!=null&&weaponUpgradeInfo.Length==3)weaponUpgradeInfo[i].transform.parent.gameObject.SetActive(state.owned);weaponUpgrades[i].interactable=!max&&profile.gold>=cost;
-                string title=i==0?"HASAR":i==1?"ATIŞ HIZI":"MENZİL";
+                var kind=(WeaponUpgrade)i;int level=state.Level(kind),cost=rules.UpgradeCost(kind,level);bool max=level>=rules.Cap(kind);if(content.weapons.Length==12&&inspected==0&&i==0&&level==0&&profile.highestMission>=2)cost=0;
+                weaponUpgrades[i].gameObject.SetActive(state.owned);if(weaponUpgradeInfo!=null&&weaponUpgradeInfo.Length==weaponUpgrades.Length)weaponUpgradeInfo[i].transform.parent.gameObject.SetActive(state.owned);weaponUpgrades[i].interactable=!max&&profile.gold>=cost;
+                string title=i==0?"HASAR":i==1?"ATIŞ HIZI":i==2?"MENZİL":i==3?"ÖZEL EVRİM":"DÖNGÜ";
                 float step=(i==0?rules.damagePerLevel:i==1?rules.fireRatePerLevel:rules.rangePerLevel)*100;
-                if(weaponUpgradeInfo!=null&&weaponUpgradeInfo.Length==3)
+                if(weaponUpgradeInfo!=null&&weaponUpgradeInfo.Length==weaponUpgrades.Length)
                 {
-                    weaponUpgradeInfo[i].text=$"{title}   SV {level}/{rules.Cap(kind)}\n"+(max?"Maksimum seviye":$"Sonraki seviye +%{step:0}");
-                    weaponUpgrades[i].GetComponentInChildren<Text>().text=max?"MAKS.":$"{cost}";
+                    weaponUpgradeInfo[i].text=$"{title}   SV {level}/{rules.Cap(kind)}\n"+(max?"Maksimum seviye":i==3?"Silaha özel etki +1":$"Sonraki seviye +%{(i==4?4:step):0}");
+                    weaponUpgrades[i].GetComponentInChildren<Text>().text=max?"MAKS.":cost==0?"ÜCRETSİZ":$"{cost}";
                 }
                 else weaponUpgrades[i].GetComponentInChildren<Text>().text=$"{title}  {level}/{rules.Cap(kind)}\n"+(max?"MAKSİMUM":$"+%{step:0} · {cost} ALTIN");
+                if(i>=3)continue;
                 var character=(CharacterUpgrade)i;int rank=profile.CharacterLevel(character),price=rules.CharacterCost(character,rank);bool capped=rank>=rules.characterCap;
                 characterUpgrades[i].interactable=!capped&&profile.gold>=price;
-                characterUpgrades[i].GetComponentInChildren<Text>().text=capped?"MAKS.":$"{price}\nALTIN";
+                characterUpgrades[i].GetComponentInChildren<Text>().text=capped?"MAKS.":VoidToyPalette.FormatGold(price);
                 characterLevels[i].text=$"SEVİYE {rank}/{rules.characterCap}\n"+(i==0?$"{100+rank*10} → {100+(rank+1)*10} CAN":i==1?$"{4.5f*(1+rank*.03f):0.00} → {4.5f*(1+(rank+1)*.03f):0.00} m/sn":$"{1+rank*.2f:0.0} → {1+(rank+1)*.2f:0.0} m");
                 if(capped)characterLevels[i].text=$"SEVİYE {rank}/{rules.characterCap} · MAKSİMUM";
             }
             pilotStats.text=$"CAN  {100+profile.vitality*10}\nHIZ  {4.5f*(1+profile.agility*.03f):0.00}\nALAN  {1+profile.magnet*.2f:0.0} m";
+        }
+        // Home shows only the active biome's ten levels (or every level of a short catalog), boss slot last and larger.
+        void LayoutHomeStrip(int mission,int count)
+        {
+            if(homeNodes==null||homeNodes.Length==0)return;
+            int window=count>=10?10:count,first=count>=10?Mathf.Clamp(mission,0,count-1)/10*10:0,last=Mathf.Min(count,first+window)-1;
+            float spacing=440f/Mathf.Max(1,window-1),start=258-spacing*(window-1)*.5f;
+            for(int i=0;i<homeNodes.Length;i++)
+            {
+                bool shown=i>=first&&i<=last;homeNodes[i].gameObject.SetActive(shown);if(!shown)continue;
+                bool boss=count>=10&&i%10==9,selected=i==mission;
+                var body=(RectTransform)homeNodes[i].transform;body.anchoredPosition=new Vector2(start+spacing*(i-first),0);
+                body.sizeDelta=Vector2.one*(selected||boss?Mathf.Min(54,spacing+4):Mathf.Min(44,spacing-6));
+            }
+            var rails=homeNodes[0].transform.parent;int rail=0;
+            foreach(Transform child in rails)
+            {
+                if(child.name!="Route rail")continue;
+                bool shown=rail<window-1;child.gameObject.SetActive(shown);
+                if(shown) {var rect=(RectTransform)child;rect.sizeDelta=new Vector2(spacing,8);rect.anchoredPosition=new Vector2(start+spacing*(rail+.5f),0);}
+                rail++;
+            }
+            if(homeBiome)
+            {
+                int biome=count>=10?first/10:0;
+                homeBiome.text=$"BİYOM {biome+1} · {VoidToyPalette.BiomeNames[Mathf.Clamp(biome,0,5)]}"+(count>=10?$"   ·   {first+1}–{last+1}":"");
+            }
         }
         public void SyncSettings(float music,float sfx,bool mute,bool haptic,bool highFrames)
         {

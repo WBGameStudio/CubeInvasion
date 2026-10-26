@@ -13,9 +13,22 @@ namespace CubeInvasion.Prototype
         public static Color Hex(int rgb) => new Color(((rgb>>16)&255)/255f,((rgb>>8)&255)/255f,(rgb&255)/255f,1);
         public static Color WithAlpha(Color c,float a) { c.a=a;return c; }
         // Melee threats read pink, ranged orange; silhouettes carry the rest.
-        public static Color Intent(ContentEnemy kind) => kind==ContentEnemy.Sniper||kind==ContentEnemy.Gunner?Warm:Danger;
+        // Support reads violet and explosives orange, so a Healer or Bomber ring never looks like a melee threat.
+        public static Color Intent(ContentEnemy kind) => kind==ContentEnemy.Healer||kind==ContentEnemy.Summoner?Violet:
+            kind==ContentEnemy.Sniper||kind==ContentEnemy.Gunner||kind==ContentEnemy.Bomber?Warm:Danger;
         public static Color Reward(RouteReward reward) => reward==RouteReward.Health?Health:reward==RouteReward.Gold||reward==RouteReward.Elite?Gold:
             reward==RouteReward.Shield||reward==RouteReward.Magnet?CyanText:reward==RouteReward.Blast?Warm:Cobalt;
         public static Color Risk(int risk) => risk>=3?Danger:risk==2?Warm:Gold;
+        // Canvas 11 biome cubes: floor stays light so graphite invaders keep their contrast.
+        public static readonly string[] BiomeNames={"NEON YARD","FACTORY RIFT","CIRCUIT ABYSS","FROZEN BLOCKS","LAVA FOUNDRY","VOID CORE"};
+        static readonly Color[] biomeFloor={Floor,Hex(0xD8D2C6),Hex(0xB9D3D6),Hex(0xE4F0FA),Hex(0xD9C3B6),Hex(0xCFC6EA)};
+        static readonly Color[] biomeSide={Side,Hex(0x3A3430),Hex(0x123238),Hex(0x2A4767),Hex(0x3A1D22),Hex(0x221A44)};
+        static readonly Color[] biomeEdge={Cyan,Hex(0xFF9C32),Hex(0x39E0C8),Hex(0x8FD8FF),Hex(0xFF6A3D),Hex(0xB18CFF)};
+        public static Color BiomeFloor(int biome) => biomeFloor[Mathf.Clamp(biome,0,5)];
+        public static Color BiomeSide(int biome) => biomeSide[Mathf.Clamp(biome,0,5)];
+        public static Color BiomeEdge(int biome) => biomeEdge[Mathf.Clamp(biome,0,5)];
+        static readonly System.Globalization.NumberFormatInfo turkish=new System.Globalization.NumberFormatInfo {NumberGroupSeparator=".",NumberDecimalSeparator=",",NumberGroupSizes=new[]{3}};
+        // Gold reads the Turkish way everywhere: 30.645, never 30,645 or 30645.
+        public static string FormatGold(int amount) => amount.ToString("#,0",turkish);
     }
 }

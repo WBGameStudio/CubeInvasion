@@ -19,11 +19,16 @@ namespace CubeInvasion.Prototype
         }
         bool CoverHit(Vector3 start,Vector3 end,float radius,out float entry)
         {
-            entry=0;
-            if(!cover||!cover.gameObject.activeInHierarchy)return false;
-            var filter=cover.GetComponent<MeshFilter>();if(!filter||!filter.sharedMesh)return false;
-            var bounds=filter.sharedMesh.bounds;var a=cover.InverseTransformPoint(start);var b=cover.InverseTransformPoint(end);var scale=cover.lossyScale;
-            float exit=1;
+            entry=float.PositiveInfinity;bool hit=false;
+            if(CoverTransformHit(cover,start,end,radius,out float t)) {entry=t;hit=true;}
+            foreach(var block in additionalCover)if(block&&CoverTransformHit(block,start,end,radius,out t)&&t<entry) {entry=t;hit=true;}
+            if(!hit)entry=0;return hit;
+        }
+        bool CoverTransformHit(Transform block,Vector3 start,Vector3 end,float radius,out float entry)
+        {
+            entry=0;if(!block||!block.gameObject.activeInHierarchy)return false;
+            var filter=block.GetComponent<MeshFilter>();if(!filter||!filter.sharedMesh)return false;
+            var bounds=filter.sharedMesh.bounds;var a=block.InverseTransformPoint(start);var b=block.InverseTransformPoint(end);var scale=block.lossyScale;float exit=1;
             return Slab(a.x,b.x-a.x,bounds.min.x-radius/Mathf.Abs(scale.x),bounds.max.x+radius/Mathf.Abs(scale.x),ref entry,ref exit)
                 &&Slab(a.z,b.z-a.z,bounds.min.z-radius/Mathf.Abs(scale.z),bounds.max.z+radius/Mathf.Abs(scale.z),ref entry,ref exit);
         }
@@ -49,14 +54,16 @@ namespace CubeInvasion.Prototype
         readonly Vector3[] coverCorners=new Vector3[4];
         Vector3 EnemyWaypoint(Vector3 start,Vector3 target)
         {
+            var obstacle=cover;foreach(var block in additionalCover)if(CoverTransformHit(block,start,target,.34f,out _)) {obstacle=block;break;}
+            if(!obstacle)return target;
             // A player hugging the barrier can be just inside the enemy's wider clearance.
             // Route toward the adjacent free space rather than asking for an unreachable endpoint.
             if(CoverHit(target,target,.34f,out _))
-            {var away=target-cover.position;away.y=0;target+=away.normalized*.12f;}
+            {var away=target-obstacle.position;away.y=0;target+=away.normalized*.12f;}
             if(!CoverHit(start,target,.32f,out _))return target;
-            var bounds=cover.GetComponent<MeshFilter>().sharedMesh.bounds;var scale=cover.lossyScale;
+            var bounds=obstacle.GetComponent<MeshFilter>().sharedMesh.bounds;var scale=obstacle.lossyScale;
             float x=bounds.extents.x+.4f/Mathf.Abs(scale.x),z=bounds.extents.z+.4f/Mathf.Abs(scale.z);
-            for(int i=0;i<4;i++)coverCorners[i]=cover.TransformPoint(bounds.center+new Vector3((i==0||i==3)?-x:x,0,i<2?-z:z));
+            for(int i=0;i<4;i++)coverCorners[i]=obstacle.TransformPoint(bounds.center+new Vector3((i==0||i==3)?-x:x,0,i<2?-z:z));
             float best=float.PositiveInfinity;var result=start;
             for(int i=0;i<4;i++)
             {

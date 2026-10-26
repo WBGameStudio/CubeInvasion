@@ -34,7 +34,7 @@ public static class FrontEndSmokeCheck
         string directory=Path.Combine(Path.GetTempPath(),"cube-ui-check-"+Guid.NewGuid().ToString("N"));Directory.CreateDirectory(directory);SessionState.SetString(Key+"dir",directory);
         string file=Path.Combine(directory,"profile.json");Environment.SetEnvironmentVariable(Env,file);
         var rules=AssetDatabase.LoadAssetAtPath<P3MetaSettings>("Assets/CubeInvasion/Resources/P3MetaSettings.asset");new MetaProfileStore(file,rules,7,1000);
-        EditorSceneManager.OpenScene("Assets/CubeInvasion/CubeInvasionPrototype.unity");SessionState.SetBool(Key,true);EditorApplication.isPlaying=true;
+        EditorSceneManager.OpenScene("Assets/CubeInvasion/CubeInvasionPrototype.unity");ExpansionTestFixture.Legacy();SessionState.SetBool(Key,true);EditorApplication.isPlaying=true;
     }
     static void Capture(string name,int width=540,int height=960)
     {

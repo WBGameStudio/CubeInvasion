@@ -57,6 +57,7 @@ namespace CubeInvasion.Prototype
         readonly Color navy=VoidToyPalette.Panel, cyan=VoidToyPalette.Cyan, danger=VoidToyPalette.Danger;
         public void Initialize(Camera camera,Action pause,Action retry,Action mute)
         {
+            pauseAction=pause;muteAction=mute;
             if(Canvas && SafeRoot)
             {
                 Canvas.worldCamera=camera;
@@ -144,11 +145,12 @@ namespace CubeInvasion.Prototype
             healthFill.rectTransform.anchorMax=new Vector2(share,1);healthLabel.text=$"CAN {hp:0}/{maxHealth:0}";
             healthFill.color=share<=.25f?danger:share<=.5f?VoidToyPalette.Warm:VoidToyPalette.Health;
             status.text=$"KÜP {stage}/3";if(objectiveText)objectiveText.text=$"{enemies} HEDEF";else status.text+=$"\n{enemies} HEDEF";
-            gold.text=pending>0?$"{wallet} +{pending}":$"{wallet}";
+            gold.text=pending>0?$"{VoidToyPalette.FormatGold(wallet)} +{pending}":VoidToyPalette.FormatGold(wallet);
             buffText.text=buffCubes>0?$"HASAR +%{buff*100:0} · {buffCubes} KÜP":"";
             hint.text=phase=="Choice"?"TEMİZLENDİ!\nSağ ya da ileri kapıdan geç":phase=="Transfer"?"SONRAKİ KÜPE GEÇİLİYOR":final?"SON SANİYELER!":"";
             hint.color=phase=="Choice"?VoidToyPalette.HealthText:final?VoidToyPalette.DangerText:VoidToyPalette.Text;
-            pauseText.text=paused?"DEVAM":"II";pauseText.fontSize=paused?15:26;if(soundText)soundText.text=muted?"SESSİZ":"SES";pauseOverlay.SetActive(paused);
+            pauseText.text=paused?"DEVAM":"II";pauseText.fontSize=paused?15:26;if(soundText)soundText.text=muted?"SESSİZ":"SES";pauseOverlay.SetActive(paused&&phase!="Loadout"&&phase!="SaveBlocked"&&phase!="Won"&&phase!="Failed");
+            if(paused&&pauseInfo) {pauseInfo.text=$"KÜP {stage}  ·  {seconds:0.0} sn kaldı  ·  süre durdu";pauseSound.text=muted?"SES  ·  KAPALI":"SES  ·  AÇIK";}
             bool ended=phase=="Won"||phase=="Failed";result.SetActive(ended&&!campaignMode);
             if(ended)
             {

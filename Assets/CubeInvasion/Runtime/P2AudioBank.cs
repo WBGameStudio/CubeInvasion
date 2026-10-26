@@ -12,6 +12,8 @@ namespace CubeInvasion.Prototype
         {
             if(sounds!=null)foreach(var entry in sounds)
                 if(entry.cue==cue && entry.variants!=null && entry.variants.Length>0)return entry.variants[variation%entry.variants.Length];
+            var expansion=Resources.Load<CampaignPresentation>("CampaignPresentation");
+            if(expansion&&expansion.sounds!=null)foreach(var entry in expansion.sounds)if(entry.cue==cue&&entry.variants!=null&&entry.variants.Length>0)return entry.variants[variation%entry.variants.Length];
             return null;
         }
     }
