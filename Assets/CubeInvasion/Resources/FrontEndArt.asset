@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CubeInvasion.Prototype.FrontEndArt
   menuHero: {fileID: 0}
   campaignIslands: {fileID: 0}
-  scout: {fileID: 21300000, guid: 547ad80b6a0674d3ca5d946e5a6bd7b4, type: 3}
+  scout: {fileID: 21300000, guid: 5b85e3127eb314ef08aa4096e66d996f, type: 3}
   panel: {fileID: 21300000, guid: 43be4a4e1b86c4c479853fc229b3b310, type: 2}
   disc: {fileID: 21300000, guid: 3c2d72c9d8aaa42cca6ade4e9a862f34, type: 2}
   casualButton: {fileID: -4390266454762342410, guid: 8269f0c0bcf9c4c03a0cae27e4923086, type: 3}
@@ -25,7 +25,7 @@ MonoBehaviour:
   coin: {fileID: 21300000, guid: 7b9000ddefb64432aad36fec914e212a, type: 3}
   uiFont: {fileID: 12800000, guid: f2a16989bb3b04cc88d03fff240296a2, type: 3}
   weapons:
-  - {fileID: 21300000, guid: e5463e14bd2bc477baa2130a167f6029, type: 3}
-  - {fileID: 21300000, guid: 53ebd96a9fae6494abe1349737395f03, type: 3}
-  - {fileID: 21300000, guid: 83ba9c077e5254846838dd12856c854a, type: 3}
-  - {fileID: 21300000, guid: 6a361b8d17cce44d48c50c431ad5734b, type: 3}
+  - {fileID: 21300000, guid: 4f77cdb8ed7064b41ba95cf0ed60eb5c, type: 3}
+  - {fileID: 21300000, guid: 281fefb5a4862454094d15d3548d4c2d, type: 3}
+  - {fileID: 21300000, guid: 66bce7e849e2243579bdac357f18cfa7, type: 3}
+  - {fileID: 21300000, guid: 68f3f4afabef64e869f20c8dde3fce99, type: 3}
