@@ -135,7 +135,7 @@ namespace CubeInvasion.Prototype
             Color color=VoidToyPalette.Intent(kind);
             Color shell=Color.Lerp(VoidToyPalette.Graphite,color,kind==ContentEnemy.Crusher?.22f:.3f);
             float hp=kind==ContentEnemy.ObjectiveNode?12:kind==ContentEnemy.Summoner?25:kind==ContentEnemy.Phaser?19:kind==ContentEnemy.Elite?(Expanded&&Mission.special==SpecialRule.EliteHunt?36:70):kind==ContentEnemy.Shielder?30:kind==ContentEnemy.Healer?20:kind==ContentEnemy.Bomber?16:kind==ContentEnemy.Grunt?18:kind==ContentEnemy.Sprinter?12:kind==ContentEnemy.Gunner?21:kind==ContentEnemy.Pusher?24:kind==ContentEnemy.Sniper?14:kind==ContentEnemy.Bruiser?45:BossPhaseHealth(stage);
-            float speed=kind==ContentEnemy.Sprinter?2.2f:kind==ContentEnemy.Bruiser?.7f:kind==ContentEnemy.Crusher?.5f:1.05f;
+            float speed=Tempo(enemy).speed;
             Vector3 scale=kind==ContentEnemy.Crusher?Vector3.one*1.05f:kind==ContentEnemy.Bruiser?Vector3.one*.85f:Vector3.one*.7f;
             if(kind==ContentEnemy.Crusher)position.y=.95f;
             string poolKey=kind.ToString();bool reused=RentActor(poolKey,out var body,out var animation);
@@ -188,7 +188,7 @@ namespace CubeInvasion.Prototype
                     else if(foe.kind==EnemyKind.Pusher)
                     {
                         var offset=player.position-foe.body.position;offset.y=0;
-                        if(offset.magnitude<=2.5f && Vector3.Dot(offset.normalized,foe.aim)>.35f)DamagePlayer(5*EnemyDamageMultiplier*foe.attackPower,foe.aim*9);
+                        if(offset.magnitude<=PushReach && Vector3.Dot(offset.normalized,foe.aim)>.35f)DamagePlayer(5*EnemyDamageMultiplier*foe.attackPower,foe.aim*PushForce);
                         feedback.Burst(foe.body.position,new Color(1,.6f,.2f),2.3f,.25f,true);
                     }
                     else if(foe.kind==EnemyKind.Bruiser)
@@ -210,12 +210,12 @@ namespace CubeInvasion.Prototype
                 }
                 return true;
             }
-            float range=foe.kind==EnemyKind.Sniper?12:foe.kind==EnemyKind.Pusher?3:foe.kind==EnemyKind.Crusher?(stage==1?2.8f:8):1.7f;
+            float range=foe.kind==EnemyKind.Sniper?12:foe.kind==EnemyKind.Pusher?PushReach+.3f:foe.kind==EnemyKind.Crusher?(stage==1?2.8f:8):1.7f;
             if(foe.attack<=0 && distance<range&&!CoverHit(foe.body.position,player.position,.1f,out _))
             {
                 foe.aim=toward.sqrMagnitude>.01f?toward.normalized:Vector3.forward;
-                foe.windup=foe.kind==EnemyKind.Sniper?1.1f:foe.kind==EnemyKind.Pusher?.85f:foe.kind==EnemyKind.Crusher?1.2f:.8f;
-                foe.attack=foe.windup+(foe.kind==EnemyKind.Crusher?1.8f:foe.kind==EnemyKind.Sniper?2.3f:1.6f)*EnemyRecoveryMultiplier;
+                var tempo=Tempo(foe.kind);foe.windup=tempo.windup;
+                foe.attack=foe.windup+tempo.recovery*EnemyRecoveryMultiplier;
                 foe.body.rotation=Quaternion.LookRotation(foe.aim);foe.warning.gameObject.SetActive(true);
                 if(foe.animation)foe.animation.Telegraph(foe.windup);
                 feedback.Play(CombatFeedback.Cue.Telegraph);
@@ -226,8 +226,8 @@ namespace CubeInvasion.Prototype
                 {
                     line.loop=true;line.useWorldSpace=true;line.positionCount=4;
                     var origin=new Vector3(foe.body.position.x,.1f,foe.body.position.z);
-                    line.SetPosition(0,origin);line.SetPosition(1,origin+Quaternion.Euler(0,-65,0)*foe.aim*2.5f);
-                    line.SetPosition(2,origin+foe.aim*2.5f);line.SetPosition(3,origin+Quaternion.Euler(0,65,0)*foe.aim*2.5f);
+                    line.SetPosition(0,origin);line.SetPosition(1,origin+Quaternion.Euler(0,-65,0)*foe.aim*PushReach);
+                    line.SetPosition(2,origin+foe.aim*PushReach);line.SetPosition(3,origin+Quaternion.Euler(0,65,0)*foe.aim*PushReach);
                 }
                 else if(foe.kind==EnemyKind.Crusher && stage>1)
                 {

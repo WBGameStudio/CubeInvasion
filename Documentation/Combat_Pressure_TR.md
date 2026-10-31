@@ -53,3 +53,18 @@ P0/P1 kamera, animasyon, küp geçişi ve düşme; P2 yedi görevin iki rotası,
 [Oyun içi önizleme](Previews/CombatPressure/Gameplay.png) · [Yönlendirme](Previews/CombatPressure/Onboarding.png) · [Kontrol özeti](Previews/CombatPressure/QA.json) · [Can/DPS bütçeleri](Previews/CombatPressure/Balance.csv) · [Sabit karakter denemesi](Previews/CombatPressure/Hands_Off_Probe.csv).
 
 Android development APK: `CubeInvasion-CombatPressure.apk`, 47.3 MiB. Gerçek Android cihazda oynanış/performans testi henüz yapılmadı.
+
+## Düşman temposu (tip başına)
+
+Değerler tek yerde: `Runtime/InvasionPrototype.EnemyTuning.cs`. Uyarı (telegraph) süreleri okunabilir kalsın diye korunur; zorluk hız, saldırı sonrası kısa toparlanma ve daha sert itmeden gelir. Hızlara genel `enemyMoveMultiplier` (1,2), toparlanmaya `enemyRecoveryMultiplier` (0,8) ayrıca uygulanır.
+
+| Tip | Hız (ilk → şimdi) | Oyundaki hız (m/s) | Uyarı | Toparlanma (ilk → şimdi) | Not |
+| --- | --- | --- | --- | --- | --- |
+| Grunt | 1,05 → 2,3 | 2,76 | 0,5 | 1,1 → 0,6 | |
+| Sprinter | 2,2 → 3,8 | 4,56 | 0,65 → 0,6 | 1,8 → 0,95 | Atılma 7,5 → 10,5 m/s |
+| Gunner | 1,05 → 1,9 | 2,28 | 1,0 → 0,9 | 1,8 → 1,05 | |
+| Pusher | 1,05 → 3,1 | 3,72 | 0,85 | 1,6 → 0,8 | İtme 9 → 16 (≈0,9 → 1,6 m), menzil 2,5 → 2,8 |
+| Sniper | 1,05 → 1,6 | 1,92 | 1,1 | 2,3 → 1,35 | |
+| Bruiser | 0,7 → 1,45 | 1,74 | 0,8 | 1,6 → 0,95 | |
+
+Kahramanın hızı 5 m/s. Pusher neredeyse onun hızında kovalar; kaçmak için düz koşmak değil, açı değiştirmek gerekir.

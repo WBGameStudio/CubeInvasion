@@ -198,7 +198,7 @@ namespace CubeInvasion.Prototype
                 var animation=AnimateActor(body,body,gunner?"Gunner":runner?"Sprinter":"Grunt",crest,cannon);
                 if(animation)animation.Spawn();
                 var warning=WarningRing(body.position,runner?1:1.5f,color);warning.gameObject.SetActive(false);
-                foes.Add(new Foe {body=body,hp=gunner?21:runner?12:18,maxHp=gunner?21:runner?12:18,speed=runner?2.2f:1.05f,attack=0,
+                foes.Add(new Foe {body=body,hp=gunner?21:runner?12:18,maxHp=gunner?21:runner?12:18,speed=Tempo(gunner?EnemyKind.Gunner:runner?EnemyKind.Sprinter:EnemyKind.Grunt).speed,attack=0,
                     color=color,visual=animation?animation.CoreRenderer:body.GetComponent<Renderer>(),animation=animation,kind=gunner?EnemyKind.Gunner:runner?EnemyKind.Sprinter:EnemyKind.Grunt,warning=warning});
                 feedback.Burst(new Vector3(body.position.x,.1f,body.position.z),color,1,.65f,true);
             }

@@ -212,7 +212,7 @@ namespace CubeInvasion.Prototype
                 if(foe.dash>0)
                 {
                     Vector3 previous=foe.body.position;
-                    MoveEnemy(foe,foe.aim*7.5f*dt);
+                    MoveEnemy(foe,foe.aim*SprintDashSpeed*dt);
                     if(!foe.dashHit && SegmentDistance(player.position,previous,foe.body.position)<.8f)
                     { DamagePlayer(7*EnemyDamageMultiplier*foe.attackPower,foe.aim*3);foe.dashHit=true; }
                     foe.dash-=dt;return;
@@ -227,8 +227,8 @@ namespace CubeInvasion.Prototype
                 if(foe.attack<=0 && distance<range&&!CoverHit(foe.body.position,player.position,.1f,out _))
                 {
                     foe.aim=toward.sqrMagnitude>.01f?toward.normalized:Vector3.forward;
-                    foe.windup=foe.kind==EnemyKind.Grunt?.5f:foe.kind==EnemyKind.Sprinter?.65f:1.0f;
-                    foe.attack=foe.windup+(foe.kind==EnemyKind.Grunt?1.1f:1.8f)*EnemyRecoveryMultiplier;
+                    var tempo=Tempo(foe.kind);foe.windup=tempo.windup;
+                    foe.attack=foe.windup+tempo.recovery*EnemyRecoveryMultiplier;
                     if(foe.animation)foe.animation.Telegraph(foe.windup);
                     foe.warning.gameObject.SetActive(true);
                     foe.body.rotation=Quaternion.LookRotation(foe.aim);
