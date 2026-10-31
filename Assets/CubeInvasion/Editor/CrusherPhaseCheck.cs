@@ -13,10 +13,12 @@ public static class CrusherPhaseCheck
     const string Key="CI.CrusherCheck";static InvasionPrototype game;static int step,run;static double deadline;static Transform player;static Camera camera;
     static readonly BindingFlags F=BindingFlags.Instance|BindingFlags.NonPublic;
     static CrusherPhaseCheck() {EditorApplication.update+=Tick;}
-    public static void Run()
+    public static void Run()=>Start(false);
+    public static void RunCampaign()=>Start(true);
+    static void Start(bool campaign)
     {
         SessionState.SetBool(Key+"walletExists",PlayerPrefs.HasKey("CI.Wallet"));SessionState.SetInt(Key+"wallet",PlayerPrefs.GetInt("CI.Wallet",0));
-        EditorSceneManager.OpenScene("Assets/CubeInvasion/CubeInvasionPrototype.unity");ExpansionTestFixture.Legacy();var data=new SerializedObject(Object.FindAnyObjectByType<InvasionPrototype>());data.FindProperty("metaSettings").objectReferenceValue=null;data.ApplyModifiedPropertiesWithoutUndo();
+        EditorSceneManager.OpenScene("Assets/CubeInvasion/CubeInvasionPrototype.unity");if(!campaign)ExpansionTestFixture.Legacy();var data=new SerializedObject(Object.FindAnyObjectByType<InvasionPrototype>());data.FindProperty("metaSettings").objectReferenceValue=null;data.ApplyModifiedPropertiesWithoutUndo();
         SessionState.SetBool(Key,true);EditorApplication.isPlaying=true;
     }
     static object Get(string n)=>typeof(InvasionPrototype).GetField(n,F).GetValue(game);
@@ -40,6 +42,7 @@ public static class CrusherPhaseCheck
             if(step==0)
             {
                 if(!player) {player=(Transform)Get("player");camera=(Camera)Get("view");}
+                if(run==0)CheckFractionalArmorDamage();
                 Set("weaponIndex",run/2);Call("StartMission",6);Call("SetPaused",true);Set("invulnerability",100f);Set("shot",100f);KillAdds();
                 var boss=Boss;var body=(Transform)Item(boss,"body");body.rotation=Quaternion.identity;player.position=body.position+Vector3.back*2.5f;player.position=new Vector3(player.position.x,.65f,player.position.z);
                 Near((float)Get("bossHealth"),252,"Shared boss health starts at 252");var panels=(Transform[])Get("crusherArmor");
@@ -105,6 +108,26 @@ public static class CrusherPhaseCheck
         }
         catch(Exception e) {Debug.LogException(e);Finish(1);}
     }
+    static void CheckFractionalArmorDamage()
+    {
+        // Actual repeated hits used to leave positive body HP after both panels vanished.
+        foreach(float damage in new[] {.1f,.3f,2.1f,3.7f,6.6f})
+        {
+            Call("StartMission",6);Call("SetPaused",true);KillAdds();
+            var boss=Boss;
+            for(int panel=0;panel<2;panel++)
+            {
+                int hits=0;
+                while(((float[])Get("crusherArmorHealth"))[panel]>0&&hits++<1000)
+                    Call("HitEnemyAt",boss,damage,Vector3.forward,panel);
+                Check(hits<1000,"Fractional damage breaks panel "+panel+" at "+damage);
+                if(panel==0)Check(((IList)Get("foes")).Contains(boss),"One surviving panel keeps boss alive");
+            }
+            Check(((IList)Get("foes")).Count==0,"No invisible body HP remains after fractional armor damage "+damage);
+            Near((float)Get("bossHealth"),180,"Fractional armor damage preserves exact next-phase health");
+            Call("Clear");Check(State=="Choice","Fractional armor clear opens walking gates");
+        }
+    }
     static void Capture(string name)
     {
         Call("SetPaused",false);for(int i=0;i<12;i++) {Call("TickAnimations",.08f);((CombatFeedback)Get("feedback")).Tick(.08f);}
@@ -115,6 +138,6 @@ public static class CrusherPhaseCheck
     static void Finish(int code)
     {
         SessionState.SetBool(Key,false);if(SessionState.GetBool(Key+"walletExists",false))PlayerPrefs.SetInt("CI.Wallet",SessionState.GetInt(Key+"wallet",0));else PlayerPrefs.DeleteKey("CI.Wallet");PlayerPrefs.Save();
-        if(code==0)Debug.Log("CUBE_CRUSHER_PHASES_OK: four weapons, both gate directions, eight full boss runs; authored armor, actual lasers, support protection, telegraph dodge, health continuity, timeout and retry.");EditorApplication.Exit(code);
+        if(code==0)Debug.Log("CUBE_CRUSHER_PHASES_OK: fractional armor regression, four weapons, both gate directions, eight full boss runs; authored armor, actual lasers, support protection, telegraph dodge, health continuity, timeout and retry.");EditorApplication.Exit(code);
     }
 }

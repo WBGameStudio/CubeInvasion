@@ -114,6 +114,14 @@ namespace CubeInvasion.Prototype
             }
             return applied;
         }
+        void SyncCrusherArmorHealth(Foe foe)
+        {
+            if(!HasCrusherObjectives||stage!=1||foe!=crusherBoss)return;
+            // Panels are the phase objective. Independent float subtraction on the body
+            // can leave untargetable HP after the last panel has broken.
+            foe.hp=crusherArmorHealth[0]+crusherArmorHealth[1];
+            bossHealth=Mathf.Max(0,crusherPhaseStartHealth-BossPhaseHealth(1)+foe.hp);
+        }
         void CrusherDroneDamaged(Foe foe,float applied)
         {
             if(!HasCrusherObjectives||stage!=2||crusherBoss==null)return;

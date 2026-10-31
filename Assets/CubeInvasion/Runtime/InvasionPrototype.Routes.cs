@@ -76,7 +76,7 @@ namespace CubeInvasion.Prototype
         }
         Vector3 SafeBranchSpawn(Vector3 desired,ContentEnemy kind)
         {
-            if(!HasBranches&&!HasGoldRushVariants)return desired;
+            if(!HasBranches&&!HasGoldRushVariants&&kind!=ContentEnemy.ObjectiveNode)return desired;
             if(SpawnFree(desired,kind))return desired;
             Vector3 best=desired;float score=float.PositiveInfinity;
             for(int z=0;z<4;z++)for(int x=0;x<4;x++)

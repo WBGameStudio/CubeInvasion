@@ -138,6 +138,7 @@ namespace CubeInvasion.Prototype
             float applied=Mathf.Min(foe.hp,damage);
             foe.hp-=damage;foe.flash=.09f;
             if(HasContent && foe.kind==EnemyKind.Crusher)bossHealth=Mathf.Max(0,bossHealth-applied);
+            SyncCrusherArmorHealth(foe);
             CrusherDroneDamaged(foe,applied);
             if(foe.animation)foe.animation.Hit();
             feedback.Play(CombatFeedback.Cue.Hit);feedback.Burst(foe.body.position,Color.white,.3f);

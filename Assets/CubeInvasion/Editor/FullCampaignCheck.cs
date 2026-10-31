@@ -43,6 +43,7 @@ public static class FullCampaignCheck
         Set("missionIndex",23);menu.ShowPage(MenuPage.Home,false);Call("RefreshContentHud");Capture("Home60");
         var shownHome=0;foreach(UnityEngine.UI.Button node in (UnityEngine.UI.Button[])type.GetField("homeNodes",Flags).GetValue(menu))if(node.gameObject.activeSelf)shownHome++;Assert(shownHome==10,"Home strip shows one biome of ten levels");
         var rules=(P3MetaSettings)Get("metaSettings");var reload=new MetaProfileStore(store.PathName,rules,60,0);Assert(reload.CanWrite&&reload.Data.weapons[4].special==1&&reload.Data.weapons[4].cooldown==1,"Expanded save reloads special upgrades");Set("metaSettings",null);menu.gameObject.SetActive(false);
+        CheckObjectiveAutoFire(catalog);
         Fresh();RemoveAll();var summoner=Call("SpawnContentEnemy",ContentEnemy.Summoner,new Vector3(0,.6f,2));Call("TickAdvancedEnemy",summoner,6.1f,Vector3.forward,4f);Assert((int)Item(((IDictionary)Get("advancedBrains"))[summoner],"summoned")==0,"Summon waits for telegraph");Call("TickAdvancedEnemy",summoner,.81f,Vector3.forward,4f);Call("FlushSummons");Assert(Foes.Count==3,"Summoner creates at most two required minions");Call("TickAdvancedEnemy",summoner,20f,Vector3.forward,4f);Call("FlushSummons");Assert(Foes.Count==3,"Summon lifetime cap prevents endless mandatory waves");
         RemoveAll();var phaser=Call("SpawnContentEnemy",ContentEnemy.Phaser,new Vector3(0,.6f,2));var body=(Transform)Item(phaser,"body");var before=body.position;Call("TickAdvancedEnemy",phaser,2.6f,Vector3.forward,4f);Assert(body.position==before,"Phaser warns before teleporting");Call("TickAdvancedEnemy",phaser,.71f,Vector3.forward,4f);Assert(body.position!=before,"Phaser relocates after warning");Assert((float)Call("AdvancedDamage",phaser,10f)>10,"Phaser exposes a brief damage window");
         RemoveAll();var elite=Call("SpawnContentEnemy",ContentEnemy.Elite,new Vector3(0,.6f,1));Put(elite,"attackPower",1.15f);player.position=new Vector3(0,.65f,2);Call("TickAdvancedEnemy",elite,2.6f,Vector3.forward,1f);Assert((float)Item(((IDictionary)Get("advancedBrains"))[elite],"windup")>0,"Elite prepares its combined attack");int shotCount=((IList)Get("enemyShots")).Count;Call("TickAdvancedEnemy",elite,1.1f,Vector3.forward,1f);Assert(((IList)Get("enemyShots")).Count==shotCount+3,"Elite executes the ranged half of its combination");Assert(Mathf.Abs((float)Item(((IList)Get("enemyShots"))[shotCount],"damage")-6*1.15f)<.001f,"Route elite multiplier reaches the advanced ranged attack");Set("invulnerability",0f);Set("health",100f);Call("TickAdvancedEnemy",elite,2.1f,Vector3.forward,1f);Call("TickAdvancedEnemy",elite,1.1f,Vector3.forward,1f);Assert((int)Item(((IDictionary)Get("advancedBrains"))[elite],"sequence")==2&&((IList)Get("enemyShots")).Count==shotCount+3,"Elite follows the burst with a push attack");Assert(Mathf.Abs((float)Get("health")-(100-7*(float)Prop("EnemyDamageMultiplier")*1.15f))<.001f,"Route elite multiplier reaches actual push damage once");
@@ -62,6 +63,35 @@ public static class FullCampaignCheck
         Set("weaponIndex",0);Fresh(22);RemoveAll();Call("SpawnSpecialPickup",player.position,true);Call("TickExpandedArena",.01f);Call("SpawnContentEnemy",ContentEnemy.Grunt,player.position+Vector3.forward*1.5f);Call("FireContentWeapon");Assert(Mathf.Abs((float)Item(((IList)Get("pulses"))[0],"damage")-7.8f)<.001f,"Damage Amp changes actual projectile damage by thirty percent");Call("TickExpandedArena",4.1f);Assert((float)Prop("temporaryAmp")==0,"Damage Amp expires after four seconds");Call("SpawnSpecialPickup",player.position,false);Call("TickExpandedArena",.01f);int gold=(int)Get("pendingGold");Call("SpawnPickup",player.position+Vector3.right*2.5f,false,5);Call("CollectPickups",0f,false);Assert((int)Get("pendingGold")==gold+5,"Magnet Core extends actual pickup reach");Call("TickExpandedArena",3.1f);gold=(int)Get("pendingGold");Call("SpawnPickup",player.position+Vector3.right*2.5f,false,5);Call("CollectPickups",0f,false);Assert((int)Get("pendingGold")==gold,"Magnet reach returns to normal after expiry");
         Fresh(12);Assert(Mathf.Abs((float)Prop("ArenaHalfX")-3)<.001f,"Narrow arena uses real six-unit floor");var gate=(Transform)Get("rightGate");Assert(Mathf.Abs(gate.position.x-((Vector3)Get("centre")).x-2.65f)<.001f,"Narrow first cube gate matches physical edge");var origin=(Vector3)Get("centre");var exit=origin+new Vector3(2.8f,.65f,0);player.position=exit;Set("phase",Enum.Parse(typeof(InvasionPrototype).GetNestedType("Phase",BindingFlags.NonPublic),"Choice"));Set("routesReady",true);Call("CheckGateCrossing",origin+new Vector3(2.5f,.65f,0),exit);Assert(State=="Transfer","Walking through narrow gate commits the route");Fresh(11);Assert(Mathf.Abs(((Transform)Get("rightPreview")).Find("Arena surface").localScale.x-6)<.001f,"Narrow candidate rises with its final geometry");Call("OpenExits");Assert(Mathf.Abs(((Transform)Get("platform")).Find("Right bridge").localScale.x-4.6f)<.001f,"Bridge spans the real destination edge");
         Fresh(22);RemoveAll();Call("SetupExpandedArena");if(((IList)Get("additionalCover")).Count>0) {var block=(Transform)((IList)Get("additionalCover"))[0];var a=block.position-Vector3.right*2;var b=block.position+Vector3.right*2;var args=new object[]{a,b,.09f,0f};Assert((bool)Call("CoverHit",args),"Additional cover blocks lasers");Call("DamageExpandedCover",a,b,100f);Assert(!block||!((IList)Get("additionalCover")).Contains(block),"Breakable cover can be destroyed");}
+    }
+    static void CheckObjectiveAutoFire(P2ContentCatalog catalog)
+    {
+        int chain=Array.FindIndex(catalog.missions,m=>m.special==SpecialRule.ChainReactor);
+        Set("weaponIndex",0);Fresh(chain);RemoveAll();
+        Call("AddCover",new Vector3(0,.4f,1.2f),new Vector3(.6f,.8f,3));
+        Call("SpawnObjectiveNode",0,new Vector3(0,.6f,2.7f),12f,"Embedded node regression");
+        var embedded=Foes[0];var at=((Transform)Item(embedded,"body")).position;
+        Assert(!(bool)Call("CoverHit",new object[]{at,at,.4f,0f}),"Required energy node spawns outside cover");
+        for(int weapon=0;weapon<12;weapon++)
+        {
+            Set("weaponIndex",weapon);Fresh(chain);RemoveAll();player.position=new Vector3(0,.65f,-1);
+            Call("SpawnObjectiveNode",0,new Vector3(0,.6f,.5f),1000f,"Auto-fire node");
+            var node=Foes[0];Set("shot",0f);Call("TickAutoFire",.02f);
+            Assert(ReferenceEquals(Get("currentTarget"),node),"Auto-fire selects energy node with weapon "+weapon);
+            for(int i=0;i<40;i++) {Call("TickPulses",.025f);Call("TickAdvancedWeapons",.025f);}
+            Assert((float)Item(node,"hp")<1000,"Auto-fire actually damages energy node with weapon "+weapon);
+        }
+        Set("weaponIndex",0);Fresh(chain);RemoveAll();player.position=new Vector3(0,.65f,-1);
+        Call("SpawnObjectiveNode",0,new Vector3(1,.6f,1),12f,"First node");var first=Foes[0];
+        Call("SpawnObjectiveNode",1,new Vector3(0,.6f,.5f),12f,"Locked node");var second=Foes[1];
+        Assert((bool)Call("AimAtNearestEnemy")&&ReferenceEquals(Get("currentTarget"),first),"Auto-aim skips closer locked energy node");
+        Call("HitEnemy",first,100f,Vector3.forward);
+        Assert((bool)Call("AimAtNearestEnemy")&&ReferenceEquals(Get("currentTarget"),second),"Auto-aim switches to next unlocked node");
+        Fresh(19);RemoveAll();player.position=new Vector3(0,.65f,-1);
+        var enemy=Call("SpawnContentEnemy",ContentEnemy.Grunt,new Vector3(0,.6f,.5f));Call("CreateBarrel",new Vector3(0,.5f,2));
+        Assert((bool)Call("AimAtNearestEnemy")&&ReferenceEquals(Get("currentTarget"),enemy),"Furnace object scan preserves nearer valid target");
+        Call("HitEnemy",enemy,100f,Vector3.forward);
+        Assert((bool)Call("AimAtNearestEnemy")&&Get("barrelTarget")!=null,"Auto-aim switches to mandatory barrel");
     }
     static void ResolveCube()
     {

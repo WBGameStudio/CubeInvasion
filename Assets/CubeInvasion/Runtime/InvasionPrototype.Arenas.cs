@@ -117,7 +117,7 @@ namespace CubeInvasion.Prototype
         void SpawnSpecialPickup(Vector3 at,bool amp)
         {var body=Shape(amp?"Damage amplifier":"Magnet core",PrimitiveType.Cube,at,Vector3.one*.3f,amp?danger:VoidToyPalette.Cyan,dynamicRoot);specialPickups.Add(new SpecialPickup {body=body,amp=amp});AnimatePickup(body);}
         void SpawnObjectiveNode(int index,Vector3 at,float hp,string label)
-        {var node=SpawnContentEnemy(ContentEnemy.ObjectiveNode,at);node.body.name=label+" "+(index+1);node.hp=node.maxHp=hp;node.speed=0;objectiveNodes[node]=index;node.warning.gameObject.SetActive(true);node.warning.localScale=Vector3.one*.4f;RefreshObjectiveMarkers();
+        {var spawn=CoverHit(at,at,.4f,out _)?SafeBranchSpawn(at,ContentEnemy.ObjectiveNode):at;var node=SpawnContentEnemy(ContentEnemy.ObjectiveNode,spawn);node.body.name=label+" "+(index+1);node.hp=node.maxHp=hp;node.speed=0;objectiveNodes[node]=index;node.warning.gameObject.SetActive(true);node.warning.localScale=Vector3.one*.4f;RefreshObjectiveMarkers();
             var existing=node.body.Find("Objective order");var text=existing?existing.GetComponent<TextMesh>():new GameObject("Objective order").AddComponent<TextMesh>();text.transform.SetParent(node.body,false);text.transform.localPosition=Vector3.up; text.transform.rotation=view.transform.rotation;text.text=(index+1).ToString();text.characterSize=.15f;text.fontSize=48;text.anchor=TextAnchor.MiddleCenter;
             if(!node.body.Find("Reward beacon vertical"))Shape("Reward beacon vertical",PrimitiveType.Cube,new Vector3(0,1,0),new Vector3(.2f,.7f,.2f),VoidToyPalette.Cyan,node.body);}
         void RefreshObjectiveMarkers()
@@ -131,9 +131,8 @@ namespace CubeInvasion.Prototype
         void AimAtExpandedObject(ref float nearest)
         {
             if(!Expanded||!HasExpandedBoss||Mission.boss!=BossIdentity.FurnaceKing||stage!=1)return;
-            currentTarget=null;goldTarget=null;
             foreach(var barrel in barrels)if(barrel.body&&barrel.fuse<0&&!CoverHit(player.position,barrel.body.position,.09f,out _))
-            {float distance=(barrel.body.position-player.position).sqrMagnitude;if(((int)Weapon.kind<4||distance<=Mathf.Pow(Weapon.EffectiveRange*(1+MetaRange),2))&&distance<nearest) {nearest=distance;barrelTarget=barrel;}}
+            {float distance=(barrel.body.position-player.position).sqrMagnitude;if(((int)Weapon.kind<4||distance<=Mathf.Pow(Weapon.EffectiveRange*(1+MetaRange),2))&&distance<nearest) {nearest=distance;barrelTarget=barrel;currentTarget=null;goldTarget=null;}}
         }
         string ExpandedObjectiveText(string fallback)
         {
