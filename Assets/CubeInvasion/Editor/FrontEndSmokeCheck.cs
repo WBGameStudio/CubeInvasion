@@ -82,7 +82,8 @@ public static class FrontEndSmokeCheck
                     press.OnPointerDown(new PointerEventData(EventSystem.current));Check(DG.Tweening.DOTween.IsTweening(playButton.transform),"Touch press starts DOTween feedback");press.OnPointerExit(new PointerEventData(EventSystem.current));
                     var homeButtons=(Button[])Get(menu,"homeNodes");Check(homeButtons.Length==7,"Home is a playable seven-node journey");
                     var route=menu.transform.Find("Home page/Road viewport/Road nodes");foreach(Transform child in route)if(child.name=="Route rail")Check(child.GetSiblingIndex()<homeButtons[0].transform.GetSiblingIndex(),"Route rails render behind interactive level tiles");
-                    Capture("Home");Capture("HomeTall",540,1200);var tabs=(Button[])Get(menu,"navigation");tabs[1].onClick.Invoke();next=now+.3;step=1;break;
+                    Capture("Home");Capture("HomeTall",540,1200);
+                    homeButtons[0].onClick.Invoke();Check(menu.transform.Find("Home page/Level sheet").gameObject.activeSelf,"Tapping a path tile opens the level sheet");DG.Tweening.DOTween.Complete(menu.transform.Find("Home page/Level sheet/Sheet panel"));Capture("Sheet");var tabs=(Button[])Get(menu,"navigation");tabs[1].onClick.Invoke();next=now+.3;step=1;break;
                 case 1:
                     Check(menu.CurrentPage==MenuPage.Road,"Serialized tab buttons receive runtime callbacks");
                     var levels=(Button[])Get(menu,"levelNodes");Check(levels.Length==7,"Road path contains seven interactive missions");
@@ -118,7 +119,7 @@ public static class FrontEndSmokeCheck
                     var actor=(Transform)Get(game,"player");actor.position+=Vector3.right;Call("TickOnboarding");
                     Check(guidance.text.Contains("YAVAŞLA"),"Movement advances guidance to the one-thumb focus fire rhythm");
                     float timer=(float)Get(game,"remaining");Call("SetPaused",true);Call("TickOnboarding");
-                    Check(!guidance.gameObject.activeSelf&&(float)Get(game,"remaining")==timer,"Pause hides guidance without changing timer");Call("SetPaused",false);
+                    Check(!guidance.gameObject.activeSelf&&(float)Get(game,"remaining")==timer,"Pause hides guidance without changing timer");Capture("Pause");Call("SetPaused",false);
                     var log=JsonUtility.FromJson<P4ValidationLog.Report>(File.ReadAllText(Path.Combine(SessionState.GetString(Key+"dir",""),"ci_playtest_v1.json")));
                     Check(log.events.Exists(e=>e.name=="level_started")&&log.events.Exists(e=>e.name=="cube_started"&&e.enemiesLeft>0)&&log.events.Exists(e=>e.name=="tutorial_moved"),"Offline funnel records mission, populated encounter and first movement");
                     gold=Store.Data.gold;UnityEngine.SceneManagement.SceneManager.LoadScene(game.gameObject.scene.name);game=null;menu=null;next=now+.5;step=5;break;
@@ -136,6 +137,10 @@ public static class FrontEndSmokeCheck
                     Check(result.GetComponent<CasualModalMotion>()&&result.Find("Result actions/Retry"),"Result modal keeps animated layout and retry action");
                     var dim=result.parent.Find("Result dim");Check(dim&&dim.gameObject.activeSelf&&dim.GetSiblingIndex()<result.GetSiblingIndex(),"Modal dim blocks combat input while staying behind result actions");
                     result.Find("Result actions/Retry").GetComponent<Button>().onClick.Invoke();Check(State=="Combat","Result modal retry starts a new mission");
+                    // Review-only: jump the fresh run to a win so the Clear screen is captured in the real scene.
+                    var phaseField=typeof(InvasionPrototype).GetField("phase",Flags);phaseField.SetValue(game,System.Enum.Parse(phaseField.FieldType,"Won"));next=now+.9;step=9;break;
+                case 9:
+                    Check(State=="Won","Win shows the Clear result");Capture("Clear");
                     Debug.Log("CUBE_UI_SMOKE_OK");Debug.Log("CUBE_REFERENCE_UI_SMOKE_OK");Debug.Log("CUBE_P4_GUIDANCE_SMOKE_OK");Finish(0);break;
             }
         }

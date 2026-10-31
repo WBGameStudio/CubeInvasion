@@ -1,3 +1,4 @@
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -44,6 +45,23 @@ namespace CubeInvasion.Prototype
             var button=image.GetComponent<UnityEngine.UI.Button>();if(!button) {button=image.gameObject.AddComponent<UnityEngine.UI.Button>();button.targetGraphic=image;}
             if(!image.GetComponent<CasualButtonMotion>())image.gameObject.AddComponent<CasualButtonMotion>();
             label=Label("Label",image.transform,font,size,TextAnchor.MiddleCenter,ink);Outline(label);return button;
+        }
+        // A soft white band that sweeps across the one primary button on a screen.
+        public static void AddShine(UnityEngine.UI.Button button)
+        {
+            var rect=(RectTransform)button.transform;
+            if(!rect.GetComponent<RectMask2D>())rect.gameObject.AddComponent<RectMask2D>();
+            var shine=rect.Find("Shine") as RectTransform;
+            if(!shine) {shine=new GameObject("Shine",typeof(RectTransform),typeof(Image)).GetComponent<RectTransform>();shine.SetParent(rect,false);shine.SetSiblingIndex(0);}
+            shine.anchorMin=new Vector2(0,0);shine.anchorMax=new Vector2(0,1);shine.pivot=new Vector2(.5f,.5f);shine.sizeDelta=new Vector2(70,40);shine.localRotation=Quaternion.Euler(0,0,-20);
+            var image=shine.GetComponent<Image>();image.color=new Color(1,1,1,.28f);image.raycastTarget=false;shine.anchoredPosition=new Vector2(-80,0);
+        }
+        public static void AnimateShine(RectTransform button,GameObject owner)
+        {
+            var shine=button.Find("Shine") as RectTransform;if(!shine)return;
+            DOTween.Kill(shine);float width=Mathf.Max(200,button.rect.width);shine.anchoredPosition=new Vector2(-80,0);
+            DOTween.Sequence().Append(shine.DOAnchorPosX(width+80,1.1f).SetEase(Ease.InOutSine)).AppendInterval(1.7f)
+                .SetLoops(-1,LoopType.Restart).SetUpdate(true).SetTarget(shine).SetLink(owner);
         }
         public static void Ink(Text text,Font font,Color color) { if(!text)return;if(font)text.font=font;text.color=color;Outline(text); }
 

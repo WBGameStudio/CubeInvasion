@@ -1,4 +1,5 @@
 using System;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -37,7 +38,7 @@ namespace CubeInvasion.Prototype
             float beat=Mathf.Clamp01(strength*pulse);
             timer.rectTransform.localScale=timerRestScale*(1+beat*.065f);
             // Only a halo around the timer pulses; the arena never gets a full-screen alarm overlay.
-            if(timerHalo&&strength>0)timerHalo.color=VoidToyPalette.WithAlpha(timerHalo.color,Mathf.Lerp(.35f,.75f,beat));
+            // Calm Void: the pulse is scale only; no halo behind the timer.
         }
         float maxHealth=100;
         public void SetMaxHealth(float value) { maxHealth=value; }
@@ -45,7 +46,7 @@ namespace CubeInvasion.Prototype
         public void SetCampaignMode(bool value) { campaignMode=value; }
         public void SetMissionInfo(int stage,int total,string objective,bool suppressHint=false)
         {
-            status.text=$"KÜP {stage}/{total}";
+            status.text=$"KÜP {stage}/{total}";cubeTotal=total;ShowCubeDots(stage);
             if(objectiveText)objectiveText.text=objective;else status.text+="\n"+objective;
             if(suppressHint)hint.text="";
         }
@@ -133,24 +134,27 @@ namespace CubeInvasion.Prototype
             if(Screen.safeArea!=lastSafe||Screen.width!=lastWidth||Screen.height!=lastHeight)ApplySafeArea();
             bool combat=phase=="Combat",final=combat&&seconds<=3,warning=combat&&seconds<=5;
             timer.text=seconds.ToString("0.0");
-            timer.color=final?VoidToyPalette.Text:warning?VoidToyPalette.Warm:VoidToyPalette.Text;
-            timerFill.rectTransform.anchorMax=new Vector2(Mathf.Clamp01(seconds/20),1);
-            timerFill.color=final?VoidToyPalette.DangerText:warning?VoidToyPalette.Warm:phase=="Choice"?VoidToyPalette.HealthText:cyan;
-            if(timerTile)timerTile.color=final?VoidToyPalette.DangerDeep:phase=="Choice"?ChoiceTile:VoidToyPalette.Glass;
-            if(timerHalo&&!warning)timerHalo.color=Color.clear;
-            else if(timerHalo&&timerHalo.color.a<.01f)timerHalo.color=VoidToyPalette.WithAlpha(final?danger:VoidToyPalette.Warm,.45f);
-            else if(timerHalo)timerHalo.color=VoidToyPalette.WithAlpha(final?danger:VoidToyPalette.Warm,timerHalo.color.a);
-            if(objectivePill) {objectivePill.color=final?danger:VoidToyPalette.Glass;objectivePill.gameObject.SetActive(phase!="Choice"&&phase!="Transfer");}
+            // Calm Void: the number itself changes color (white, orange at 5 s, red at 3 s, green when cleared); no boxes or halos.
+            Color state=final?VoidToyPalette.DangerText:warning?VoidToyPalette.Warm:phase=="Choice"?VoidToyPalette.Health:VoidToyPalette.Text;
+            timer.color=state;
+            timerFill.rectTransform.anchorMax=new Vector2(Mathf.Clamp01(seconds/20),1);timerFill.color=state;
+            if(timerTile)timerTile.color=Color.clear;if(timerHalo)timerHalo.color=Color.clear;
+            if(objectivePill) {objectivePill.color=Color.clear;objectivePill.gameObject.SetActive(phase!="Choice"&&phase!="Transfer");}
+            if(objectiveText)objectiveText.color=final?VoidToyPalette.DangerText:VoidToyPalette.Text;
             float share=Mathf.Clamp01(hp/maxHealth);
             healthFill.rectTransform.anchorMax=new Vector2(share,1);healthLabel.text=$"CAN {hp:0}/{maxHealth:0}";
             healthFill.color=share<=.25f?danger:share<=.5f?VoidToyPalette.Warm:VoidToyPalette.Health;
-            status.text=$"KÜP {stage}/3";if(objectiveText)objectiveText.text=$"{enemies} HEDEF";else status.text+=$"\n{enemies} HEDEF";
+            status.text=$"KÜP {stage}/3";if(objectiveText)objectiveText.text=$"{enemies} düşman";else status.text+=$"\n{enemies} HEDEF";ShowCubeDots(stage);
             gold.text=pending>0?$"{VoidToyPalette.FormatGold(wallet)} +{pending}":VoidToyPalette.FormatGold(wallet);
+            FloatGold(wallet+pending,combat||phase=="Choice");
             buffText.text=buffCubes>0?$"HASAR +%{buff*100:0} · {buffCubes} KÜP":"";
-            hint.text=phase=="Choice"?"TEMİZLENDİ!\nSağ ya da ileri kapıdan geç":phase=="Transfer"?"SONRAKİ KÜPE GEÇİLİYOR":final?"SON SANİYELER!":"";
-            hint.color=phase=="Choice"?VoidToyPalette.HealthText:final?VoidToyPalette.DangerText:VoidToyPalette.Text;
-            pauseText.text=paused?"DEVAM":"II";pauseText.fontSize=paused?15:26;if(soundText)soundText.text=muted?"SESSİZ":"SES";pauseOverlay.SetActive(paused&&phase!="Loadout"&&phase!="SaveBlocked"&&phase!="Won"&&phase!="Failed");
-            if(paused&&pauseInfo) {pauseInfo.text=$"KÜP {stage}  ·  {seconds:0.0} sn kaldı  ·  süre durdu";pauseSound.text=muted?"SES  ·  KAPALI":"SES  ·  AÇIK";}
+            hint.text=phase=="Choice"?"Temizlendi\nBir kapıdan yürü":"";
+            hint.color=phase=="Choice"?VoidToyPalette.Health:VoidToyPalette.Text;
+            pauseText.text=paused?"":"II";pauseText.fontSize=26;
+            // While paused the overlay's big frozen time is the only clock on screen.
+            timer.enabled=timerFill.enabled=!paused;var timerTrack=timerFill.transform.parent?timerFill.transform.parent.GetComponent<Image>():null;if(timerTrack&&timerTrack!=timerTile)timerTrack.enabled=!paused;if(objectiveText)objectiveText.enabled=!paused;
+            if(soundText)soundText.text=muted?"SESSİZ":"SES";pauseOverlay.SetActive(paused&&phase!="Loadout"&&phase!="SaveBlocked"&&phase!="Won"&&phase!="Failed");
+            if(paused&&pauseInfo) {if(pauseTime)pauseTime.text=seconds.ToString("0.0");pauseInfo.text=$"Süre durdu · küp {stage}/{cubeTotal}";pauseSound.text=muted?"Ses kapalı":"Ses açık";}
             bool ended=phase=="Won"||phase=="Failed";result.SetActive(ended&&!campaignMode);
             if(ended)
             {
@@ -158,8 +162,34 @@ namespace CubeInvasion.Prototype
                 resultDetail.text=phase=="Won"?$"3 küp temizlendi\nBankalanan altın: {wallet}":reason;
             }
             if(paused||ended||(phase=="Loadout"||phase=="SaveBlocked")||phase=="Transfer"||(phase=="Collapse"||phase=="Falling"||phase=="Dying"))joystick.ResetInput();
-            joystick.GetComponent<Image>().raycastTarget=!paused&&!ended&&phase!="Loadout"&&phase!="SaveBlocked"&&phase!="Transfer"&&phase!="Collapse"&&phase!="Falling"&&phase!="Dying";
+            bool steerable=!paused&&!ended&&phase!="Loadout"&&phase!="SaveBlocked"&&phase!="Transfer"&&phase!="Collapse"&&phase!="Falling"&&phase!="Dying";
+            joystick.GetComponent<Image>().raycastTarget=steerable;if(joystickZone)joystickZone.raycastTarget=steerable;
             PlaceHealthOverPlayer(combat||phase=="Choice"||phase=="Transfer");
+        }
+        void ShowCubeDots(int stage)
+        {
+            if(cubeDots==null)return;
+            for(int i=0;i<cubeDots.Length;i++)
+            {
+                var dot=cubeDots[i];bool shown=i<cubeTotal;dot.gameObject.SetActive(shown);if(!shown)continue;
+                dot.color=i+1<stage?VoidToyPalette.Health:i+1==stage?VoidToyPalette.Text:VoidToyPalette.WithAlpha(VoidToyPalette.Text,.3f);
+                var rect=dot.rectTransform;float x=8;for(int j=0;j<i;j++)x+=(j+1==stage?28:12)+6;
+                rect.offsetMin=new Vector2(x,-6);rect.offsetMax=new Vector2(x+(i+1==stage?28:12),6);
+            }
+        }
+        void FloatGold(int total,bool live)
+        {
+            if(!goldFloater)return;
+            if(lastGoldTotal>=0&&total>lastGoldTotal&&live&&Application.isPlaying)
+            {
+                goldFloater.text="+"+(total-lastGoldTotal);var rect=goldFloater.rectTransform;
+                DOTween.Kill(rect);DOTween.Kill(goldFloater);
+                rect.anchoredPosition=new Vector2(rect.anchoredPosition.x,-106);goldFloater.color=VoidToyPalette.Gold;
+                rect.DOAnchorPosY(-82,.9f).SetUpdate(true).SetTarget(rect).SetLink(gameObject);
+                goldFloater.DOFade(0,.9f).SetDelay(.25f).SetUpdate(true).SetTarget(goldFloater).SetLink(gameObject);
+            }
+            else if(!live)goldFloater.text="";
+            lastGoldTotal=total;
         }
         void OnDestroy() { if(joystickSprite&&joystickSprite!=VoidToyStyle.Disc())Destroy(joystickSprite);if(joystickTexture)Destroy(joystickTexture); }
         public void ResetJoystick() { if(joystick)joystick.ResetInput(); }

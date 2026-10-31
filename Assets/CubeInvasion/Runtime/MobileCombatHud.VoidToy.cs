@@ -1,4 +1,5 @@
 using System;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,15 +8,19 @@ namespace CubeInvasion.Prototype
     // Display data for one walking-gate route. Cards inform only; the gate itself is the choice.
     public struct BranchCard { public string direction,title,detail; public Color accent; public int risk; }
 
-    // Void Toy Arcade layout: top band (cube chip · timer · gold/pause), objective pill,
-    // health bar over the player and gate cards. Applied on every Initialize, so it is idempotent.
+    // Calm Void HUD (Sade UI canvas 04–05, 08): a boxless timer with a thin time line and one objective line,
+    // cube progress as dots, gold only as a floating +N, health over the player and small gate labels.
+    // Applied on every Initialize, so it is idempotent.
     public sealed partial class MobileCombatHud
     {
         [SerializeField] Text objectiveText;
         [SerializeField] Image timerTile,timerHalo,objectivePill;
         RectTransform healthTrack;
         Action pauseAction,muteAction;
-        Text pauseInfo,pauseSound;
+        Text pauseInfo,pauseSound,pauseTime,goldFloater;
+        Image joystickZone;
+        Image[] cubeDots;
+        int cubeTotal=3,lastGoldTotal=-1;
         Camera sceneCamera;
         Vector3 playerAnchor;bool hasPlayerAnchor;
         static readonly Color ChoiceTile=VoidToyPalette.Hex(0x0E3B39);
@@ -39,22 +44,27 @@ namespace CubeInvasion.Prototype
             }
             Transform band=header?header:(Transform)SafeRoot;
 
-            var stageChip=VoidToyStyle.Tile("Objective tile",band,tile,VoidToyPalette.Glass,new Vector2(0,1),new Vector2(0,1),new Vector2(16,-78),new Vector2(170,-16));
+            var stageChip=VoidToyStyle.Tile("Objective tile",band,tile,Color.clear,new Vector2(0,1),new Vector2(0,1),new Vector2(16,-78),new Vector2(170,-16));
             Fit(status,(RectTransform)stageChip.transform,new Vector2(14,4),new Vector2(-8,-4),22,TextAnchor.MiddleLeft,VoidToyPalette.Text);
+            status.enabled=false;
+            // Cube progress reads as dots: done green, current a wider white bar, upcoming faint.
+            cubeDots=new Image[6];
+            for(int i=0;i<6;i++)cubeDots[i]=VoidToyStyle.Tile("Cube dot "+i,stageChip.transform,tile,Color.clear,new Vector2(0,.5f),new Vector2(0,.5f),new Vector2(8+i*16,-6),new Vector2(20+i*16,6));
+            foreach(var dot in cubeDots)dot.pixelsPerUnitMultiplier=40;
 
             timerHalo=VoidToyStyle.Tile("Timer halo",band,tile,Color.clear,new Vector2(.5f,1),new Vector2(.5f,1),new Vector2(-92,-132),new Vector2(92,-8));
-            timerTile=VoidToyStyle.Tile("Timer tile",band,tile,VoidToyPalette.Glass,new Vector2(.5f,1),new Vector2(.5f,1),new Vector2(-84,-124),new Vector2(84,-16));
-            Fit(timer,(RectTransform)timerTile.transform,new Vector2(0,22),new Vector2(0,-2),62,TextAnchor.MiddleCenter,VoidToyPalette.Text);
+            timerTile=VoidToyStyle.Tile("Timer tile",band,tile,Color.clear,new Vector2(.5f,1),new Vector2(.5f,1),new Vector2(-96,-124),new Vector2(96,-12));
+            Fit(timer,(RectTransform)timerTile.transform,new Vector2(0,20),new Vector2(0,0),76,TextAnchor.MiddleCenter,VoidToyPalette.Text);
             var caption=timerTile.transform.Find("Time caption");if(caption)caption.gameObject.SetActive(false);
             var track=(RectTransform)timerFill.transform.parent;track.SetParent(timerTile.transform,false);
-            VoidToyStyle.Place(track,Vector2.zero,new Vector2(1,0),new Vector2(28,12),new Vector2(-28,20));
-            track.GetComponent<Image>().color=VoidToyPalette.Raised;
+            VoidToyStyle.Place(track,Vector2.zero,new Vector2(1,0),new Vector2(36,8),new Vector2(-36,13));
+            VoidToyStyle.Surface(track.GetComponent<Image>(),tile,VoidToyPalette.WithAlpha(VoidToyPalette.Text,.2f),60);VoidToyStyle.Surface(timerFill,tile,VoidToyPalette.Text,60);
 
-            objectivePill=VoidToyStyle.Tile("Objective pill",band,tile,VoidToyPalette.Glass,new Vector2(.5f,1),new Vector2(.5f,1),new Vector2(-156,-180),new Vector2(156,-134));
+            objectivePill=VoidToyStyle.Tile("Objective pill",band,tile,Color.clear,new Vector2(.5f,1),new Vector2(.5f,1),new Vector2(-170,-166),new Vector2(170,-128));
             if(!objectiveText)objectiveText=VoidToyStyle.Label("Objective",objectivePill.transform,uiFont,22,TextAnchor.MiddleCenter,VoidToyPalette.Text);
             Fit(objectiveText,(RectTransform)objectivePill.transform,new Vector2(12,0),new Vector2(-12,0),22,TextAnchor.MiddleCenter,VoidToyPalette.Text);
             // Long boss/Gold Rush objectives shrink onto one line instead of spilling out of the pill.
-            objectiveText.verticalOverflow=VerticalWrapMode.Truncate;objectiveText.resizeTextForBestFit=true;objectiveText.resizeTextMinSize=12;objectiveText.resizeTextMaxSize=22;
+            objectiveText.verticalOverflow=VerticalWrapMode.Truncate;objectiveText.resizeTextForBestFit=true;objectiveText.resizeTextMinSize=12;objectiveText.resizeTextMaxSize=21;
 
             var goldChip=VoidToyStyle.Tile("Gold chip",band,tile,VoidToyPalette.Glass,new Vector2(1,1),new Vector2(1,1),new Vector2(-180,-76),new Vector2(-86,-16));
             var coin=goldChip.transform.Find("Coin") as RectTransform;
@@ -64,16 +74,20 @@ namespace CubeInvasion.Prototype
             Fit(gold,(RectTransform)goldChip.transform,new Vector2(42,0),new Vector2(-10,0),22,TextAnchor.MiddleRight,VoidToyPalette.Gold);
             // Wallet plus pending gold stays on one line; best fit shrinks it inside the chip.
             gold.horizontalOverflow=HorizontalWrapMode.Wrap;gold.resizeTextForBestFit=true;gold.resizeTextMinSize=12;gold.resizeTextMaxSize=22;gold.verticalOverflow=VerticalWrapMode.Truncate;
+            // Gold stays out of combat; it only appears as a floating +N when something is picked up.
+            goldChip.gameObject.SetActive(false);
+            goldFloater=VoidToyStyle.Label("Gold floater",SafeRoot,uiFont,26,TextAnchor.MiddleRight,VoidToyPalette.Gold);
+            VoidToyStyle.Place(goldFloater.rectTransform,new Vector2(1,1),new Vector2(1,1),new Vector2(-220,-124),new Vector2(-22,-88));goldFloater.text="";
 
             var pause=pauseText.GetComponentInParent<Button>(true).GetComponent<RectTransform>();pause.SetParent(SafeRoot,false);
             VoidToyStyle.Place(pause,Vector2.one,Vector2.one,new Vector2(-76,-76),new Vector2(-16,-16));
-            VoidToyStyle.Surface(pause.GetComponent<Image>(),tile,VoidToyPalette.Glass);
+            VoidToyStyle.Surface(pause.GetComponent<Image>(),tile,VoidToyPalette.WithAlpha(VoidToyPalette.Void,.5f));
             Fit(pauseText,pause,Vector2.zero,Vector2.zero,26,TextAnchor.MiddleCenter,VoidToyPalette.Text);
             // Sound lives in Settings; the combat screen keeps only pause in the corner.
             if(soundText)soundText.GetComponentInParent<Button>(true).gameObject.SetActive(false);
 
             Fit(buffText,SafeRoot,new Vector2(16,-112),new Vector2(-16,-86),17,TextAnchor.MiddleLeft,VoidToyPalette.CyanText,true);
-            Fit(hint,SafeRoot,new Vector2(20,-250),new Vector2(-20,-190),28,TextAnchor.MiddleCenter,VoidToyPalette.Text,true);
+            Fit(hint,SafeRoot,new Vector2(20,-250),new Vector2(-20,-176),30,TextAnchor.MiddleCenter,VoidToyPalette.Text,true);
             var guide=SafeRoot.Find("First run guidance") as RectTransform;
             if(guide)VoidToyStyle.Place(guide,new Vector2(0,1),new Vector2(1,1),new Vector2(25,-322),new Vector2(-25,-258));
 
@@ -87,27 +101,34 @@ namespace CubeInvasion.Prototype
             var stick=joystick?joystick.GetComponent<Image>():null;
             if(stick)
             {
-                stick.sprite=VoidToyStyle.Disc();stick.type=Image.Type.Simple;stick.color=VoidToyPalette.WithAlpha(VoidToyPalette.Void,.38f);
+                stick.sprite=VoidToyStyle.Disc();stick.type=Image.Type.Simple;stick.color=VoidToyPalette.WithAlpha(VoidToyPalette.Void,.18f);
                 var ring=stick.transform.Find("Joystick ring");
                 if(!ring) {ring=new GameObject("Joystick ring",typeof(RectTransform),typeof(Image)).transform;ring.SetParent(stick.transform,false);ring.SetAsFirstSibling();}
                 VoidToyStyle.Place((RectTransform)ring,Vector2.zero,Vector2.one,Vector2.zero,Vector2.zero);
-                var ringImage=ring.GetComponent<Image>();ringImage.sprite=VoidToyStyle.Ring();ringImage.color=VoidToyPalette.WithAlpha(VoidToyPalette.Text,.28f);ringImage.raycastTarget=false;
+                var ringImage=ring.GetComponent<Image>();ringImage.sprite=VoidToyStyle.Ring();ringImage.color=VoidToyPalette.WithAlpha(VoidToyPalette.Text,.18f);ringImage.raycastTarget=false;
                 if(joystick.knob) {var knob=joystick.knob.GetComponent<Image>();knob.sprite=VoidToyStyle.Disc();knob.color=VoidToyPalette.Text;}
+                // Free-hand control: the whole open screen accepts the thumb; the stick only shows while held.
+                var zone=SafeRoot.Find("Joystick zone");
+                if(!zone) {zone=new GameObject("Joystick zone",typeof(RectTransform),typeof(Image)).transform;zone.SetParent(SafeRoot,false);}
+                zone.SetAsFirstSibling();VoidToyStyle.Place((RectTransform)zone,Vector2.zero,Vector2.one,Vector2.zero,Vector2.zero);
+                joystickZone=zone.GetComponent<Image>();joystickZone.color=Color.clear;joystickZone.raycastTarget=true;
+                var touch=zone.GetComponent<JoystickTouchZone>();if(!touch)touch=zone.gameObject.AddComponent<JoystickTouchZone>();touch.stick=joystick;joystick.ResetInput();
             }
             if(pauseOverlay)
             {
-                // Pause is a full-screen dim with a card: big resume plus the sound toggle that left the combat HUD.
+                // Pause: no card. A deep dim, the frozen time as the headline, one shining resume and the sound toggle.
                 var overlay=(RectTransform)pauseOverlay.transform;VoidToyStyle.Place(overlay,Vector2.zero,Vector2.one,Vector2.zero,Vector2.zero);overlay.SetAsLastSibling();
-                var dim=pauseOverlay.GetComponent<Image>();dim.sprite=null;dim.type=Image.Type.Simple;dim.color=VoidToyPalette.WithAlpha(VoidToyPalette.Void,.8f);dim.raycastTarget=true;
-                var card=VoidToyStyle.Tile("Pause card",overlay,tile,VoidToyPalette.Panel,new Vector2(.5f,.5f),new Vector2(.5f,.5f),new Vector2(-226,-170),new Vector2(226,190));
-                var title=pauseOverlay.transform.Find("Pause label")?.GetComponent<Text>();
-                if(title) {title.transform.SetParent(card.transform,false);VoidToyStyle.Place(title.rectTransform,new Vector2(0,1),new Vector2(1,1),new Vector2(20,-86),new Vector2(-20,-26));title.text="Duraklatıldı";title.fontSize=40;title.alignment=TextAnchor.MiddleCenter;VoidToyStyle.Ink(title,uiFont,VoidToyPalette.Text);}
-                pauseInfo=VoidToyStyle.Label("Pause info",card.transform,uiFont,19,TextAnchor.MiddleCenter,VoidToyPalette.Muted);
-                VoidToyStyle.Place(pauseInfo.rectTransform,new Vector2(0,1),new Vector2(1,1),new Vector2(20,-128),new Vector2(-20,-90));VoidToyStyle.Outline(pauseInfo);
-                var resume=VoidToyStyle.Button("Resume",card.transform,tile,VoidToyPalette.Cyan,new Vector2(0,1),new Vector2(1,1),new Vector2(24,-232),new Vector2(-24,-148),uiFont,32,VoidToyPalette.Ink,out var resumeLabel);
-                resumeLabel.text="DEVAM";resume.onClick.RemoveAllListeners();resume.onClick.AddListener(()=>pauseAction?.Invoke());
-                var sound=VoidToyStyle.Button("Sound toggle",card.transform,tile,VoidToyPalette.Raised,new Vector2(0,1),new Vector2(1,1),new Vector2(24,-322),new Vector2(-24,-252),uiFont,22,VoidToyPalette.Text,out pauseSound);
-                pauseSound.text="SES  ·  AÇIK";sound.onClick.RemoveAllListeners();sound.onClick.AddListener(()=>muteAction?.Invoke());
+                var dim=pauseOverlay.GetComponent<Image>();dim.sprite=null;dim.type=Image.Type.Simple;dim.color=VoidToyPalette.WithAlpha(VoidToyPalette.Void,.86f);dim.raycastTarget=true;
+                var card=VoidToyStyle.Tile("Pause card",overlay,tile,Color.clear,new Vector2(.5f,.5f),new Vector2(.5f,.5f),new Vector2(-226,-200),new Vector2(226,220));
+                pauseTime=pauseOverlay.transform.Find("Pause label")?.GetComponent<Text>()??card.transform.Find("Pause label")?.GetComponent<Text>();
+                if(pauseTime) {pauseTime.transform.SetParent(card.transform,false);VoidToyStyle.Place(pauseTime.rectTransform,new Vector2(0,1),new Vector2(1,1),new Vector2(10,-120),new Vector2(-10,-10));pauseTime.fontSize=88;pauseTime.alignment=TextAnchor.MiddleCenter;VoidToyStyle.Ink(pauseTime,uiFont,VoidToyPalette.Text);}
+                pauseInfo=VoidToyStyle.Label("Pause info",card.transform,uiFont,20,TextAnchor.MiddleCenter,VoidToyPalette.Muted);
+                VoidToyStyle.Place(pauseInfo.rectTransform,new Vector2(0,1),new Vector2(1,1),new Vector2(10,-160),new Vector2(-10,-122));VoidToyStyle.Outline(pauseInfo);
+                var resume=VoidToyStyle.Button("Resume",card.transform,tile,VoidToyPalette.Cyan,new Vector2(0,1),new Vector2(1,1),new Vector2(16,-300),new Vector2(-16,-214),uiFont,30,VoidToyPalette.Ink,out var resumeLabel);
+                resumeLabel.text="DEVAM";resume.onClick.RemoveAllListeners();resume.onClick.AddListener(()=>pauseAction?.Invoke());VoidToyStyle.AddShine(resume);
+                var sound=VoidToyStyle.Button("Sound toggle",card.transform,tile,VoidToyPalette.Panel,new Vector2(0,1),new Vector2(1,1),new Vector2(16,-388),new Vector2(-16,-320),uiFont,21,VoidToyPalette.Text,out pauseSound);
+                pauseSound.text="Ses açık";sound.onClick.RemoveAllListeners();sound.onClick.AddListener(()=>muteAction?.Invoke());
+                if(Application.isPlaying)VoidToyStyle.AnimateShine((RectTransform)resume.transform,gameObject);
             }
             if(result)VoidToyStyle.Surface(result.GetComponent<Image>(),tile,VoidToyPalette.Panel);
             foreach(var text in GetComponentsInChildren<Text>(true))
@@ -148,8 +169,11 @@ namespace CubeInvasion.Prototype
                 branchCards=new GameObject("Walking gate previews",typeof(RectTransform)).GetComponent<RectTransform>();branchCards.SetParent(SafeRoot,false);
                 VoidToyStyle.Place(branchCards,Vector2.zero,Vector2.one,Vector2.zero,Vector2.zero);
                 // Forward sits toward the top of the screen, right toward the right edge, matching the gates.
-                forwardCard=Card("Forward gate preview",art,uiFont,new Vector2(.5f,1),new Vector2(-180,-382),new Vector2(180,-272));
-                rightCard=Card("Right gate preview",art,uiFont,new Vector2(1,0),new Vector2(-318,232),new Vector2(-16,342));
+                forwardCard=Card("Forward gate preview",art,uiFont,new Vector2(.5f,1),new Vector2(-118,-340),new Vector2(118,-272));
+                rightCard=Card("Right gate preview",art,uiFont,new Vector2(1,0),new Vector2(-256,250),new Vector2(-18,318));
+                if(Application.isPlaying)
+                    foreach(var card in new[]{forwardCard,rightCard})
+                        card.root.DOAnchorPosY(card.root.anchoredPosition.y+6,1.3f).SetEase(Ease.InOutSine).SetLoops(-1,LoopType.Yoyo).SetUpdate(true).SetLink(card.root.gameObject);
             }
             if(!branchCards)return;branchCards.gameObject.SetActive(visible);
             if(!visible)return;
@@ -163,19 +187,18 @@ namespace CubeInvasion.Prototype
             view.border=VoidToyStyle.Tile(name,branchCards,tile,VoidToyPalette.Cyan,anchor,anchor,low,high);
             view.root=(RectTransform)view.border.transform;
             var face=VoidToyStyle.Tile("Card face",view.root,tile,VoidToyPalette.WithAlpha(VoidToyPalette.Panel,.97f),Vector2.zero,Vector2.one,new Vector2(3,3),new Vector2(-3,-3));
-            view.direction=VoidToyStyle.Label("Direction",face.transform,uiFont,17,TextAnchor.MiddleLeft,VoidToyPalette.Muted);
-            VoidToyStyle.Place(view.direction.rectTransform,new Vector2(0,1),new Vector2(1,1),new Vector2(16,-34),new Vector2(-80,-8));
+            // Calm label: reward icon, reward line and risk dots. Direction and encounter detail stay off screen.
+            view.direction=VoidToyStyle.Label("Direction",face.transform,uiFont,17,TextAnchor.MiddleLeft,VoidToyPalette.Muted);view.direction.gameObject.SetActive(false);
             view.pips=new Image[3];
             for(int i=0;i<3;i++)
             {
-                var pip=VoidToyStyle.Tile("Risk "+(i+1),face.transform,tile,VoidToyPalette.Track,Vector2.one,Vector2.one,new Vector2(-70+i*19,-28),new Vector2(-56+i*19,-14));
+                var pip=VoidToyStyle.Tile("Risk "+(i+1),face.transform,tile,VoidToyPalette.Track,Vector2.zero,Vector2.zero,new Vector2(70+i*15,12),new Vector2(81+i*15,23));
                 pip.pixelsPerUnitMultiplier=40;view.pips[i]=pip;
             }
-            view.icon=VoidToyStyle.Tile("Reward icon",face.transform,tile,VoidToyPalette.Health,new Vector2(0,0),new Vector2(0,0),new Vector2(14,12),new Vector2(64,62));
-            view.title=VoidToyStyle.Label("Reward",face.transform,uiFont,24,TextAnchor.MiddleLeft,VoidToyPalette.Text);
-            VoidToyStyle.Place(view.title.rectTransform,new Vector2(0,0),new Vector2(1,0),new Vector2(76,36),new Vector2(-12,66));
-            view.detail=VoidToyStyle.Label("Encounter",face.transform,uiFont,16,TextAnchor.MiddleLeft,VoidToyPalette.Muted);
-            VoidToyStyle.Place(view.detail.rectTransform,new Vector2(0,0),new Vector2(1,0),new Vector2(76,8),new Vector2(-12,36));
+            view.icon=VoidToyStyle.Tile("Reward icon",face.transform,tile,VoidToyPalette.Health,new Vector2(0,.5f),new Vector2(0,.5f),new Vector2(10,-24),new Vector2(58,24));
+            view.title=VoidToyStyle.Label("Reward",face.transform,uiFont,21,TextAnchor.MiddleLeft,VoidToyPalette.Text);
+            VoidToyStyle.Place(view.title.rectTransform,new Vector2(0,0),new Vector2(1,1),new Vector2(70,28),new Vector2(-10,-4));
+            view.detail=VoidToyStyle.Label("Encounter",face.transform,uiFont,16,TextAnchor.MiddleLeft,VoidToyPalette.Muted);view.detail.gameObject.SetActive(false);
             view.title.verticalOverflow=view.detail.verticalOverflow=VerticalWrapMode.Truncate;view.title.horizontalOverflow=HorizontalWrapMode.Wrap;
             view.title.resizeTextForBestFit=view.detail.resizeTextForBestFit=true;view.title.resizeTextMinSize=16;view.title.resizeTextMaxSize=24;view.detail.resizeTextMinSize=12;view.detail.resizeTextMaxSize=16;
             foreach(var text in view.root.GetComponentsInChildren<Text>(true))VoidToyStyle.Outline(text);
@@ -187,7 +210,7 @@ namespace CubeInvasion.Prototype
             if(view.direction.text!=card.direction)view.direction.text=card.direction;
             if(view.title.text!=card.title)view.title.text=card.title;
             if(view.detail.text!=card.detail)view.detail.text=card.detail;
-            view.border.color=card.accent;view.icon.color=card.accent;
+            view.border.color=VoidToyPalette.WithAlpha(VoidToyPalette.Void,.9f);view.icon.color=card.accent;
             for(int i=0;i<3;i++)view.pips[i].color=i<card.risk?VoidToyPalette.Risk(card.risk):VoidToyPalette.Track;
         }
     }

@@ -116,6 +116,12 @@ public static class PrototypeSmokeCheck
         var other=new UnityEngine.EventSystems.PointerEventData(UnityEngine.EventSystems.EventSystem.current) { pointerId=8 };
         joystick.OnPointerUp(other);Check(hud.InputValue.sqrMagnitude>0,"Second finger cannot release movement joystick");
         joystick.OnPointerUp(pointer);Check(hud.InputValue==Vector2.zero,"Joystick release clears movement");
+        var zoneRoot=hud.SafeRoot.Find("Joystick zone");var zone=zoneRoot?zoneRoot.GetComponent<JoystickTouchZone>():null;Check(zone&&zone.stick==joystick,"Open screen space feeds the free-hand joystick");
+        var stickGroup=joystick.GetComponent<CanvasGroup>();Check(stickGroup&&stickGroup.alpha==0,"Free-hand joystick hides until touched");
+        Vector2 homeScreen=RectTransformUtility.WorldToScreenPoint(view,rect.position);
+        pointer.position=RectTransformUtility.WorldToScreenPoint(view,hud.SafeRoot.TransformPoint(hud.SafeRoot.rect.center+new Vector2(60,-40)));zone.OnPointerDown(pointer);
+        Check(Vector2.Distance(RectTransformUtility.WorldToScreenPoint(view,rect.position),pointer.position)<2&&stickGroup.alpha==1&&hud.InputValue.sqrMagnitude<.01f,"Joystick appears centred under the touch point");
+        zone.OnPointerUp(pointer);Check(stickGroup.alpha==0&&Vector2.Distance(RectTransformUtility.WorldToScreenPoint(view,rect.position),homeScreen)<1&&hud.InputValue==Vector2.zero,"Joystick release hides the stick and clears movement");
         var enemies=(IList)Get("foes");object gunner=enemies[0], sprinter=enemies[enemies.Count-1];
         var player=(Transform)Get("player");
         foreach(var foe in enemies) { ItemSet(foe,"spawn",0f);ItemSet(foe,"attack",100f); }

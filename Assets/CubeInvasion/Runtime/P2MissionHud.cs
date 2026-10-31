@@ -53,7 +53,7 @@ namespace CubeInvasion.Prototype
             loadout.SetActive(true);result.SetActive(false);BuildBossPanel();ApplyVoidToyStyle();
         }
         [SerializeField] Image resultEmblem;
-        Image reasonChip;Text reasonLabel;
+        Image reasonChip,resultIcon;Text reasonLabel;GameObject resultCheck,resultShards;bool shownEnded;
         [SerializeField] Sprite victoryEmblem,failureEmblem;
         public void ConfigureResultEmblem(Image image,Sprite won,Sprite failed) { resultEmblem=image;victoryEmblem=won;failureEmblem=failed; }
         public void SetMetaMode(bool enabled)
@@ -76,7 +76,8 @@ namespace CubeInvasion.Prototype
             if(profile.run!=null&&profile.run.ended)
             {
                 var run=profile.run;
-                resultDescription.text=$"Bu deneme: +{run.gold} altın · {run.cubes} küp · {run.kills} hedef\nSavaş: {run.seconds:0.0} sn · Cüzdan: {profile.gold}"+(run.won?"":$"\n{run.reason}");
+                // Calm summary: what this run earned, in one line. The reason already sits in red above the title.
+                resultDescription.text=run.won?$"+{VoidToyPalette.FormatGold(run.gold)} altın · {run.cubes} küp · {run.kills} hedef":$"{run.cubes} küp temizlendi · {VoidToyPalette.FormatGold(run.gold)} altın korundu";
             }
         }
         void BuildBossPanel()
@@ -116,18 +117,28 @@ namespace CubeInvasion.Prototype
                 weaponDescription.text=weapon.title+"\n"+weapon.description;
                 for(int i=0;i<weapons.Length;i++) { weapons[i].GetComponent<Image>().color=i==weaponIndex?cyan:tile;weaponLabels[i].color=i==weaponIndex?ink:Color.white; }
             }
+            if(!ended)shownEnded=false;
             if(ended)
             {
                 bool timeout=!won&&reason!=null&&reason.Contains("saniye"),fell=!won&&reason!=null&&reason.Contains("düştün");
-                resultTitle.text=won?"TEMİZLENDİ!":timeout?"KÜP ÇÖKTÜ":fell?"DÜŞTÜN":"TEKRAR DENE";resultTitle.color=won?VoidToyPalette.Gold:VoidToyPalette.DangerText;
-                if(reasonChip) {reasonChip.color=won?VoidToyPalette.Health:VoidToyPalette.DangerText;reasonLabel.text=won?"GÖREV TAMAM":timeout?"TIME OUT":fell?"KENAR":"CAN BİTTİ";}
+                resultTitle.text=won?"Temizlendi":timeout?"Küp çöktü":fell?"Düştün":"Can bitti";resultTitle.color=VoidToyPalette.Text;
+                if(reasonLabel) {reasonLabel.text=won?$"Bölüm {missionIndex+1}":timeout?"Süre doldu":fell?"Kenardan düştün":"Canın tükendi";reasonLabel.color=won?VoidToyPalette.Muted:VoidToyPalette.DangerText;}
+                if(resultIcon) {resultIcon.gameObject.SetActive(won);resultCheck.SetActive(won);}
+                if(resultShards)resultShards.SetActive(!won);
                 // One cyan primary per state: advance after a win, retry after a fail.
                 bool canAdvance=won&&missionIndex<count-1;
                 Paint(advance,true);Paint(retry,!canAdvance);Paint(menu,false);
+                if(!shownEnded&&Application.isPlaying)
+                {
+                    if(advance)VoidToyStyle.AnimateShine((RectTransform)advance.transform,gameObject);
+                    if(retry&&!canAdvance)VoidToyStyle.AnimateShine((RectTransform)retry.transform,gameObject);
+                }
+                if(retry) {var shine=retry.transform.Find("Shine");if(shine)shine.gameObject.SetActive(!canAdvance);}
                 if(resultEmblem)resultEmblem.sprite=won?victoryEmblem:failureEmblem;
                 resultDescription.text=won?mission.title+$"\nBankalanan altın: {wallet}":reason+"\nTamamlanan küplerin altını korundu.";
                 advance.gameObject.SetActive(won&&missionIndex<count-1);
-                retry.GetComponentInChildren<Text>().text=won?"YENİDEN OYNA":"TEKRAR DENE";
+                retry.GetComponentInChildren<Text>().text=won?"Yeniden oyna":"TEKRAR";shownEnded=true;
+                if(menu)menu.GetComponentInChildren<Text>().text="Yola dön";
                 if(won&&missionIndex==count-1&&!metaMode)resultDescription.text+="\nTüm görevler tamamlandı.";
             }
         }
@@ -137,19 +148,35 @@ namespace CubeInvasion.Prototype
             var modal=result?result.GetComponent<Image>():null;
             if(modal)
             {
-                VoidToyStyle.Surface(modal,tile,VoidToyPalette.Panel,1.5f);
+                // Calm Void result (Sade UI 06–07): a full screen, not a card. One symbol, a title, one muted line, one shining action.
+                var page=(RectTransform)result.transform;page.anchorMin=Vector2.zero;page.anchorMax=Vector2.one;page.pivot=new Vector2(.5f,.5f);page.offsetMin=page.offsetMax=Vector2.zero;
+                modal.sprite=null;modal.type=Image.Type.Simple;modal.color=VoidToyPalette.WithAlpha(VoidToyPalette.Void,.97f);
                 var font=resultTitle?resultTitle.font:null;
-                // Reason chip replaces the old emblem; a summary tile holds the attempt details.
                 if(resultEmblem)resultEmblem.gameObject.SetActive(false);
-                reasonChip=VoidToyStyle.Tile("Reason chip",result.transform,tile,VoidToyPalette.Danger,new Vector2(.5f,1),new Vector2(.5f,1),new Vector2(-96,-78),new Vector2(96,-34));
-                reasonLabel=VoidToyStyle.Label("Reason",reasonChip.transform,font,20,TextAnchor.MiddleCenter,VoidToyPalette.Ink);
-                var summary=VoidToyStyle.Tile("Result summary",result.transform,tile,VoidToyPalette.Void,new Vector2(0,1),new Vector2(1,1),new Vector2(24,-292),new Vector2(-24,-170));
+                resultIcon=VoidToyStyle.Tile("Result icon",result.transform,tile,VoidToyPalette.Health,new Vector2(.5f,1),new Vector2(.5f,1),new Vector2(-64,-300),new Vector2(64,-172));resultIcon.pixelsPerUnitMultiplier=3;
+                // Check mark from two strokes; collapse as two tilted halves of a cube.
+                resultCheck=(VoidToyStyle.Tile("Result check",resultIcon.transform,null,Color.clear,Vector2.zero,Vector2.one,Vector2.zero,Vector2.zero)).gameObject;
+                var shortStroke=VoidToyStyle.Tile("Check short",resultCheck.transform,tile,VoidToyPalette.Ink,new Vector2(.5f,.5f),new Vector2(.5f,.5f),new Vector2(-34,-8),new Vector2(-2,4));shortStroke.pixelsPerUnitMultiplier=40;shortStroke.rectTransform.localRotation=Quaternion.Euler(0,0,-45);shortStroke.rectTransform.anchoredPosition=new Vector2(-16,-6);
+                var longStroke=VoidToyStyle.Tile("Check long",resultCheck.transform,tile,VoidToyPalette.Ink,new Vector2(.5f,.5f),new Vector2(.5f,.5f),new Vector2(-30,-6),new Vector2(30,6));longStroke.pixelsPerUnitMultiplier=40;longStroke.rectTransform.localRotation=Quaternion.Euler(0,0,45);longStroke.rectTransform.anchoredPosition=new Vector2(10,4);
+                resultShards=(VoidToyStyle.Tile("Result shards",result.transform,null,Color.clear,new Vector2(.5f,1),new Vector2(.5f,1),new Vector2(-80,-320),new Vector2(80,-160))).gameObject;
+                foreach(var side in new[]{-1,1})
+                {
+                    var half=VoidToyStyle.Tile(side<0?"Shard left":"Shard right",resultShards.transform,tile,VoidToyPalette.DangerDeep,new Vector2(.5f,.5f),new Vector2(.5f,.5f),new Vector2(-34,-70),new Vector2(34,70));
+                    half.pixelsPerUnitMultiplier=12;half.rectTransform.anchoredPosition=new Vector2(side*40,side<0?-6:-18);half.rectTransform.localRotation=Quaternion.Euler(0,0,side<0?8:-6);
+                    var edge=half.GetComponent<Outline>()??half.gameObject.AddComponent<Outline>();edge.effectColor=VoidToyPalette.Danger;edge.effectDistance=new Vector2(2,-2);
+                }
+                reasonChip=VoidToyStyle.Tile("Reason chip",result.transform,tile,Color.clear,new Vector2(.5f,1),new Vector2(.5f,1),new Vector2(-220,-360),new Vector2(220,-326));
+                reasonLabel=VoidToyStyle.Label("Reason",reasonChip.transform,font,19,TextAnchor.MiddleCenter,VoidToyPalette.Muted);
+                var summary=VoidToyStyle.Tile("Result summary",result.transform,tile,Color.clear,new Vector2(0,1),new Vector2(1,1),new Vector2(24,-292),new Vector2(-24,-170));
                 summary.transform.SetAsFirstSibling();
-                if(resultTitle) {VoidToyStyle.Place(resultTitle.rectTransform,new Vector2(0,1),new Vector2(1,1),new Vector2(16,-160),new Vector2(-16,-88));resultTitle.fontSize=44;resultTitle.alignment=TextAnchor.MiddleCenter;}
-                if(resultDescription) {VoidToyStyle.Place(resultDescription.rectTransform,new Vector2(0,1),new Vector2(1,1),new Vector2(40,-286),new Vector2(-40,-176));resultDescription.fontSize=19;resultDescription.alignment=TextAnchor.MiddleCenter;}
+                if(resultTitle) {VoidToyStyle.Place(resultTitle.rectTransform,new Vector2(0,1),new Vector2(1,1),new Vector2(16,-420),new Vector2(-16,-360));resultTitle.fontSize=48;resultTitle.alignment=TextAnchor.MiddleCenter;}
+                if(resultDescription) {VoidToyStyle.Place(resultDescription.rectTransform,new Vector2(0,1),new Vector2(1,1),new Vector2(48,-560),new Vector2(-48,-436));resultDescription.fontSize=19;resultDescription.alignment=TextAnchor.UpperCenter;}
+                var actions=result.transform.Find("Result actions") as RectTransform;
+                if(actions) {actions.anchorMin=Vector2.zero;actions.anchorMax=new Vector2(1,0);actions.offsetMin=new Vector2(32,40);actions.offsetMax=new Vector2(-32,260);}
+                if(advance)VoidToyStyle.AddShine(advance);if(retry)VoidToyStyle.AddShine(retry);
             }
             var dim=transform.Find("Result dim");if(dim)dim.GetComponent<Image>().color=VoidToyPalette.WithAlpha(VoidToyPalette.Void,.8f);
-            if(resultDescription)resultDescription.color=VoidToyPalette.Text;
+            if(resultDescription)resultDescription.color=VoidToyPalette.Muted;
             if(bossPanel)
             {
                 // Boss bar hangs right under the objective pill, off the arena and the gates.
@@ -163,9 +190,10 @@ namespace CubeInvasion.Prototype
         static void Paint(Button button,bool primary)
         {
             if(!button)return;
-            var image=button.GetComponent<Image>();if(image)image.color=primary?VoidToyPalette.Cyan:VoidToyPalette.Raised;
+            // Primary: cyan with shine. Secondary: no surface, a quiet text link.
+            var image=button.GetComponent<Image>();if(image)image.color=primary?VoidToyPalette.Cyan:Color.clear;
             var label=button.GetComponentInChildren<Text>(true);
-            if(label) {label.color=primary?VoidToyPalette.Ink:VoidToyPalette.Text;VoidToyStyle.Outline(label);}
+            if(label) {label.color=primary?VoidToyPalette.Ink:VoidToyPalette.Muted;VoidToyStyle.Outline(label);}
         }
         RectTransform Panel(string name,Transform parent,Vector2 min,Vector2 max,Vector2 low,Vector2 high,Color color)
         {

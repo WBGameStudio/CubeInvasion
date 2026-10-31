@@ -17,7 +17,9 @@ namespace CubeInvasion.Prototype
         void UpdateBranchView(Transform gate,RouteOffer offer)
         {
             if(!gate||offer==null)return;
-            var label=gate.GetComponentInChildren<TextMesh>();label.GetComponent<Renderer>().enabled=true;ApplyGateFont(label);
+            var label=gate.GetComponentInChildren<TextMesh>();ApplyGateFont(label);
+            // The HUD offer cards carry reward and risk; the world sign stays hidden so the two never overlap.
+            label.GetComponent<Renderer>().enabled=false;
             label.text=(gate.name.StartsWith("Right")?"SAĞ · ":"İLERİ · ")+RewardLabel(offer.reward)+$"\nRİSK {offer.reward.risk}/3 · {offer.encounter.enemies.Length} HEDEF";
             label.fontSize=64;label.characterSize=.04f;
             // Gate color names the reward family (heal, power, gold, shield); risk stays on the pips and label.
