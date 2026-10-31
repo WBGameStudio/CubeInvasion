@@ -813,3 +813,78 @@ MonoBehaviour:
     integratedFace: 0
     useRuntimeTint: 1
     mechanicalRig: 0
+  - key: Rogue cube
+    mesh: {fileID: 4300000, guid: e605b71dcb4f14f5ba9ac430996fefea, type: 2}
+    lodMesh: {fileID: 4300000, guid: a286247269cbd4ecb95c77a81f2d5d6b, type: 2}
+    rig:
+    - name: Hips
+      parent: 
+      mesh: {fileID: 4300000, guid: b31239eefc6ec450ea355b80871048c3, type: 2}
+      lodMesh: {fileID: 4300000, guid: d82cc909ad2684b77a3e21d9690f7aaf, type: 2}
+      pivot: {x: 0, y: -0.52, z: 0}
+    - name: LeftLeg
+      parent: Hips
+      mesh: {fileID: 4300000, guid: e5adcc15859e74975a7c90e0c4a2cefe, type: 2}
+      lodMesh: {fileID: 4300000, guid: f4edb279927804ed49c1f69eb3de62f6, type: 2}
+      pivot: {x: -0.19, y: -0.52, z: 0}
+    - name: RightLeg
+      parent: Hips
+      mesh: {fileID: 4300000, guid: 7f152cb237f4b4eee8040468ab69ff01, type: 2}
+      lodMesh: {fileID: 4300000, guid: 4fbeff5afddbe433ebffd4bbb9444a24, type: 2}
+      pivot: {x: 0.19, y: -0.52, z: 0}
+    - name: Core
+      parent: 
+      mesh: {fileID: 4300000, guid: a7c8ec681788e46218e2ab065ffe4ff8, type: 2}
+      lodMesh: {fileID: 4300000, guid: f856c2d0bb70d4b208e19d9b9b9fe7e0, type: 2}
+      pivot: {x: 0, y: -0.21999997, z: 0}
+    - name: LeftEye
+      parent: Core
+      mesh: {fileID: 4300000, guid: 84ac3800d33ca46d293eeecf19440e24, type: 2}
+      lodMesh: {fileID: 4300000, guid: fab8433fee36f493a92f1115659b2136, type: 2}
+      pivot: {x: -0.1, y: -0.109999955, z: 0.33}
+    - name: RightEye
+      parent: Core
+      mesh: {fileID: 4300000, guid: f9244cef20791447fa777cc5bd9b123b, type: 2}
+      lodMesh: {fileID: 4300000, guid: 70f3cae7064f3437bada6ccf26bda767, type: 2}
+      pivot: {x: 0.1, y: -0.109999955, z: 0.33}
+    - name: Mouth
+      parent: Core
+      mesh: {fileID: 4300000, guid: a097bc4a5ce054d27bf913a0e9c3c228, type: 2}
+      lodMesh: {fileID: 4300000, guid: 6e02a2d0f85f14b81ade778f542919cf, type: 2}
+      pivot: {x: 0, y: -0.22999996, z: 0.33}
+    - name: LeftArm
+      parent: Core
+      mesh: {fileID: 4300000, guid: cb72e3243edf24f28859a70410be9293, type: 2}
+      lodMesh: {fileID: 4300000, guid: 38542674b2355478792166a926adff90, type: 2}
+      pivot: {x: -0.36, y: -0.13, z: 0}
+    - name: RightHand
+      parent: Core
+      mesh: {fileID: 4300000, guid: 726afc71e56c1439fa3e5e812a4c5f94, type: 2}
+      lodMesh: {fileID: 4300000, guid: 7e9c5f5e6d6de490bb40347a0238769c, type: 2}
+      pivot: {x: 0.36, y: -0.13, z: 0}
+    - name: Antenna
+      parent: Core
+      mesh: {fileID: 4300000, guid: d07eec03266e14dec8f5513ae806d1f8, type: 2}
+      lodMesh: {fileID: 4300000, guid: 03ead1c9d4a7345889893d1301b3eaae, type: 2}
+      pivot: {x: 0, y: 0.16000003, z: -0.1}
+    - name: ScarfA
+      parent: Core
+      mesh: {fileID: 4300000, guid: f910e9cdd873c4064809eaccb9e3f9b9, type: 2}
+      lodMesh: {fileID: 4300000, guid: 2127f29a3bc6f44de8c1a180b3a0f6b4, type: 2}
+      pivot: {x: 0, y: 0.06999999, z: -0.356}
+    - name: ScarfB
+      parent: ScarfA
+      mesh: {fileID: 4300000, guid: 66f734ac938d64648b500a68d06eedf1, type: 2}
+      lodMesh: {fileID: 4300000, guid: 35cc7bfa653434298866fe295c96765c, type: 2}
+      pivot: {x: 0, y: 0.02000004, z: -0.49}
+    - name: ScarfC
+      parent: ScarfB
+      mesh: {fileID: 4300000, guid: c6bed1965a9744306bbdc1f6e3c2e0bb, type: 2}
+      lodMesh: {fileID: 4300000, guid: 65fd765bb5d6f4ee3a684244bed7c6c0, type: 2}
+      pivot: {x: 0, y: -0.060000002, z: -0.6}
+    trim: {fileID: 2100000, guid: a773c2fe4f04640ad9937aad47fb771a, type: 2}
+    accent: {fileID: 2100000, guid: a773c2fe4f04640ad9937aad47fb771a, type: 2}
+    surface: {fileID: 2100000, guid: a773c2fe4f04640ad9937aad47fb771a, type: 2}
+    integratedFace: 1
+    useRuntimeTint: 0
+    mechanicalRig: 1

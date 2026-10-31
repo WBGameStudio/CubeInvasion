@@ -248,7 +248,7 @@ namespace CubeInvasion.Prototype
         void FireContentWeapon()
         {
             if(!AimAtNearestEnemy())return;
-            if(playerAnimation)playerAnimation.Shoot();
+            HeroShot();
             var spec=Weapon;
             if(FireAdvancedWeapon())return;
             int pelletCount=ResolvedWeapon.Pellets;

@@ -9,13 +9,18 @@ namespace CubeInvasion.Prototype
         float EnemyRecoveryMultiplier=>combatBalance?combatBalance.enemyRecoveryMultiplier:.8f;
         float EnemyDamageMultiplier=>combatBalance?combatBalance.enemyDamageMultiplier:1.3f;
         float FireMovementWeight=>Mathf.InverseLerp(combatBalance?combatBalance.focusRadius:.25f,combatBalance?combatBalance.runningRadius:.85f,stick.magnitude);
-        float FireCadenceMultiplier=>Mathf.Lerp(1,combatBalance?combatBalance.runningShotIntervalMultiplier:2.1f,FireMovementWeight);
+        float FireCadenceMultiplier=>Mathf.Lerp(1,combatBalance?combatBalance.runningShotIntervalMultiplier:1.4f,FireMovementWeight);
         void TickAutoFire(float dt)
         {
             // Normalized recovery makes moving back toward center immediately accelerate the next shot.
             // No pointer-up, tap, extra button or cooldown reset is required.
             shot=Mathf.Max(0,shot-dt/FireCadenceMultiplier);
-            if(AimAtNearestEnemy()&&shot<=0) { shot=FireInterval;FirePulse(); }
+            if(AimAtNearestEnemy()&&shot<=0)
+            {
+                // Facing turns smoothly; a shot never leaves while the gun points more than 45° away from the target.
+                float off=Quaternion.Angle(player.rotation,aimFacing);if(off>45)player.rotation=Quaternion.RotateTowards(player.rotation,aimFacing,off-45);
+                shot=FireInterval;FirePulse();
+            }
         }
         bool CoverHit(Vector3 start,Vector3 end,float radius,out float entry)
         {

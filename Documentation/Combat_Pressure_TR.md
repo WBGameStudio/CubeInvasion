@@ -8,9 +8,9 @@ Otomatik hedefleme ve otomatik ateş korunur; yeni düğme, ikinci parmak veya p
 
 - Merkezin %25'i içinde: seçilen silahın normal atış aralığı; hafif yürürken de odak atışı yapılabilir.
 - %25–85 arasında: atış aralığı kademeli artar.
-- %85 ve üzeri: atış aralığı normalin 2,1 katıdır. Koşarken ateş devam eder, fakat hasar üretimi yaklaşık %52 azalır.
+- %85 ve üzeri: atış aralığı normalin 1,4 katıdır. Koşarken ateş devam eder, hasar üretimi yaklaşık %29 azalır. (Önceki 2,1 kat oyun testinde hareketi fazla cezalandırıyordu: koşarken 2,3 sn boyunca hiç düşman ölmedi.)
 
-Örnek: temel Pulse Pistol odakta 0,5 saniyede, tam koşuda yaklaşık 1,05 saniyede bir ateş eder. Hız değişimi bekleyen atışın toparlanmasını anında etkiler; joystick'i merkeze çekmek sayacı sıfırlamaz. Silah/kalıcı atış hızı geliştirmeleri bu ritmin temel hızına uygulanır. Hareketsiz kalmanın karşılığı daha hızlı ateş, bedeli düşman saldırılarına açık kalmaktır. Parmağı hafifçe merkeze yaklaştırarak yavaş yürüme de mümkündür.
+Örnek: temel Pulse Pistol odakta 0,5 saniyede, tam koşuda yaklaşık 0,7 saniyede bir ateş eder. Hız değişimi bekleyen atışın toparlanmasını anında etkiler; joystick'i merkeze çekmek sayacı sıfırlamaz. Silah/kalıcı atış hızı geliştirmeleri bu ritmin temel hızına uygulanır. Hareketsiz kalmanın karşılığı daha hızlı ateş, bedeli düşman saldırılarına açık kalmaktır. Parmağı hafifçe merkeze yaklaştırarak yavaş yürüme de mümkündür.
 
 Joystick üstünde `ODAK ATEŞİ`, `KOŞU ATIŞI`, ara hızda `YAVAŞLA · HIZLI ATEŞ`, tüm hedefler kapalıysa `ATEŞ HATTI BUL` gösterilir. İlk kullanım yönlendirmesi aynı parmak basılıyken yavaşlamayı anlatır. Pause atış sayacını ve animasyonları dondurur.
 

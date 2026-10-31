@@ -19,17 +19,19 @@ public static partial class VoidToyArtGeometry
         "Gold crate","Jackpot chest","Spike tile","Spike tile spikes","Electric coil","Lava tile"};
     // These take their runtime colour (timer state, reward, risk) from the Shape() property block on masked vertices.
     public static bool Tinted(string key)=>HazardTinted(key)||key=="Edge light"||key.StartsWith("Reward beacon")||key.StartsWith("Gate ")||key=="Locked until clear"||key.EndsWith("bridge");
-    public static bool Actor(string key)=>System.Array.IndexOf(Actors,key)>=0||System.Array.IndexOf(ExpansionActors,key)>=0;
+    public static bool Actor(string key)=>key==Hero||System.Array.IndexOf(Actors,key)>=0||System.Array.IndexOf(ExpansionActors,key)>=0;
     public static bool Weapon(string key)=>System.Array.IndexOf(Weapons,key)>=0||System.Array.IndexOf(ExpansionWeapons,key)>=0;
     // Gameplay transforms (InvasionPrototype.SpawnContentEnemy / scene player) the meshes are fitted to.
-    public static Vector3 GameplayScale(string key)=>Props.Contains(key)?PropGameplayScale(key):key=="Armored body"?new Vector3(.65f,.55f,.65f):key=="Crusher"?Vector3.one*1.05f:key=="Bruiser"?Vector3.one*.85f:Weapon(key)?new Vector3(.2f,.2f,.65f):Vector3.one*.7f;
-    static float RootHeight(string key)=>key=="Armored body"?.65f:key=="Crusher"?.95f:.6f;
+    public static Vector3 GameplayScale(string key)=>Props.Contains(key)?PropGameplayScale(key):key==Hero?Vector3.one:key=="Armored body"?new Vector3(.65f,.55f,.65f):key=="Crusher"?Vector3.one*1.05f:key=="Bruiser"?Vector3.one*.85f:Weapon(key)?new Vector3(.2f,.2f,.65f):Vector3.one*.7f;
+    static float RootHeight(string key)=>key=="Armored body"||key==Hero?.65f:key=="Crusher"?.95f:.6f;
     public static Color Family(string key)=>key.StartsWith("Expansion ")?ExpansionFamily(key):key=="Scatter shot"?VoidToyPalette.Warm:key=="Twin blasters"?Cobalt:key=="Rapid smg"?VoidToyPalette.Violet:Cyan;
-    public static int Budget(string key)=>key=="Crusher"?6000:Weapon(key)?600:key=="Deep sides"||key=="Arena surface"||HazardTile(key)?1200:Actor(key)?3000:600;
-    public static VoidToyMeshBuilder Make(string key)
+    public static int Budget(string key)=>key==Hero?2400:key=="Crusher"?6000:Weapon(key)?600:key=="Deep sides"||key=="Arena surface"||HazardTile(key)?1200:Actor(key)?3000:600;
+    public static bool HasLod(string key)=>key==Hero;
+    public static VoidToyMeshBuilder Make(string key,bool low=false)
     {
         switch(key)
         {
+            case Hero:return RogueCube(low);
             case "Armored body":return Scout();
             case "Grunt":return Grunt();
             case "Sprinter":return Sprinter();

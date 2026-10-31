@@ -7,9 +7,10 @@ namespace CubeInvasion.Prototype
     public sealed partial class CombatFeedback : MonoBehaviour
     {
         public enum Cue { Shot, Hit, Hurt, Explosion, Gold, Heal, Clear, Alarm, Fail, Gate, Twin, Scatter, Rapid, Telegraph, BossPhase, BossSlam, Unlock, Upgrade, Denied, Pierce, Ricochet, Arc, Rocket, Flame, Cryo, Drone, Nova, Summon, Teleport, ShieldBlock, Repair }
-        sealed class Effect { public Transform body; public float age, duration, size; public Vector3 origin; public bool ring; }
+        sealed class Effect { public Transform body; public float age, duration, size; public Vector3 origin, velocity, spin; public bool ring, debris; }
         readonly List<Effect> effects=new List<Effect>();
-        readonly Stack<Transform> ringPool=new Stack<Transform>(), sparkPool=new Stack<Transform>();
+        readonly Stack<Transform> ringPool=new Stack<Transform>(), sparkPool=new Stack<Transform>(), debrisPool=new Stack<Transform>();
+        readonly float[] voiceStarted=new float[10];
         readonly List<Material> materials=new List<Material>();
         readonly Dictionary<Cue,AudioClip> clips=new Dictionary<Cue,AudioClip>();
         [SerializeField] P2AudioBank audioBank;
@@ -54,7 +55,7 @@ namespace CubeInvasion.Prototype
             if(voices!=null)return;
             lineMaterial=new Material(Shader.Find("Sprites/Default")); materials.Add(lineMaterial);
             sparkMaterial=new Material(Shader.Find(UnityEngine.Rendering.GraphicsSettings.defaultRenderPipeline?"Universal Render Pipeline/Unlit":"Standard")); materials.Add(sparkMaterial);
-            voices=new AudioSource[6];
+            voices=new AudioSource[voiceStarted.Length];
             for(int i=0;i<voices.Length;i++) { voices[i]=gameObject.AddComponent<AudioSource>(); voices[i].playOnAwake=false; voices[i].spatialBlend=0; }
             foreach(Cue cue in System.Enum.GetValues(typeof(Cue)))
             {
@@ -92,12 +93,17 @@ namespace CubeInvasion.Prototype
             if(Muted||frozen||voices==null)return;
             if((cue==Cue.Shot||cue==Cue.Rapid||cue==Cue.Twin) && Time.unscaledTime-lastShotSound<.08f)return;
             if(cue==Cue.Shot||cue==Cue.Rapid||cue==Cue.Twin)lastShotSound=Time.unscaledTime;
-            AudioSource selected=null;
-            foreach(var voice in voices)if(!voice.isPlaying) { selected=voice;break; }
-            if(!selected) { if(cue==Cue.Shot||cue==Cue.Hit||cue==Cue.Gold)return; selected=voices[0]; }
+            int slot=-1;
+            for(int i=0;i<voices.Length;i++)if(!voices[i].isPlaying) {slot=i;break;}
+            // Busy fights used to drop hits and gold exactly when they mattered; only shots are droppable now,
+            // everything else steals the voice that has been playing longest.
+            if(slot<0) { if(cue==Cue.Shot||cue==Cue.Rapid||cue==Cue.Twin)return; slot=0;for(int i=1;i<voices.Length;i++)if(voiceStarted[i]<voiceStarted[slot])slot=i; }
+            var selected=voices[slot];voiceStarted[slot]=Time.unscaledTime;
             var variant=audioBank?audioBank.Find(cue,variation++):null;
             if(campaignSounds&&campaignSounds.sounds!=null)foreach(var entry in campaignSounds.sounds)if(entry.cue==cue&&entry.variants.Length>0) {variant=entry.variants[variation%entry.variants.Length];break;}
-            selected.clip=variant?variant:clips[cue];selected.pitch=1;
+            // Small pitch spread keeps rapid repeats (shots, hits, coins) from sounding like one looped sample.
+            bool repeated=cue==Cue.Shot||cue==Cue.Rapid||cue==Cue.Twin||cue==Cue.Hit||cue==Cue.Gold;
+            selected.clip=variant?variant:clips[cue];selected.pitch=repeated?Random.Range(.93f,1.07f):1;
             selected.volume=(cue==Cue.Shot||cue==Cue.Rapid||cue==Cue.Twin||cue>=Cue.Pierce&&cue<=Cue.Nova?.26f:cue==Cue.Telegraph?.42f:.6f)*SfxLevel;selected.Play();
 
             if(cue==Cue.Explosion||cue==Cue.BossSlam)duck=.25f;
@@ -130,9 +136,31 @@ namespace CubeInvasion.Prototype
                 Destroy(body.GetComponent<Collider>());body.GetComponent<Renderer>().sharedMaterial=sparkMaterial;
             }
             body.gameObject.SetActive(true);body.position=position;body.localScale=Vector3.one*.05f;
-            if(ring) { var line=body.GetComponent<LineRenderer>();line.startColor=line.endColor=color; }
+            // Wider bursts get a bolder stroke; the old fixed .06 line read like a debug gizmo at play distance.
+            if(ring) { var line=body.GetComponent<LineRenderer>();line.startColor=line.endColor=color;line.widthMultiplier=Mathf.Clamp(size*.11f,.07f,.14f); }
             else { var block=new MaterialPropertyBlock();block.SetColor("_Color",color);block.SetColor("_BaseColor",color);body.GetComponent<Renderer>().SetPropertyBlock(block); }
             effects.Add(new Effect { body=body,duration=duration,size=size,origin=position,ring=ring });
+        }
+        // Pooled chunks that burst out, fall, bounce once on the floor and shrink away.
+        public void Shatter(Vector3 position,Color body,Color accent,Vector3 push,int count)
+        {
+            push.y=0;push=push.sqrMagnitude>.0001f?push.normalized:Vector3.zero;
+            for(int i=0;i<count;i++)
+            {
+                MakeEffectRoom();
+                Transform piece;
+                if(debrisPool.Count>0)piece=debrisPool.Pop();
+                else
+                {
+                    piece=GameObject.CreatePrimitive(PrimitiveType.Cube).transform;piece.name="Pooled debris chunk";piece.SetParent(transform);
+                    Destroy(piece.GetComponent<Collider>());piece.GetComponent<Renderer>().sharedMaterial=sparkMaterial;
+                }
+                var color=i%3==0?accent:body;var block=new MaterialPropertyBlock();block.SetColor("_Color",color);block.SetColor("_BaseColor",color);piece.GetComponent<Renderer>().SetPropertyBlock(block);
+                var spread=Random.insideUnitCircle;var velocity=new Vector3(spread.x,0,spread.y)*2.6f+push*1.8f+Vector3.up*Random.Range(3.2f,5f);
+                float size=Random.Range(.09f,.17f);
+                piece.gameObject.SetActive(true);piece.position=position;piece.rotation=Random.rotation;piece.localScale=Vector3.one*size;
+                effects.Add(new Effect {body=piece,duration=Random.Range(.5f,.7f),size=size,origin=position,velocity=velocity,spin=Random.insideUnitSphere*720,debris=true});
+            }
         }
         public void Tick(float dt)
         {
@@ -142,12 +170,21 @@ namespace CubeInvasion.Prototype
             for(int i=effects.Count-1;i>=0;i--)
             {
                 var effect=effects[i];effect.age+=dt;float t=Mathf.Clamp01(effect.age/effect.duration);
+                if(effect.debris)
+                {
+                    effect.velocity.y-=16*dt;effect.origin+=effect.velocity*dt;
+                    if(effect.origin.y<.06f&&effect.velocity.y<0) {effect.origin.y=.06f;effect.velocity.y*=-.35f;effect.velocity.x*=.5f;effect.velocity.z*=.5f;effect.spin*=.5f;}
+                    effect.body.position=effect.origin;effect.body.Rotate(effect.spin*dt,Space.World);
+                    effect.body.localScale=Vector3.one*effect.size*(1-t*t*t);
+                    if(t>=1)Recycle(i);
+                    continue;
+                }
                 effect.body.localScale=Vector3.one*(effect.ring?Mathf.Lerp(.1f,effect.size,t):effect.size*(1-t));
                 if(!effect.ring)effect.body.position=effect.origin+Vector3.up*t*.5f;
                 if(t>=1)Recycle(i);
             }
         }
-        void Recycle(int i) { var effect=effects[i];effect.body.gameObject.SetActive(false);(effect.ring?ringPool:sparkPool).Push(effect.body);effects.RemoveAt(i); }
+        void Recycle(int i) { var effect=effects[i];effect.body.gameObject.SetActive(false);(effect.debris?debrisPool:effect.ring?ringPool:sparkPool).Push(effect.body);effects.RemoveAt(i); }
         void OnDestroy() { foreach(var clip in ownedClips)if(clip)Destroy(clip);foreach(var material in materials)if(material)Destroy(material); }
     }
 }

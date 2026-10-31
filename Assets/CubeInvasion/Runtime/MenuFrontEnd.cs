@@ -356,16 +356,17 @@ namespace CubeInvasion.Prototype
         // Ambient motion only in Play: the Play button shine, the next-level pulse and the Scout's bob.
         void StartAmbient()
         {
-            if(!Application.isPlaying||pages==null)return;
-            // Runtime-made sprites are not saved with the scene; give the line icons their round shapes here.
+            if(pages==null)return;
+            // Round shapes are imported sprites, so the builder saves them and the edit-mode Game view matches Play.
             foreach(var image in GetComponentsInChildren<Image>(true))
             {
                 if(image.name=="Gold ring")image.sprite=VoidToyStyle.Ring();
                 else if(image.name=="Gold dot"||image.name.StartsWith("Settings knob"))image.sprite=VoidToyStyle.Disc();
             }
+            var glow=pages[2].transform.Find("Weapon glow");if(glow)glow.GetComponent<Image>().sprite=VoidToyStyle.Disc();
+            if(!Application.isPlaying)return;
             var launch=pages[0].transform.Find("Play campaign");if(launch)VoidToyStyle.AnimateShine((RectTransform)launch,gameObject);
             if(primaryUpgrade)VoidToyStyle.AnimateShine((RectTransform)primaryUpgrade.transform,gameObject);if(buyWeapon)VoidToyStyle.AnimateShine((RectTransform)buyWeapon.transform,gameObject);
-            var glow=pages[2].transform.Find("Weapon glow");if(glow)glow.GetComponent<Image>().sprite=VoidToyStyle.Disc();
             var content=homeNodes!=null&&homeNodes.Length>0?homeNodes[0].transform.parent:null;
             var pulse=content?content.Find("Path pulse") as RectTransform:null;
             if(pulse)

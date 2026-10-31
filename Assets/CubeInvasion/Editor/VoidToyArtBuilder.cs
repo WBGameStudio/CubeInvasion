@@ -18,7 +18,9 @@ public static class VoidToyArtBuilder
     public static string Slug(string key)=>key.Replace(' ','_').Replace("+","Plus");
     public static string Prefab(string key)=>Root+"/Prefabs/"+Slug(key)+".prefab";
     static IEnumerable<string> Keys=>VoidToyArtGeometry.Actors.Concat(VoidToyArtGeometry.Weapons).Concat(VoidToyArtGeometry.Props)
-        .Concat(VoidToyArtGeometry.ExpansionActors).Concat(VoidToyArtGeometry.ExpansionWeapons).Append("Frozen patch");
+        .Concat(VoidToyArtGeometry.ExpansionActors).Concat(VoidToyArtGeometry.ExpansionWeapons).Append("Frozen patch").Append(VoidToyArtGeometry.Hero);
+    // Loaded at runtime (Resources.Load "RogueCubeFaces") to swap KİP's screen-face expressions.
+    public const string HeroFacesPath="Assets/CubeInvasion/Resources/RogueCubeFaces.asset";
     const string PresentationPath="Assets/CubeInvasion/Resources/CampaignPresentation.asset",ExpansionBackupPath=Root+"/ExpansionArtBackup.asset";
     public static bool IsActive(ToyArtLibrary.Model model)=>model!=null&&model.mesh&&AssetDatabase.GetAssetPath(model.mesh).StartsWith(Root+"/");
     [MenuItem("Cube Invasion/Art/Void Toy/Build Void Toy Models")]
@@ -30,20 +32,26 @@ public static class VoidToyArtBuilder
         var plastic=Paint("VoidToy_Plastic",shader,false);var tinted=Paint("VoidToy_Tinted",shader,true);
         var snapshot=AssetDatabase.LoadAssetAtPath<ToyArtLibrary>(SnapshotPath);
         if(!snapshot) {snapshot=ScriptableObject.CreateInstance<ToyArtLibrary>();AssetDatabase.CreateAsset(snapshot,SnapshotPath);}
-        var models=new List<ToyArtLibrary.Model>();var csv=new StringBuilder("Model,Vertices,Triangles,Budget,RigParts,Parts\n");
+        var models=new List<ToyArtLibrary.Model>();var csv=new StringBuilder("Model,Vertices,Triangles,Budget,RigParts,Parts,LOD1Triangles\n");
         foreach(string key in Keys)
         {
             string name=Slug(key);var builder=VoidToyArtGeometry.Make(key);var mesh=SaveMesh(name,builder.Build(name));
             bool actor=VoidToyArtGeometry.Actor(key);var rig=actor?builder.BuildRig(name,SaveMesh):new ToyArtLibrary.RigPart[0];
-            var paint=VoidToyArtGeometry.Tinted(key)?tinted:plastic;
-            models.Add(new ToyArtLibrary.Model {key=key,mesh=mesh,rig=rig,surface=paint,trim=paint,accent=paint,integratedFace=actor,mechanicalRig=actor,useRuntimeTint=paint==tinted});
-            csv.AppendLine($"{key},{mesh.vertexCount},{mesh.triangles.Length/3},{VoidToyArtGeometry.Budget(key)},{rig.Length},{string.Join(" ",rig.Select(p=>p.name))}");
+            var paint=VoidToyArtGeometry.Tinted(key)?tinted:plastic;Mesh lod=null;
+            if(VoidToyArtGeometry.HasLod(key))
+            {
+                // LOD1: same parts and pivots, plain blocks and halved round segments (ToyActorAnimator builds the LODGroup).
+                var lowBuilder=VoidToyArtGeometry.Make(key,true);lod=SaveMesh(name+"_LOD1",lowBuilder.Build(name+"_LOD1"));
+                var lowRig=lowBuilder.BuildRig(name+"_LOD1",SaveMesh);foreach(var part in rig)part.lodMesh=lowRig.First(p=>p.name==part.name).mesh;
+            }
+            models.Add(new ToyArtLibrary.Model {key=key,mesh=mesh,lodMesh=lod,rig=rig,surface=paint,trim=paint,accent=paint,integratedFace=actor,mechanicalRig=actor,useRuntimeTint=paint==tinted});
+            csv.AppendLine($"{key},{mesh.vertexCount},{mesh.triangles.Length/3},{VoidToyArtGeometry.Budget(key)},{rig.Length},{string.Join(" ",rig.Select(p=>p.name))},{(lod?lod.triangles.Length/3:0)}");
             var prefab=new GameObject(name,typeof(MeshFilter),typeof(MeshRenderer));prefab.GetComponent<MeshFilter>().sharedMesh=mesh;prefab.GetComponent<MeshRenderer>().sharedMaterial=paint;
             if(VoidToyArtGeometry.Props.Contains(key))prefab.transform.localScale=VoidToyArtGeometry.GameplayScale(key);
             if(actor)
             {
                 prefab.transform.localScale=VoidToyArtGeometry.GameplayScale(key);prefab.AddComponent<ToyActorAnimator>().ConfigurePrefab(key);
-                if(key=="Armored body")
+                if(key=="Armored body"||key==VoidToyArtGeometry.Hero)
                 {
                     // Same authored fire-anchor offset as the gameplay scene; linked to the pistol mesh after the loop.
                     var weapon=new GameObject("Pulse pistol",typeof(MeshFilter),typeof(MeshRenderer));weapon.transform.SetParent(prefab.transform,false);
@@ -54,11 +62,25 @@ public static class VoidToyArtBuilder
             PrefabUtility.SaveAsPrefabAsset(prefab,Prefab(key));Object.DestroyImmediate(prefab);
         }
         snapshot.models=models.ToArray();snapshot.InvalidateLookup();EditorUtility.SetDirty(snapshot);
-        var scout=PrefabUtility.LoadPrefabContents(Prefab("Armored body"));snapshot.TryGet("Pulse pistol",out var pistol);scout.transform.Find("Pulse pistol").GetComponent<MeshFilter>().sharedMesh=pistol.mesh;
-        PrefabUtility.SaveAsPrefabAsset(scout,Prefab("Armored body"));PrefabUtility.UnloadPrefabContents(scout);
+        snapshot.TryGet("Pulse pistol",out var pistol);
+        foreach(string armed in new[]{"Armored body",VoidToyArtGeometry.Hero})
+        {var scout=PrefabUtility.LoadPrefabContents(Prefab(armed));scout.transform.Find("Pulse pistol").GetComponent<MeshFilter>().sharedMesh=pistol.mesh;PrefabUtility.SaveAsPrefabAsset(scout,Prefab(armed));PrefabUtility.UnloadPrefabContents(scout);}
+        BuildHeroFaces();
         File.WriteAllText(Root+"/MeshBudget.csv",csv.ToString());AssetDatabase.SaveAssets();AssetDatabase.Refresh();Validate(snapshot);
         Debug.Log("CUBE_VOIDTOY_ASSETS_OK: "+Keys.Count(VoidToyArtGeometry.Actor)+" articulated actors, "+Keys.Count(VoidToyArtGeometry.Weapon)+" weapons and "+Keys.Count(k=>!VoidToyArtGeometry.Actor(k)&&!VoidToyArtGeometry.Weapon(k))+" props / tiles in "+Root);
         return snapshot;
+    }
+    // KİP expression variants: one entry per expression, rig = LeftEye / RightEye / Mouth meshes on the default face pivots.
+    static void BuildHeroFaces()
+    {
+        var faces=AssetDatabase.LoadAssetAtPath<ToyArtLibrary>(HeroFacesPath);if(!faces) {faces=ScriptableObject.CreateInstance<ToyArtLibrary>();AssetDatabase.CreateAsset(faces,HeroFacesPath);}
+        var entries=new List<ToyArtLibrary.Model>();
+        foreach(string expression in VoidToyArtGeometry.HeroFaces)
+        {
+            string name=Slug(VoidToyArtGeometry.Hero)+"_Face_"+expression;var builder=VoidToyArtGeometry.HeroFace(expression);
+            entries.Add(new ToyArtLibrary.Model {key=VoidToyArtGeometry.Hero+"/"+expression,mesh=SaveMesh(name,builder.Build(name)),rig=builder.BuildRig(name,SaveMesh),integratedFace=true});
+        }
+        faces.models=entries.ToArray();faces.InvalidateLookup();EditorUtility.SetDirty(faces);
     }
     static Material Paint(string name,Shader shader,bool tint)
     {
@@ -97,6 +119,7 @@ public static class VoidToyArtBuilder
             foreach(var part in model.rig)if(!string.IsNullOrEmpty(part.parent)&&!model.rig.Any(p=>p.name==part.parent))throw new Exception("Dangling rig parent "+key+"/"+part.name);
         }
         library.TryGet("Armored body",out var scout);if(scout.rig.Length!=7||!scout.rig.Any(p=>p.name=="RightHand"))throw new Exception("Scout needs the 7-part rig with a weapon hand");
+        ValidateHero(library);
         library.TryGet("Crusher",out var boss);if(boss.rig.Count(p=>p.name.EndsWith("Armor"))!=2)throw new Exception("Crusher armour panels must be separate meshes");
         Debug.Log("CUBE_VOIDTOY_GEOMETRY_OK: budgets, palette, intent lights, tint masks, complete rigs, separate boss armour.");
     }
@@ -164,5 +187,24 @@ public static class VoidToyArtBuilder
         art.InvalidateLookup();EditorUtility.SetDirty(art);AssetDatabase.SaveAssets();
         CampaignExpansionBuilder.RefreshWeaponIcons();
     }
-    public static void BuildInstallAndReview() {Install();VoidToyArtReview.Catalog();VoidToyArtReview.ArenaKit();VoidToyArtReview.Animation();}
+    public static void BuildInstallAndReview() {Install();VoidToyArtReview.Catalog();VoidToyArtReview.ArenaKit();VoidToyArtReview.Animation();VoidToyArtReview.RogueCube();}
+    // Brief §3-§5 contract: names, parents, LOD per part, budgets, real-world size.
+    static void ValidateHero(ToyArtLibrary library)
+    {
+        if(!library.TryGet(VoidToyArtGeometry.Hero,out var hero))throw new Exception("Missing Rogue cube");
+        var parents=new Dictionary<string,string>{{"Hips",""},{"LeftLeg","Hips"},{"RightLeg","Hips"},{"Core",""},{"LeftEye","Core"},{"RightEye","Core"},{"Mouth","Core"},
+            {"LeftArm","Core"},{"RightHand","Core"},{"Antenna","Core"},{"ScarfA","Core"},{"ScarfB","ScarfA"},{"ScarfC","ScarfB"}};
+        if(hero.rig.Length!=parents.Count)throw new Exception("Rogue cube needs exactly "+parents.Count+" parts, has "+hero.rig.Length);
+        foreach(var part in hero.rig)if(!parents.TryGetValue(part.name,out var parent)||(part.parent??"")!=parent)throw new Exception("Rogue cube part / parent mismatch: "+part.name+" <- "+part.parent);
+        if(!hero.integratedFace||!hero.mechanicalRig||!hero.lodMesh||hero.rig.Any(p=>!p.lodMesh))throw new Exception("Rogue cube needs integratedFace, mechanicalRig and LOD1 for every part");
+        int Tris(Mesh m)=>m.triangles.Length/3;int PartTris(params string[] names)=>hero.rig.Where(p=>names.Contains(p.name)).Sum(p=>Tris(p.mesh));
+        if(hero.rig.Sum(p=>Tris(p.lodMesh))!=Tris(hero.lodMesh))throw new Exception("Rogue cube LOD1 rig loses geometry");
+        if(Tris(hero.lodMesh)>Tris(hero.mesh)*.6f)throw new Exception("Rogue cube LOD1 reduction too small: "+Tris(hero.lodMesh)+"/"+Tris(hero.mesh));
+        if(PartTris("LeftEye","RightEye","Mouth")>200||PartTris("ScarfA","ScarfB","ScarfC")+176>300)throw new Exception("Rogue cube face / scarf budget");
+        var size=hero.mesh.bounds.size;
+        if(Mathf.Abs(size.y-1.25f)>.02f)throw new Exception("Rogue cube height "+size.y.ToString("F3")+" (brief: 1.25)");
+        var faces=AssetDatabase.LoadAssetAtPath<ToyArtLibrary>(HeroFacesPath);
+        if(!faces||faces.models.Length!=VoidToyArtGeometry.HeroFaces.Length||faces.models.Any(f=>f.rig.Length!=3||f.rig.Sum(p=>Tris(p.mesh))>200))throw new Exception("Rogue cube expressions incomplete or over the 200-triangle face budget");
+        Debug.Log($"CUBE_ROGUECUBE_OK: {Tris(hero.mesh)} tris (LOD1 {Tris(hero.lodMesh)}), {hero.rig.Length} parts, {size.x:F2} x {size.y:F2} x {size.z:F2} m, face {PartTris("LeftEye","RightEye","Mouth")}, scarf chain {PartTris("ScarfA","ScarfB","ScarfC")} (+176 collar on Core), {faces.models.Length} expressions.");
+    }
 }

@@ -1,53 +1,54 @@
-Model,Vertices,Triangles,Budget,RigParts,Parts
-Armored body,2174,1352,3000,7,Core LeftLeg RightLeg Head VisorEye LeftArm RightHand
-Grunt,1152,528,3000,5,Core LeftLeg RightLeg Head VisorEye
-Sprinter,1344,616,3000,7,Core LeftLeg RightLeg VisorEye LeftEar RightEar Tail
-Gunner,1344,616,3000,8,Core LeftFrontLeg RightFrontLeg LeftBackLeg RightBackLeg Head VisorEye RightHand
-Pusher,960,440,3000,6,Core LeftLeg RightLeg LeftEye RightEye ShieldHand
-Sniper,960,440,3000,7,Core LeftFrontLeg RightFrontLeg LeftBackLeg RightBackLeg RightHand LensEye
-Bruiser,1248,572,3000,8,Core LeftLeg RightLeg Head VisorEye LeftArm RightArm RightHand
-Crusher,2107,1168,6000,9,Core LeftLeg RightLeg LeftArmor RightArmor LeftHand RightHand Head VisorEye
-Shielder,1440,660,3000,5,Core LeftLeg RightLeg ShieldHand VisorEye
-Healer,2119,1044,3000,7,Core LeftLeg RightLeg VisorEye Head LeftArm RightArm
-Bomber,806,704,3000,5,Core LeftLeg RightLeg VisorEye Head
-Pulse pistol,576,264,600,0,
-Twin blasters,864,396,600,0,
-Scatter shot,672,308,600,0,
-Rapid smg,960,440,600,0,
-Deep sides,1728,792,1200,0,
-Arena surface,1632,748,1200,0,
-Edge light,96,44,600,0,
-Low cover,576,264,600,0,
-Explosive barrel,200,176,600,0,
-Explosive band,50,44,600,0,
-Health +20,288,132,600,0,
-Health cross H,96,44,600,0,
-Health cross V,96,44,600,0,
-Gold pickup,116,104,600,0,
-Elite crown,96,44,600,0,
-Gate left post,288,132,600,0,
-Gate right post,288,132,600,0,
-Gate header,384,176,600,0,
-Locked until clear,768,352,600,0,
-Right bridge,384,176,600,0,
-Forward bridge,384,176,600,0,
-Reward beacon,288,132,600,0,
-Reward beacon vertical,288,132,600,0,
-Gold crate,840,452,600,0,
-Jackpot chest,864,396,600,0,
-Spike tile,1344,616,1200,0,
-Spike tile spikes,1728,792,1200,0,
-Electric coil,1074,712,1200,0,
-Lava tile,864,396,1200,0,
-Summoner,1344,616,3000,7,Core LeftLeg RightLeg VisorEye Head LeftArm RightArm
-Phaser,2112,968,3000,5,Core LeftLeg RightLeg VisorEye RightHand
-Elite,1536,704,3000,7,Core LeftLeg RightLeg VisorEye Head LeftArm RightArm
-Expansion PierceRifle,864,396,600,0,
-Expansion RicochetGun,672,308,600,0,
-Expansion ArcLauncher,941,496,600,0,
-Expansion RocketPod,960,440,600,0,
-Expansion FlameSprayer,714,344,600,0,
-Expansion CryoBeam,768,352,600,0,
-Expansion OrbitDrones,960,440,600,0,
-Expansion NovaCannon,606,328,600,0,
-Frozen patch,384,176,1200,0,
+Model,Vertices,Triangles,Budget,RigParts,Parts,LOD1Triangles
+Armored body,2174,1352,3000,7,Core LeftLeg RightLeg Head VisorEye LeftArm RightHand,0
+Grunt,1152,528,3000,5,Core LeftLeg RightLeg Head VisorEye,0
+Sprinter,1344,616,3000,7,Core LeftLeg RightLeg VisorEye LeftEar RightEar Tail,0
+Gunner,1344,616,3000,8,Core LeftFrontLeg RightFrontLeg LeftBackLeg RightBackLeg Head VisorEye RightHand,0
+Pusher,960,440,3000,6,Core LeftLeg RightLeg LeftEye RightEye ShieldHand,0
+Sniper,960,440,3000,7,Core LeftFrontLeg RightFrontLeg LeftBackLeg RightBackLeg RightHand LensEye,0
+Bruiser,1248,572,3000,8,Core LeftLeg RightLeg Head VisorEye LeftArm RightArm RightHand,0
+Crusher,2107,1168,6000,9,Core LeftLeg RightLeg LeftArmor RightArmor LeftHand RightHand Head VisorEye,0
+Shielder,1440,660,3000,5,Core LeftLeg RightLeg ShieldHand VisorEye,0
+Healer,2119,1044,3000,7,Core LeftLeg RightLeg VisorEye Head LeftArm RightArm,0
+Bomber,806,704,3000,5,Core LeftLeg RightLeg VisorEye Head,0
+Pulse pistol,576,264,600,0,,0
+Twin blasters,864,396,600,0,,0
+Scatter shot,672,308,600,0,,0
+Rapid smg,960,440,600,0,,0
+Deep sides,1728,792,1200,0,,0
+Arena surface,1632,748,1200,0,,0
+Edge light,96,44,600,0,,0
+Low cover,576,264,600,0,,0
+Explosive barrel,200,176,600,0,,0
+Explosive band,50,44,600,0,,0
+Health +20,288,132,600,0,,0
+Health cross H,96,44,600,0,,0
+Health cross V,96,44,600,0,,0
+Gold pickup,116,104,600,0,,0
+Elite crown,96,44,600,0,,0
+Gate left post,288,132,600,0,,0
+Gate right post,288,132,600,0,,0
+Gate header,384,176,600,0,,0
+Locked until clear,768,352,600,0,,0
+Right bridge,384,176,600,0,,0
+Forward bridge,384,176,600,0,,0
+Reward beacon,288,132,600,0,,0
+Reward beacon vertical,288,132,600,0,,0
+Gold crate,840,452,600,0,,0
+Jackpot chest,864,396,600,0,,0
+Spike tile,1344,616,1200,0,,0
+Spike tile spikes,1728,792,1200,0,,0
+Electric coil,1074,712,1200,0,,0
+Lava tile,864,396,1200,0,,0
+Summoner,1344,616,3000,7,Core LeftLeg RightLeg VisorEye Head LeftArm RightArm,0
+Phaser,2112,968,3000,5,Core LeftLeg RightLeg VisorEye RightHand,0
+Elite,1536,704,3000,7,Core LeftLeg RightLeg VisorEye Head LeftArm RightArm,0
+Expansion PierceRifle,864,396,600,0,,0
+Expansion RicochetGun,672,308,600,0,,0
+Expansion ArcLauncher,941,496,600,0,,0
+Expansion RocketPod,960,440,600,0,,0
+Expansion FlameSprayer,714,344,600,0,,0
+Expansion CryoBeam,768,352,600,0,,0
+Expansion OrbitDrones,960,440,600,0,,0
+Expansion NovaCannon,606,328,600,0,,0
+Frozen patch,384,176,1200,0,,0
+Rogue cube,3223,1568,2400,13,Hips LeftLeg RightLeg Core LeftEye RightEye Mouth LeftArm RightHand Antenna ScarfA ScarfB ScarfC,600

@@ -109,9 +109,11 @@ public static class CombatPressureSmokeCheck
             pointer.position=RectTransformUtility.WorldToScreenPoint(view,rect.TransformPoint(new Vector3(rect.rect.width*.04f,0,0)));joystick.OnDrag(pointer);
             Call("ReadInput");Check(((Vector2)Get("stick")).magnitude>.01f&&((Vector2)Get("stick")).magnitude<.25f,"Same held thumb can slow-walk into focus without lifting");
             Set("shot",.5f);for(int i=0;i<110;i++)Call("TickAutoFire",.02f);int focused=((IList)Get("pulses")).Count;Call("ClearPulses");
-            Check(focused>=4&&running<=2&&running>0,"Focused fire is faster while running retains automatic shots");
-            Set("stick",Vector2.right);Set("shot",.4f);Call("TickAutoFire",.21f);float recovery=(float)Get("shot");Set("stick",Vector2.zero);Call("TickAutoFire",.2f);
-            Check(Mathf.Approximately(recovery,.3f)&&Mathf.Approximately((float)Get("shot"),.1f),"Changing speed changes current recovery without restarting the cooldown");
+            Check(focused>=4&&running<focused&&running>0,"Focused fire is faster while running retains automatic shots");
+            Set("stick",Vector2.right);float runningCadence=(float)typeof(InvasionPrototype).GetProperty("FireCadenceMultiplier",Flags).GetValue(game);
+            Set("shot",.4f);Call("TickAutoFire",.21f);float recovery=(float)Get("shot");Set("stick",Vector2.zero);Call("TickAutoFire",.2f);
+            float expected=.4f-.21f/runningCadence;
+            Check(runningCadence>1&&Mathf.Approximately(recovery,expected)&&Mathf.Approximately((float)Get("shot"),Mathf.Max(0,expected-.2f)),"Changing speed changes current recovery without restarting the cooldown");
             float shot=(float)Get("shot"),clock=(float)Get("remaining");var before=player.position;Call("Update");
             Check((float)Get("shot")==shot&&(float)Get("remaining")==clock&&player.position==before,"Pause freezes fire recovery and combat clocks");joystick.OnPointerUp(pointer);
             hud.SetFireRhythm(0,true,true);Check(hud.SafeRoot.Find("Fire rhythm").GetComponent<Text>().text=="ODAK ATEŞİ","Authored HUD explains focus mode beside the joystick");

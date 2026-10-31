@@ -17,4 +17,4 @@ MonoBehaviour:
   enemyDamageMultiplier: 1.3
   focusRadius: 0.25
   runningRadius: 0.85
-  runningShotIntervalMultiplier: 2.1
+  runningShotIntervalMultiplier: 1.4

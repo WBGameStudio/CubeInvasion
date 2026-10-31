@@ -10,6 +10,6 @@ namespace CubeInvasion.Prototype
         [Header("One-thumb fire rhythm / joystick distance from center")]
         [Range(0,.6f)] public float focusRadius=.25f;
         [Range(.6f,1)] public float runningRadius=.85f;
-        [Min(1)] public float runningShotIntervalMultiplier=2.1f;
+        [Min(1)] public float runningShotIntervalMultiplier=1.4f;
     }
 }

@@ -21,6 +21,8 @@ namespace CubeInvasion.ArtTools
         public Vector3 Scale=Vector3.one,Offset=Vector3.zero;
         // UV0.x: 1 where a runtime-tinted prop takes its MaterialPropertyBlock colour (edge light, gates, beacons).
         public float Tint;
+        // LOD1 build: chamfered blocks become plain blocks, round shapes halve their segments.
+        public bool Low;
         public int Triangles=>triangles.Count/3;
         public static Color Glow(Color c) {c.a=0;return c;}
         Vector3 Map(Vector3 p)=>new Vector3((p.x+Offset.x)/Scale.x,(p.y+Offset.y)/Scale.y,(p.z+Offset.z)/Scale.z);
@@ -57,6 +59,7 @@ namespace CubeInvasion.ArtTools
         // 6 faces, 12 edge chamfers, 8 corner facets: 44 triangles with crisp highlights on every edge.
         public void Box(Vector3 centre,Vector3 size,Color color,float bevel=.14f,Quaternion? rotation=null)
         {
+            if(Low) {Plain(centre,size,color,rotation);return;}
             var q=rotation??Quaternion.identity;var h=size*.5f;float b=Mathf.Min(size.x,Mathf.Min(size.y,size.z))*Mathf.Clamp(bevel,.01f,.45f);var i=h-Vector3.one*b;
             for(int x=-1;x<=1;x++)for(int y=-1;y<=1;y++)for(int z=-1;z<=1;z++)
             {
@@ -78,8 +81,20 @@ namespace CubeInvasion.ArtTools
                 else Polygon(centre,q,d.normalized,color,P(j=>d[j]*(j==0?h[j]:i[j])),P(j=>d[j]*(j==1?h[j]:i[j])),P(j=>d[j]*(j==2?h[j]:i[j])));
             }
         }
+        // Six hard faces, 12 triangles; `under` paints the downward face (cloth / scarf inner side).
+        public void Plain(Vector3 centre,Vector3 size,Color color,Quaternion? rotation=null,Color? under=null)
+        {
+            var q=rotation??Quaternion.identity;var h=size*.5f;
+            for(int axis=0;axis<3;axis++)for(int sign=-1;sign<=1;sign+=2)
+            {
+                int u=(axis+1)%3,v=(axis+2)%3;var d=Vector3.zero;d[axis]=sign;
+                Vector3 C(float su,float sv) {var p=Vector3.zero;p[axis]=sign*h[axis];p[u]=su*h[u];p[v]=sv*h[v];return p;}
+                Polygon(centre,q,d,axis==1&&sign<0&&under.HasValue?under.Value:color,C(-1,-1),C(1,-1),C(1,1),C(-1,1));
+            }
+        }
         public void Sphere(Vector3 centre,Vector3 size,Color color,int slices=16,int rings=10)
         {
+            if(Low) {slices=Mathf.Max(6,slices/2);rings=Mathf.Max(4,rings/2);}
             var half=size*.5f;int first=vertices.Count;
             for(int y=0;y<=rings;y++)for(int x=0;x<=slices;x++)
             {
@@ -93,6 +108,7 @@ namespace CubeInvasion.ArtTools
         // Smooth sides, flat caps; the axis is local Z.
         public void Cylinder(Vector3 centre,float radius,float length,Color color,Quaternion? rotation=null,int sides=8)
         {
+            if(Low)sides=Mathf.Max(4,sides/2);
             var q=rotation??Quaternion.identity;int first=vertices.Count;
             for(int ring=0;ring<2;ring++)for(int s=0;s<=sides;s++)
             {

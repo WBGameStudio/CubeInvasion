@@ -1,0 +1,165 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 807608c1d63942e4b44412fb84930395, type: 3}
+  m_Name: RogueCubeFaces
+  m_EditorClassIdentifier: Assembly-CSharp::CubeInvasion.Prototype.ToyArtLibrary
+  models:
+  - key: Rogue cube/Neutral
+    mesh: {fileID: 4300000, guid: 1993070f86eba4f2cb4dd93a1a4cf23d, type: 2}
+    lodMesh: {fileID: 0}
+    rig:
+    - name: LeftEye
+      parent: Core
+      mesh: {fileID: 4300000, guid: aa7dcff90f5b0426a84b7e5799dffa4d, type: 2}
+      lodMesh: {fileID: 0}
+      pivot: {x: -0.1, y: -0.109999955, z: 0.33}
+    - name: RightEye
+      parent: Core
+      mesh: {fileID: 4300000, guid: 9baf19fd765b9488d9c20084b624eb4e, type: 2}
+      lodMesh: {fileID: 0}
+      pivot: {x: 0.1, y: -0.109999955, z: 0.33}
+    - name: Mouth
+      parent: Core
+      mesh: {fileID: 4300000, guid: 2db4ead89a3fe44d1b6ec2f5a75c9b63, type: 2}
+      lodMesh: {fileID: 0}
+      pivot: {x: 0, y: -0.22999996, z: 0.33}
+    trim: {fileID: 0}
+    accent: {fileID: 0}
+    surface: {fileID: 0}
+    integratedFace: 1
+    useRuntimeTint: 0
+    mechanicalRig: 0
+  - key: Rogue cube/Determined
+    mesh: {fileID: 4300000, guid: 333e6703cc6894ce88ce98861c0cd857, type: 2}
+    lodMesh: {fileID: 0}
+    rig:
+    - name: LeftEye
+      parent: Core
+      mesh: {fileID: 4300000, guid: 3ffe513b8b01d4a7493cc4c850bb2122, type: 2}
+      lodMesh: {fileID: 0}
+      pivot: {x: -0.1, y: -0.109999955, z: 0.33}
+    - name: RightEye
+      parent: Core
+      mesh: {fileID: 4300000, guid: e4a0a2e423d6b4aaf9d2ab009a8d428d, type: 2}
+      lodMesh: {fileID: 0}
+      pivot: {x: 0.1, y: -0.109999955, z: 0.33}
+    - name: Mouth
+      parent: Core
+      mesh: {fileID: 4300000, guid: d2ba0e0a31b4540a9921650fc403b8a5, type: 2}
+      lodMesh: {fileID: 0}
+      pivot: {x: 0, y: -0.22999996, z: 0.33}
+    trim: {fileID: 0}
+    accent: {fileID: 0}
+    surface: {fileID: 0}
+    integratedFace: 1
+    useRuntimeTint: 0
+    mechanicalRig: 0
+  - key: Rogue cube/Surprised
+    mesh: {fileID: 4300000, guid: d8029317839594fa6a1648f290744ce8, type: 2}
+    lodMesh: {fileID: 0}
+    rig:
+    - name: LeftEye
+      parent: Core
+      mesh: {fileID: 4300000, guid: 544b9318a82a7464f888ba413a31d3d8, type: 2}
+      lodMesh: {fileID: 0}
+      pivot: {x: -0.1, y: -0.109999955, z: 0.33}
+    - name: RightEye
+      parent: Core
+      mesh: {fileID: 4300000, guid: a96514c0dc31a45eebe387438390cb06, type: 2}
+      lodMesh: {fileID: 0}
+      pivot: {x: 0.1, y: -0.109999955, z: 0.33}
+    - name: Mouth
+      parent: Core
+      mesh: {fileID: 4300000, guid: 0f8438cd531ba440fa2a8c79a5f5a556, type: 2}
+      lodMesh: {fileID: 0}
+      pivot: {x: 0, y: -0.22999996, z: 0.33}
+    trim: {fileID: 0}
+    accent: {fileID: 0}
+    surface: {fileID: 0}
+    integratedFace: 1
+    useRuntimeTint: 0
+    mechanicalRig: 0
+  - key: Rogue cube/Pain
+    mesh: {fileID: 4300000, guid: d7a604dd7581c4d06b6050cc25e82438, type: 2}
+    lodMesh: {fileID: 0}
+    rig:
+    - name: LeftEye
+      parent: Core
+      mesh: {fileID: 4300000, guid: 43dd1ea559b9b46d9b81cc75034c9053, type: 2}
+      lodMesh: {fileID: 0}
+      pivot: {x: -0.1, y: -0.109999955, z: 0.33}
+    - name: RightEye
+      parent: Core
+      mesh: {fileID: 4300000, guid: 7b4f726173c1b4e0baeae743426f793c, type: 2}
+      lodMesh: {fileID: 0}
+      pivot: {x: 0.1, y: -0.109999955, z: 0.33}
+    - name: Mouth
+      parent: Core
+      mesh: {fileID: 4300000, guid: 8640f466e4d8443d8a4b6a0f4dd66d3b, type: 2}
+      lodMesh: {fileID: 0}
+      pivot: {x: 0, y: -0.22999996, z: 0.33}
+    trim: {fileID: 0}
+    accent: {fileID: 0}
+    surface: {fileID: 0}
+    integratedFace: 1
+    useRuntimeTint: 0
+    mechanicalRig: 0
+  - key: Rogue cube/Happy
+    mesh: {fileID: 4300000, guid: 1dad5b405909f4d428558e44151cca02, type: 2}
+    lodMesh: {fileID: 0}
+    rig:
+    - name: LeftEye
+      parent: Core
+      mesh: {fileID: 4300000, guid: dc4eb5720eb0a470e87bcac3e93a672f, type: 2}
+      lodMesh: {fileID: 0}
+      pivot: {x: -0.1, y: -0.109999955, z: 0.33}
+    - name: RightEye
+      parent: Core
+      mesh: {fileID: 4300000, guid: fc1be4c700cf4420dbc325c27bf936e8, type: 2}
+      lodMesh: {fileID: 0}
+      pivot: {x: 0.1, y: -0.109999955, z: 0.33}
+    - name: Mouth
+      parent: Core
+      mesh: {fileID: 4300000, guid: 905f8c55deda4422384e7a46f5c9b8f8, type: 2}
+      lodMesh: {fileID: 0}
+      pivot: {x: 0, y: -0.22999996, z: 0.33}
+    trim: {fileID: 0}
+    accent: {fileID: 0}
+    surface: {fileID: 0}
+    integratedFace: 1
+    useRuntimeTint: 0
+    mechanicalRig: 0
+  - key: Rogue cube/Dizzy
+    mesh: {fileID: 4300000, guid: debd82da6f77a4d5abcf2f721f59f2cf, type: 2}
+    lodMesh: {fileID: 0}
+    rig:
+    - name: LeftEye
+      parent: Core
+      mesh: {fileID: 4300000, guid: cc41abe932f2549dd8f8f6fdabada2d9, type: 2}
+      lodMesh: {fileID: 0}
+      pivot: {x: -0.1, y: -0.109999955, z: 0.33}
+    - name: RightEye
+      parent: Core
+      mesh: {fileID: 4300000, guid: a20175f52fc9a4325a954a58dbd46c6c, type: 2}
+      lodMesh: {fileID: 0}
+      pivot: {x: 0.1, y: -0.109999955, z: 0.33}
+    - name: Mouth
+      parent: Core
+      mesh: {fileID: 4300000, guid: f192cd3a6d3c743d69db8c7bb7f01cc5, type: 2}
+      lodMesh: {fileID: 0}
+      pivot: {x: 0, y: -0.22999996, z: 0.33}
+    trim: {fileID: 0}
+    accent: {fileID: 0}
+    surface: {fileID: 0}
+    integratedFace: 1
+    useRuntimeTint: 0
+    mechanicalRig: 0

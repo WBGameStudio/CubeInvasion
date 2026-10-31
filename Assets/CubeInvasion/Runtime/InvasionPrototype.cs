@@ -165,7 +165,10 @@ namespace CubeInvasion.Prototype
             centre=Vector3.zero; stage=1; health=100; remaining=20;
             wallet=PlayerPrefs.GetInt("CI.Wallet",0);
             platform=Arena(centre,false,cyan);
-            playerAnimation=AnimateActor(playerBody,player,"Armored body",playerVisor,gun);
+            // KİP is authored at world scale; the Scout mesh relied on the body's squashed transform.
+            bool rogue=artLibrary&&artLibrary.TryGet(HeroKey,out _);
+            if(rogue)playerBody.localScale=Vector3.one;
+            playerAnimation=AnimateActor(playerBody,player,rogue?HeroKey:"Armored body",playerVisor,gun);
             view.GetComponent<ArcadeFollowCamera>().Follow(player);
             InitializeFeel();
             if(HasContent) { InitializeContent();return; }
@@ -309,9 +312,12 @@ namespace CubeInvasion.Prototype
             var forward=Vector3.ProjectOnPlane(view.transform.forward,Vector3.up).normalized;
             var right=Vector3.ProjectOnPlane(view.transform.right,Vector3.up).normalized;
             var direction=right*input.x-forward*input.y;
-            if(direction.sqrMagnitude>.01f)player.rotation=Quaternion.LookRotation(direction);
+            var facing=direction.sqrMagnitude>.01f?Quaternion.LookRotation(direction):player.rotation;
             Vector3 before=player.position;
-            player.position+=direction*MoveSpeed*ArenaMoveMultiplier*dt;
+            // Short ramps instead of instant velocity; deceleration is quicker so stopping at an edge stays precise.
+            var targetVelocity=direction*MoveSpeed*ArenaMoveMultiplier;
+            moveVelocity=Vector3.MoveTowards(moveVelocity,targetVelocity,(direction.sqrMagnitude>.01f?MoveAcceleration:MoveDeceleration)*MoveSpeed/4.5f*dt);
+            player.position+=moveVelocity*dt;
             if(phase==Phase.Combat&&CoverHit(before,player.position,.3f,out _))
             {
                 var x=new Vector3(player.position.x,before.y,before.z);var z=new Vector3(before.x,before.y,player.position.z);
@@ -340,7 +346,9 @@ namespace CubeInvasion.Prototype
                 if(Mathf.Abs(relative.x)<1.15f && relative.z>3.85f)relative.z=3.85f;
                 player.position=centre+relative;
             }
-            if(phase==Phase.Combat)AimAtNearestEnemy();
+            if(phase==Phase.Combat&&AimAtNearestEnemy())facing=aimFacing;
+            // The body turns quickly toward the aim instead of snapping; shots still fly straight at the target.
+            player.rotation=Quaternion.RotateTowards(player.rotation,facing,TurnRate*dt);
         }
         bool AimAtNearestEnemy()
         {
@@ -356,7 +364,7 @@ namespace CubeInvasion.Prototype
             AimAtGoldCrate(ref nearest);AimAtExpandedObject(ref nearest);
             if(!HasAimTarget)return false;
             var aim=AimPoint-player.position;aim.y=0;
-            if(aim.sqrMagnitude>.0001f)player.rotation=Quaternion.LookRotation(aim);
+            if(aim.sqrMagnitude>.0001f)aimFacing=Quaternion.LookRotation(aim);
             return true;
         }
         void CheckGateCrossing(Vector3 before, Vector3 after)
@@ -413,7 +421,7 @@ namespace CubeInvasion.Prototype
             if(phase!=Phase.Combat || !AimAtNearestEnemy())return;
             if(HasContent) { FireContentWeapon();return; }
             var body=RentProjectile(pulsePool,"Forward pulse",SafeMuzzle(gun.position+player.forward*.35f),cyan,.18f);
-            if(playerAnimation)playerAnimation.Shoot();
+            HeroShot();
             feedback.Play(CombatFeedback.Cue.Shot);PlayerMuzzle(cyan);
             var aim=AimPoint-body.position;aim.y=0;
             var direction=aim.sqrMagnitude>.0001f?aim.normalized:player.forward;body.GetComponent<LaserBoltVisual>().Fly(direction,0);
@@ -454,6 +462,7 @@ namespace CubeInvasion.Prototype
         void Clear()
         {
             if(phase!=Phase.Combat)return;
+            Face(FaceHappy,1.2f,3);
             ClearPulses();
             FinishEncounterFeel(true);
             int bank=10+pendingGold+RouteClearBonus+(Expanded&&stage==CubeCount?(IsBoss?400+Mission.biome*120:IsGoldRush?300:50+Mission.biome*50):0);
@@ -540,6 +549,7 @@ namespace CubeInvasion.Prototype
         void Fail(string why, FailureKind kind=FailureKind.Health)
         {
             if(phase!=Phase.Combat)return;
+            Face(FaceDizzy,3,4);
             RecordValidation("cube_failed",kind.ToString());
             if(activeOffer!=null)RecordBranch("route_fail",activeOffer,kind.ToString());
             if(IsBoss)RecordValidation("boss_phase_failed",kind.ToString());
@@ -621,6 +631,6 @@ namespace CubeInvasion.Prototype
             GUI.color=Color.white;
         }
         void OnApplicationFocus(bool focused) { if(!focused) { FlushMenuSettings(true);SetPaused(true); } }
-        void OnDestroy() { FlushMenuSettings(true);ClearAnimationTweens();foreach(var mat in materials) if(mat) Destroy(mat); if(joystickDisc)Destroy(joystickDisc); }
+        void OnDestroy() { Time.timeScale=1;FlushMenuSettings(true);ClearAnimationTweens();foreach(var mat in materials) if(mat) Destroy(mat); if(joystickDisc)Destroy(joystickDisc); }
     }
 }

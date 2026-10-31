@@ -16,10 +16,12 @@ namespace CubeInvasion.Prototype
                 var cameraObject=new GameObject("Menu preview camera") {hideFlags=HideFlags.HideAndDontSave};cameraObject.transform.SetParent(stage.transform,false);previewCamera=cameraObject.AddComponent<Camera>();previewCamera.enabled=false;previewCamera.clearFlags=CameraClearFlags.SolidColor;previewCamera.backgroundColor=Color.clear;previewCamera.orthographic=true;previewCamera.nearClipPlane=.01f;previewCamera.farClipPlane=30;previewCamera.allowHDR=false;previewCamera.cullingMask=1<<30;
                 target=new RenderTexture(256,256,24,RenderTextureFormat.ARGB32);previewCamera.targetTexture=target;
                 model=new GameObject("Displayed weapon",typeof(MeshFilter),typeof(MeshRenderer)) {hideFlags=HideFlags.HideAndDontSave,layer=30};model.transform.SetParent(stage.transform,false);model.transform.localScale=new Vector3(1,1,3.25f);
-                var graphic=new GameObject("Interactive 3D preview",typeof(RectTransform),typeof(RawImage));graphic.transform.SetParent(transform,false);image=graphic.GetComponent<RawImage>();image.texture=target;var rect=image.rectTransform;rect.anchorMin=Vector2.zero;rect.anchorMax=Vector2.one;rect.offsetMin=rect.offsetMax=Vector2.zero;image.raycastTarget=true;GetComponent<Image>().enabled=true;
+                var graphic=new GameObject("Interactive 3D preview",typeof(RectTransform),typeof(RawImage));graphic.transform.SetParent(transform,false);image=graphic.GetComponent<RawImage>();image.texture=target;var rect=image.rectTransform;rect.anchorMin=Vector2.zero;rect.anchorMax=Vector2.one;rect.offsetMin=rect.offsetMax=Vector2.zero;image.raycastTarget=true;
             }
             var baseArt=Resources.Load<ToyArtLibrary>("ToyArtLibrary");var expansion=Resources.Load<CampaignPresentation>("CampaignPresentation");ToyArtLibrary.Model entry=null;
-            if(!(expansion&&expansion.art&&expansion.art.TryGet(weapon.model,out entry))&&!baseArt.TryGet(weapon.model,out entry))return;
+            // The flat sprite stays only as a fallback for a weapon without a model; otherwise it showed behind the turntable.
+            bool found=(expansion&&expansion.art&&expansion.art.TryGet(weapon.model,out entry))||baseArt.TryGet(weapon.model,out entry);
+            GetComponent<Image>().enabled=!found;image.enabled=found;if(!found)return;
             model.GetComponent<MeshFilter>().sharedMesh=entry.mesh;model.GetComponent<MeshRenderer>().sharedMaterials=entry.Materials(entry.surface?null:new Material(Shader.Find("Universal Render Pipeline/Unlit")) {color=weapon.color});stage.SetActive(gameObject.activeInHierarchy);nextFrame=0;if(gameObject.activeInHierarchy)RenderNow();
         }
         public void OnDrag(PointerEventData pointer) {yaw+=pointer.delta.x*.5f;nextFrame=0;}

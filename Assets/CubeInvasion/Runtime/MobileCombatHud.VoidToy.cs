@@ -160,6 +160,36 @@ namespace CubeInvasion.Prototype
                 healthTrack.localPosition=new Vector3(local.x,local.y,0);
         }
 
+        // Damage reads at the screen edges only: a short pink vignette, never a full-screen wash over the arena.
+        Image hurtEdge;static Sprite hurtVignette;
+        public void FlashHurt()
+        {
+            if(!Canvas)return;
+            if(!hurtEdge)
+            {
+                if(!hurtVignette)hurtVignette=Vignette();
+                hurtEdge=new GameObject("Hurt edge",typeof(RectTransform),typeof(Image)).GetComponent<Image>();
+                hurtEdge.transform.SetParent(Canvas.transform,false);hurtEdge.transform.SetSiblingIndex(0);
+                VoidToyStyle.Place(hurtEdge.rectTransform,Vector2.zero,Vector2.one,Vector2.zero,Vector2.zero);
+                hurtEdge.sprite=hurtVignette;hurtEdge.raycastTarget=false;
+            }
+            hurtEdge.DOKill();hurtEdge.gameObject.SetActive(true);hurtEdge.color=VoidToyPalette.WithAlpha(VoidToyPalette.Danger,.75f);
+            hurtEdge.DOFade(0,.38f).SetEase(Ease.OutQuad).SetUpdate(true).SetLink(hurtEdge.gameObject).OnComplete(()=>hurtEdge.gameObject.SetActive(false));
+        }
+        static Sprite Vignette()
+        {
+            const int size=128;var texture=new Texture2D(size,size,TextureFormat.RGBA32,false) {name="Hurt vignette",wrapMode=TextureWrapMode.Clamp,hideFlags=HideFlags.DontSave};
+            var pixels=new Color32[size*size];
+            for(int y=0;y<size;y++)for(int x=0;x<size;x++)
+            {
+                float dx=Mathf.Abs(x+.5f-size*.5f)/(size*.5f),dy=Mathf.Abs(y+.5f-size*.5f)/(size*.5f);
+                float edge=Mathf.Max(dx,dy);float a=Mathf.SmoothStep(0,1,Mathf.InverseLerp(.62f,1,edge));
+                pixels[y*size+x]=new Color32(255,255,255,(byte)(255*a));
+            }
+            texture.SetPixels32(pixels);texture.Apply(false,true);
+            var sprite=Sprite.Create(texture,new Rect(0,0,size,size),new Vector2(.5f,.5f),100);sprite.hideFlags=HideFlags.DontSave;return sprite;
+        }
+
         public void SetBranchPreview(BranchCard right,BranchCard forward,bool visible)
         {
             if(!branchCards&&visible)
@@ -200,7 +230,7 @@ namespace CubeInvasion.Prototype
             VoidToyStyle.Place(view.title.rectTransform,new Vector2(0,0),new Vector2(1,1),new Vector2(70,28),new Vector2(-10,-4));
             view.detail=VoidToyStyle.Label("Encounter",face.transform,uiFont,16,TextAnchor.MiddleLeft,VoidToyPalette.Muted);view.detail.gameObject.SetActive(false);
             view.title.verticalOverflow=view.detail.verticalOverflow=VerticalWrapMode.Truncate;view.title.horizontalOverflow=HorizontalWrapMode.Wrap;
-            view.title.resizeTextForBestFit=view.detail.resizeTextForBestFit=true;view.title.resizeTextMinSize=16;view.title.resizeTextMaxSize=24;view.detail.resizeTextMinSize=12;view.detail.resizeTextMaxSize=16;
+            view.title.resizeTextForBestFit=view.detail.resizeTextForBestFit=true;view.title.resizeTextMinSize=13;view.title.resizeTextMaxSize=24;view.detail.resizeTextMinSize=12;view.detail.resizeTextMaxSize=16;
             foreach(var text in view.root.GetComponentsInChildren<Text>(true))VoidToyStyle.Outline(text);
             return view;
         }

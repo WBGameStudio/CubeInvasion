@@ -37,6 +37,12 @@ namespace CubeInvasion.Prototype
         public Transform WeaponVisual=>weaponVisual;
         float gaitPhase,idlePhase,weight;
         Vector3 previous,localDirection;
+        // Hero rig extras (present only when the model has a Hips joint): lower body faces the movement while
+        // the body aims, plus spring-driven antenna and scarf as secondary motion.
+        Joint hips;bool backpedal;float hipYaw,flutter;
+        Vector2 antenna,antennaVelocity;Vector3 lastLocalVelocity;
+        readonly Vector2[] scarf=new Vector2[3];
+        float scarfJolt;
         Motion mode;
         bool shooting,visible=true,ready;
         public Motion CurrentMotion => mode;
@@ -67,7 +73,7 @@ namespace CubeInvasion.Prototype
                 else joints.Add(new Joint {name=part.name,pivot=joint.transform,left=part.name.StartsWith("Left"),arm=part.name.EndsWith("Arm"),back=part.name.Contains("Back")});
             }
             foreach(var part in model.rig)if(!string.IsNullOrEmpty(part.parent)&&hierarchy.TryGetValue(part.parent,out var parent))hierarchy[part.name].SetParent(parent,true);
-            foreach(var joint in joints)joint.rest=joint.pivot.localPosition;
+            foreach(var joint in joints) {joint.rest=joint.pivot.localPosition;if(joint.name=="Hips")hips=joint;}
             if(low.Count==high.Count&&low.Count>0)
             {
                 var levels=gaitRoot.gameObject.AddComponent<LODGroup>();levels.SetLODs(new[]{new LOD(.08f,high.ToArray()),new LOD(.012f,low.ToArray())});levels.RecalculateBounds();
@@ -139,6 +145,8 @@ namespace CubeInvasion.Prototype
             }
             float wave=Mathf.Sin(gaitPhase*Mathf.PI*2),stride=(mode==Motion.Run?37:24)*weight;
             float breathe=Mathf.Sin(idlePhase*Mathf.PI*2);
+            var legDirection=localDirection;
+            if(hips!=null) {TickHeroSecondary(velocity,speed,dt,breathe);legDirection=new Vector3(0,0,backpedal?-1:1);}
             float blinkT=(idlePhase-.78f)/.085f,blink=blinkT>0&&blinkT<1?1-Mathf.Sin(blinkT*Mathf.PI)*.92f:1;
             foreach(var joint in joints)
             {
@@ -146,6 +154,10 @@ namespace CubeInvasion.Prototype
                 // Bolted-on armour (boss panels) rides the reaction root but never swings.
                 if(joint.name.EndsWith("Armor"))continue;
                 if(joint.name.EndsWith("Eye")) {joint.pivot.localScale=new Vector3(1,blink,1);continue;}
+                if(joint==hips) {joint.pivot.localRotation=Quaternion.Euler(0,hipYaw,0);continue;}
+                if(joint.name=="Mouth")continue;
+                if(joint.name=="Antenna") {joint.pivot.localRotation=Quaternion.Euler(antenna.x,0,antenna.y);continue;}
+                if(joint.name.StartsWith("Scarf")) {var bend=scarf[Mathf.Clamp(joint.name[joint.name.Length-1]-'A',0,2)];joint.pivot.localRotation=Quaternion.Euler(bend.x,bend.y,0);continue;}
                 if(joint.name=="Head") { joint.pivot.localRotation=Quaternion.Euler(-weight*2+breathe*1.2f,Mathf.Sin(idlePhase*Mathf.PI*2+.8f)*3,breathe*2-weight*localDirection.x*3);continue; }
                 if(joint.name.EndsWith("Ear")) {float lag=Mathf.Sin(gaitPhase*Mathf.PI*2-.55f);joint.pivot.localRotation=Quaternion.Euler(lag*weight*17+breathe*3,0,(joint.left?-1:1)*(weight*7+lag*weight*6));continue;}
                 if(joint.name=="Tail") {joint.pivot.localRotation=Quaternion.Euler(wave*weight*10,breathe*12+wave*weight*15,0);continue;}
@@ -157,13 +169,53 @@ namespace CubeInvasion.Prototype
                 if(mechanical&&joint.name.EndsWith("Hand"))
                 { joint.pivot.localRotation=Quaternion.Euler(-anticipation*18+kick*14,0,(joint.left?-1:1)*anticipation*8);continue; }
                 float swing=wave*stride*sign*(joint.arm?(shooting?.16f:-.65f):1);
-                joint.pivot.localRotation=Quaternion.Euler(localDirection.z*swing*(mechanical&&!joint.arm?-1:1)-(joint.arm?anticipation*42+kick*13:0),0,-localDirection.x*swing+(joint.arm?(joint.left?-1:1)*anticipation*12:0));
+                var swingDirection=joint.arm?localDirection:legDirection;
+                joint.pivot.localRotation=Quaternion.Euler(swingDirection.z*swing*(mechanical&&!joint.arm?-1:1)-(joint.arm?anticipation*42+kick*13:0),0,-swingDirection.x*swing+(joint.arm?(joint.left?-1:1)*anticipation*12:0));
                 if(!joint.arm)joint.pivot.localPosition+=Vector3.up*Mathf.Max(0,wave*sign)*weight*(mode==Motion.Run?.11f:.065f);
             }
             gaitRoot.localPosition=Vector3.up*(restHeight-anticipation*(mechanical?.07f:0)+breathe*.012f+Mathf.Abs(wave)*weight*(mode==Motion.Run?.08f:.045f));
-            gaitRoot.localScale=new Vector3(1+breathe*.006f,1-breathe*.009f,1+breathe*.006f);
+            // The hero squashes on each foot contact and stretches at the top of the bounce (volume kept).
+            float squash=hips!=null?(1-Mathf.Abs(wave)*2)*weight*(mode==Motion.Run?.06f:.035f):0;
+            gaitRoot.localScale=new Vector3(1+breathe*.006f+squash*.5f,1-breathe*.009f-squash,1+breathe*.006f+squash*.5f);
             gaitRoot.localRotation=Quaternion.Euler(localDirection.z*weight*(mode==Motion.Run?8:3),0,-localDirection.x*weight*6);
             if(original)original.enabled=false;
+        }
+        void TickHeroSecondary(Vector3 velocity,float speed,float dt,float breathe)
+        {
+            // Legs follow the stick; moving away from the aim walks backwards instead of twisting the hips 180°.
+            float target=0;backpedal=false;
+            if(speed>.12f)
+            {
+                target=Mathf.Atan2(localDirection.x,localDirection.z)*Mathf.Rad2Deg;
+                if(Mathf.Abs(target)>100) {target-=180*Mathf.Sign(target);backpedal=true;}
+                target=Mathf.Clamp(target,-80,80);
+            }
+            hipYaw=Mathf.LerpAngle(hipYaw,target,1-Mathf.Exp(-dt*14));
+            // Antenna: damped spring driven by body acceleration and the recoil kick.
+            var localVelocity=motionRoot.InverseTransformDirection(velocity);var accel=(localVelocity-lastLocalVelocity)/dt;lastLocalVelocity=localVelocity;
+            var drive=new Vector2(Mathf.Clamp(-accel.z*.9f,-40,40)+kick*30,Mathf.Clamp(accel.x*.9f,-40,40));
+            antennaVelocity+=(drive-antenna*140-antennaVelocity*12)*dt;antenna+=antennaVelocity*dt;
+            antenna=new Vector2(Mathf.Clamp(antenna.x,-35,35),Mathf.Clamp(antenna.y,-35,35));
+            // Scarf: three segments trail with growing lag, lift with speed and flutter while running.
+            flutter+=dt*(8+speed*3);scarfJolt=Mathf.MoveTowards(scarfJolt,0,dt*4);
+            float run=Mathf.Clamp01(speed/5);
+            for(int i=0;i<3;i++)
+            {
+                var goal=new Vector2(-run*(32-i*7)-scarfJolt*(25+i*10)+breathe*3+Mathf.Sin(flutter+i*1.3f)*run*(6+i*4),
+                    -localDirection.x*weight*(10+i*6)+Mathf.Sin(flutter*.7f+i)*run*4);
+                scarf[i]=Vector2.Lerp(scarf[i],goal,1-Mathf.Exp(-dt*(16-i*4)));
+            }
+        }
+        // Expression meshes are swapped on the face joints (and their LOD copies); blink keeps working on top.
+        public void SetFace(Mesh leftEye,Mesh rightEye,Mesh mouth)
+        {
+            if(!ready)return;
+            foreach(var joint in joints)
+            {
+                var mesh=joint.name=="LeftEye"?leftEye:joint.name=="RightEye"?rightEye:joint.name=="Mouth"?mouth:null;if(!mesh)continue;
+                joint.pivot.GetComponent<MeshFilter>().sharedMesh=mesh;
+                var lod=joint.pivot.Find("LOD1");if(lod)lod.GetComponent<MeshFilter>().sharedMesh=mesh;
+            }
         }
         public void Shoot()
         {
@@ -182,6 +234,7 @@ namespace CubeInvasion.Prototype
         {
             if(!ready)return;
             // Keep scale reactions separate from the gait joints and recoil position.
+            scarfJolt=1;antennaVelocity+=new Vector2(-260,Random.Range(-120f,120f));
             reactions.Add(reactionRoot.DOPunchScale(Vector3.one*.065f,.18f,3,.4f).SetUpdate(UpdateType.Manual));
         }
         public void Telegraph(float duration)

@@ -24,6 +24,9 @@ namespace CubeInvasion.Prototype
         public float CountdownPulse=>countdownShake?countdownShake.Pulse:0;
         public void ConfigureCountdown(CountdownCameraShake effect) {countdownShake=effect;}
         public bool DriveCountdown(float seconds,bool active,float dt)=>countdownShake&&countdownShake.Drive(seconds,active,dt);
+        ImpactCameraKick impactKick;
+        public void Kick(float strength,Vector3 push) {if(impactKick)impactKick.Kick(strength,push);}
+        public void ClearKick() {if(impactKick)impactKick.Clear();}
 
         public void Follow(Transform followTarget)
         {
@@ -54,6 +57,9 @@ namespace CubeInvasion.Prototype
             if(!countdownShake)countdownShake=virtualCamera.GetComponent<CountdownCameraShake>();
             if(!countdownShake)countdownShake=virtualCamera.gameObject.AddComponent<CountdownCameraShake>();
             countdownShake.ResetUrgency();
+            impactKick=virtualCamera.GetComponent<ImpactCameraKick>();
+            if(!impactKick)impactKick=virtualCamera.gameObject.AddComponent<ImpactCameraKick>();
+            impactKick.Clear();
             virtualCamera.Follow=anchor;
             virtualCamera.LookAt=null; // Preserve the diagonal heading when the robot turns.
             UpdateRig();

@@ -37,7 +37,9 @@ namespace CubeInvasion.Prototype
         void LateUpdate()
         {
             FlushMenuSettings();
+            TickHitStop();
             TickAnimations(Time.deltaTime);
+            if(!paused)TickHeroFace(Time.unscaledDeltaTime);
             if(!hud)return;
             feedback.SetPaused(paused);
             if(!paused)feedback.Tick(Time.deltaTime);
@@ -59,7 +61,7 @@ namespace CubeInvasion.Prototype
         }
         void SetupEncounterFeel()
         {
-            pendingGold=0;alarmSecond=21;knockback=Vector3.zero;
+            pendingGold=0;alarmSecond=21;knockback=Vector3.zero;moveVelocity=Vector3.zero;
             if(cover)Destroy(cover.gameObject);cover=null;
             barrels.Clear();ClearPickups();ClearEnemyShots();
             if(HasContent?Encounter.cover||Encounter.barrels:stage>=2)
@@ -118,7 +120,7 @@ namespace CubeInvasion.Prototype
                 if((magnet&&!pickup.healing) || distance<PickupRadius*(pickup.healing?1:temporaryMagnet>0?3:1+RouteMagnet))
                 {
                     if(pickup.healing) { health=Mathf.Min(MaxHealth,health+pickup.value);feedback.Play(CombatFeedback.Cue.Heal); }
-                    else { pendingGold+=pickup.value;if(IsGoldRush)quotaGold=Mathf.Min(Encounter.goldQuota,quotaGold+pickup.value);feedback.Play(CombatFeedback.Cue.Gold); }
+                    else { pendingGold+=pickup.value;if(IsGoldRush)quotaGold=Mathf.Min(Encounter.goldQuota,quotaGold+pickup.value);feedback.Play(CombatFeedback.Cue.Gold);Face(FaceHappy,.25f,2); }
                     feedback.Burst(pickup.body.position,pickup.healing?Color.green:Color.yellow,.5f);
                     RecyclePickup(pickup);pickups.RemoveAt(i);
                 }
@@ -155,6 +157,7 @@ namespace CubeInvasion.Prototype
             bool outside=Expanded&&(Mathf.Abs(at.x-centre.x)>ArenaHalfX||Mathf.Abs(at.z-centre.z)>Half);
             SpawnPickup(outside?player.position:at,false,EnemyGold(foe));
             feedback.Burst(new Vector3(at.x,.1f,at.z),danger,.9f,.25f,true);
+            var away=at-player.position;away.y=0;KillImpact(at,away);
             ExpandedEnemyEliminated(foe);advancedBrains.Remove(foe);teleportDestinations.Remove(foe);CrusherEnemyEliminated(foe);GoldEnemyEliminated(foe);BomberEliminated(foe,at);SupportEliminated(foe);
         }
         void DamagePlayer(float damage,Vector3 push)
@@ -164,7 +167,7 @@ namespace CubeInvasion.Prototype
             cubeDamageTaken+=Mathf.Min(health,Mathf.Max(0,damage));
             health=Mathf.Max(0,health-damage);invulnerability=.55f;hurtFlash=.18f;knockback=push;
             if(playerAnimation)playerAnimation.Hit();
-            feedback.Play(CombatFeedback.Cue.Hurt);feedback.Burst(player.position,danger,.8f,.2f,true);
+            feedback.Play(CombatFeedback.Cue.Hurt);feedback.Burst(player.position,danger,.8f,.2f,true);HurtImpact(push);
             if(health<=0)Fail("Canın tükendi");
         }
         void TickEnemies(float dt)
@@ -285,6 +288,7 @@ namespace CubeInvasion.Prototype
             Vector3 at=barrel.body.position;barrels.Remove(barrel);
             Destroy(barrel.body.gameObject);Destroy(barrel.warning.gameObject);
             feedback.Play(CombatFeedback.Cue.Explosion);feedback.Burst(new Vector3(at.x,.12f,at.z),new Color(1,.45f,.1f),2.2f,.3f,true);
+            feedback.Shatter(at+Vector3.up*.3f,new Color(1,.38f,.16f),VoidToyPalette.Gold,Vector3.zero,9);Impact(BlastStop,1,Vector3.up);
             // Chained barrels receive their own visible fuse.
             // A final support kill can retire the protected boss too; visit each original victim once.
             var victims=foes.ToArray();

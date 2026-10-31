@@ -194,4 +194,85 @@ public static class VoidToyArtReview
             EditorSceneManager.ClosePreviewScene(scene);
         }
     }
+    // KİP review: turntable, the six screen-face expressions, and the in-game 45/45 shot among graphite enemies.
+    [MenuItem("Cube Invasion/Art/Void Toy/Render Rogue Cube Review")]
+    public static void RogueCube()
+    {
+        var library=AssetDatabase.LoadAssetAtPath<ToyArtLibrary>(VoidToyArtBuilder.SnapshotPath);VoidToyArtBuilder.Validate(library);
+        var faces=AssetDatabase.LoadAssetAtPath<ToyArtLibrary>(VoidToyArtBuilder.HeroFacesPath);library.TryGet(VoidToyArtGeometry.Hero,out var hero);
+        var animators=new List<ToyActorAnimator>();var scene=EditorSceneManager.NewPreviewScene();Texture2D sheet=null;
+        ToyActorAnimator Spawn(string key,Vector3 at,float yaw)
+        {
+            var obj=Load(key,scene);obj.transform.position=at;obj.transform.rotation=Quaternion.Euler(0,yaw,0);
+            var animator=obj.GetComponent<ToyActorAnimator>();animator.enabled=false;var accessories=new List<Transform>();foreach(Transform child in obj.transform)accessories.Add(child);
+            library.TryGet(key,out var model);animator.Bind(model,obj.transform);foreach(var child in accessories)animator.Attach(child);
+            animator.TickPose(Vector3.zero,.001f,false);foreach(var node in animator.VisualRoot.GetComponentsInChildren<Transform>())if(node.name.EndsWith("Eye"))node.localScale=Vector3.one;
+            animators.Add(animator);return animator;
+        }
+        try
+        {
+            // 1. Turntable and expression sheet.
+            var kip=Spawn(VoidToyArtGeometry.Hero,Vector3.zero,0);var bounds=Bounds(kip.gameObject);
+            var camera=Camera(scene,VoidToyPalette.Floor);camera.aspect=1;
+            var title=Label(scene,camera,"",Vector3.zero,52,VoidToyPalette.Ink);
+            sheet=new Texture2D(480*6,480*2,TextureFormat.RGB24,false);
+            var views=new[]{("FRONT",new Vector3(8,0,0),180f),("3/4",new Vector3(22,0,0),215f),("SIDE",new Vector3(8,0,0),270f),("BACK",new Vector3(18,0,0),20f),("TOP",new Vector3(70,0,0),215f),("3/4 HIGH",new Vector3(45,0,0),225f)};
+            for(int i=0;i<views.Length;i++)
+            {
+                camera.transform.rotation=Quaternion.Euler(views[i].Item2.x,views[i].Item3,0);camera.orthographicSize=.95f;camera.transform.position=bounds.center+Vector3.up*.05f-camera.transform.forward*20;
+                title.text=views[i].Item1;title.transform.rotation=camera.transform.rotation;title.transform.position=bounds.center+camera.transform.up*.82f;
+                var image=Grab(camera,480,480);sheet.SetPixels(i*480,480,480,480,image.GetPixels());Object.DestroyImmediate(image);
+            }
+            var reactions=kip.VisualRoot.Find("DOTween Reactions/Core");
+            for(int i=0;i<VoidToyArtGeometry.HeroFaces.Length;i++)
+            {
+                faces.TryGet(VoidToyArtGeometry.Hero+"/"+VoidToyArtGeometry.HeroFaces[i],out var face);
+                foreach(var part in face.rig)reactions.Find(part.name).GetComponent<MeshFilter>().sharedMesh=part.mesh;
+                camera.transform.rotation=Quaternion.Euler(4,180,0);camera.orthographicSize=.3f;var screen=reactions.Find("Mouth").position+Vector3.up*.07f;camera.transform.position=screen-camera.transform.forward*20;
+                title.text=VoidToyArtGeometry.HeroFaces[i].ToUpperInvariant();title.transform.rotation=camera.transform.rotation;title.transform.position=screen+Vector3.up*.25f+Vector3.forward*.3f;title.characterSize=.009f;
+                var image=Grab(camera,480,480);sheet.SetPixels(i*480,0,480,480,image.GetPixels());Object.DestroyImmediate(image);title.characterSize=.032f;
+            }
+            foreach(var part in hero.rig)if(VoidToyArtGeometry.HeroFaceParts.Contains(part.name))reactions.Find(part.name).GetComponent<MeshFilter>().sharedMesh=part.mesh;
+            sheet.Apply();Write(sheet,Previews+"/RogueCube_Review.png");Object.DestroyImmediate(title.gameObject);
+            // 2. In-game: 1080x1920, ortho 5.6, 45/45 camera, light floor over the dark void, six graphite enemies.
+            var arena=new GameObject("Combat cube").transform;UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(arena.gameObject,scene);
+            Transform Prop(string key,Vector3 at,Vector3? scale=null)
+            {var obj=Load(key,scene);obj.transform.SetParent(arena,false);obj.transform.localPosition=at;if(scale.HasValue)obj.transform.localScale=scale.Value;return obj.transform;}
+            Prop("Deep sides",new Vector3(0,-1.2f,0));Prop("Arena surface",new Vector3(0,-.04f,0));
+            for(int i=0;i<4;i++)
+            {
+                bool alongX=i<2;var edge=Prop("Edge light",new Vector3(alongX?0:(i==2?-4.45f:4.45f),.03f,alongX?(i==0?-4.45f:4.45f):0),alongX?new Vector3(9,.06f,.07f):new Vector3(.07f,.06f,9));
+                var block=new MaterialPropertyBlock();block.SetColor("_Color",VoidToyPalette.Cyan);edge.GetComponent<Renderer>().SetPropertyBlock(block);
+            }
+            var at=new Vector3(0,.65f,-.4f);kip.transform.position=at;kip.transform.rotation=Quaternion.Euler(0,20,0);kip.TickPose(Vector3.zero,.001f,false);
+            string[] cast={"Grunt","Sprinter","Gunner","Pusher","Sniper","Bruiser"};
+            for(int i=0;i<cast.Length;i++)
+            {
+                float a=(-70+i*28)*Mathf.Deg2Rad;var position=at+new Vector3(Mathf.Sin(a)*2.6f,-.05f,Mathf.Cos(a)*2.6f+.4f);
+                var foe=Spawn(cast[i],position,0);foe.transform.rotation=Quaternion.LookRotation(Vector3.ProjectOnPlane(at-position,Vector3.up));foe.TickPose(Vector3.zero,.001f,false);
+            }
+            var game=Camera(scene,VoidToyPalette.Hex(0x0E1626));game.transform.rotation=Quaternion.Euler(45,45,0);game.orthographicSize=5.6f;game.aspect=1080f/1920;
+            game.transform.position=at+Vector3.forward*.8f-game.transform.forward*30;
+            var shot=Grab(game,1080,1920);Write(shot,Previews+"/RogueCube_InGame.png");Object.DestroyImmediate(shot);
+            // Screen share of the character's height: foot on the floor to the antenna ball top.
+            var foot=new Vector3(at.x,.04f,at.z);float low=game.WorldToViewportPoint(foot).y,high=game.WorldToViewportPoint(foot+Vector3.up*1.25f).y;
+            // 3. Rig sanity with the current animator: blink, stride, recoil, hit; root and fire anchor stay put.
+            kip.transform.position=Vector3.right*20;var root=kip.transform.position;var anchor=kip.transform.Find("Pulse pistol");var anchorAt=anchor.localPosition;bool blinked=false,strode=false;
+            for(int frame=0;frame<144;frame++)
+            {
+                bool run=frame>=40;if(run&&frame%8==0)kip.Shoot();if(frame==100)kip.Telegraph(.5f);if(frame==120)kip.Hit();
+                kip.TickPose(frame<24?Vector3.zero:Vector3.forward*(run?4.5f:1.2f),1f/24,run);
+                foreach(var node in kip.VisualRoot.GetComponentsInChildren<Transform>()) {if(node.name.EndsWith("Eye")&&node.localScale.y<.4f)blinked=true;if(node.name.EndsWith("Leg")&&Quaternion.Angle(node.localRotation,Quaternion.identity)>5)strode=true;}
+                if(kip.transform.position!=root||anchor.localPosition!=anchorAt||!float.IsFinite(kip.VisualRoot.localPosition.y))throw new Exception("Rogue cube animation moved root / fire anchor");
+            }
+            if(!blinked||!strode)throw new Exception("Rogue cube blink / stride missing");
+            Debug.Log($"CUBE_ROGUECUBE_REVIEW_OK: {Previews}/RogueCube_Review.png, RogueCube_InGame.png; KIP spans {(high-low)*100:F1}% of the 1080x1920 frame height at ortho 5.6 (brief: >= 6%); blink and stride OK with the current animator.");
+        }
+        finally
+        {
+            if(sheet)Object.DestroyImmediate(sheet);
+            foreach(var animator in animators)if(animator)animator.SendMessage("OnDestroy",SendMessageOptions.DontRequireReceiver);
+            EditorSceneManager.ClosePreviewScene(scene);
+        }
+    }
 }
