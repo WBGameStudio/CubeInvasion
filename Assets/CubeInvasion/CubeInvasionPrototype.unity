@@ -1865,12 +1865,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52c93e3e76da48a68c4c850ebbab8eaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CubeInvasion.Prototype.ArcadeFollowCamera
-  tilt: 45
+  tilt: 50
   heading: 45
-  followDamping: 0.18
+  followDamping: 0.22
   minimumSize: 6.8
-  horizontalHalfView: 5.2
-  forwardFraming: 1
+  horizontalHalfView: 5.4
+  forwardFraming: 0.4
+  arenaPull: 0.45
+  lookAhead: 1.3
+  lookAheadTime: 0.35
+  arenaShiftTime: 0.55
   target: {fileID: 495176913}
   anchor: {fileID: 270313423}
   virtualCamera: {fileID: 405644915}

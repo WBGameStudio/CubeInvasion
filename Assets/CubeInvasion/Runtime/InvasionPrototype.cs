@@ -312,11 +312,12 @@ namespace CubeInvasion.Prototype
             var forward=Vector3.ProjectOnPlane(view.transform.forward,Vector3.up).normalized;
             var right=Vector3.ProjectOnPlane(view.transform.right,Vector3.up).normalized;
             var direction=right*input.x-forward*input.y;
+            if(direction.sqrMagnitude>.0001f)direction=direction.normalized*MoveResponse(input.magnitude);else direction=Vector3.zero;
             var facing=direction.sqrMagnitude>.01f?Quaternion.LookRotation(direction):player.rotation;
             Vector3 before=player.position;
-            // Short ramps instead of instant velocity; deceleration is quicker so stopping at an edge stays precise.
+            // Eased velocity (fast start, soft finish) instead of instant speed; stopping eases a little quicker.
             var targetVelocity=direction*MoveSpeed*ArenaMoveMultiplier;
-            moveVelocity=Vector3.MoveTowards(moveVelocity,targetVelocity,(direction.sqrMagnitude>.01f?MoveAcceleration:MoveDeceleration)*MoveSpeed/4.5f*dt);
+            moveVelocity=Vector3.Lerp(moveVelocity,targetVelocity,1-Mathf.Exp(-(direction.sqrMagnitude>.01f?MoveEase:StopEase)*dt));
             player.position+=moveVelocity*dt;
             if(phase==Phase.Combat&&CoverHit(before,player.position,.3f,out _))
             {
@@ -347,8 +348,10 @@ namespace CubeInvasion.Prototype
                 player.position=centre+relative;
             }
             if(phase==Phase.Combat&&AimAtNearestEnemy())facing=aimFacing;
-            // The body turns quickly toward the aim instead of snapping; shots still fly straight at the target.
-            player.rotation=Quaternion.RotateTowards(player.rotation,facing,TurnRate*dt);
+            // The body eases toward the aim instead of snapping (fast for big turns, gentle at the end);
+            // shots still fly straight at the target.
+            float turn=Quaternion.Angle(player.rotation,facing);
+            player.rotation=Quaternion.RotateTowards(player.rotation,facing,Mathf.Max(turn*(1-Mathf.Exp(-TurnEase*dt)),MinTurnRate*dt));
         }
         bool AimAtNearestEnemy()
         {
@@ -517,7 +520,7 @@ namespace CubeInvasion.Prototype
             StartCoroutine(RetireCube(rejected));
             for(int i=chosen.childCount-1;i>=0;i--)
                 if(chosen.GetChild(i).name.StartsWith("Reward"))Destroy(chosen.GetChild(i).gameObject);
-            Vector3 destination=chosen.position;
+            Vector3 destination=chosen.position;transferFocus=destination;
             var start=player.position;
             float entryX=Expanded&&selected!=null&&selected.encounter.layout==ArenaLayout.Narrow?-2.1f:-3.6f;
             var end=destination+(right?new Vector3(entryX,.65f,0):new Vector3(0,.65f,-3.6f));

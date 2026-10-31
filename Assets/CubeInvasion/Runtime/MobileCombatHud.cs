@@ -25,9 +25,8 @@ namespace CubeInvasion.Prototype
         public void SetFireRhythm(float movement,bool hasTarget,bool active)
         {
             if(!fireRhythm)return;
-            fireRhythm.gameObject.SetActive(active);
-            fireRhythm.text=!hasTarget?"ATEŞ HATTI BUL":movement<.2f?"ODAK ATEŞİ":movement>.8f?"KOŞU ATIŞI":"YAVAŞLA · HIZLI ATEŞ";
-            fireRhythm.color=!hasTarget?VoidToyPalette.Gold:Color.Lerp(VoidToyPalette.HealthText,VoidToyPalette.Gold,movement);
+            // The rhythm is felt through the fire rate itself; the on-screen label explained it and cluttered combat.
+            if(fireRhythm.gameObject.activeSelf)fireRhythm.gameObject.SetActive(false);
         }
         [SerializeField] GameObject result, pauseOverlay;
         Vector3 timerRestScale;bool hasTimerRestScale;

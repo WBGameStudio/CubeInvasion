@@ -7,12 +7,14 @@ namespace CubeInvasion.Prototype
         // Impact pacing: a few frames of hit-stop plus a camera kick sell kills, hurt and explosions.
         // The freeze slows the whole simulation (combat clock included), so it never costs the player time.
         const float HitStopScale=.05f, KillStop=.045f, HurtStop=.085f, BlastStop=.07f;
-        const float MoveAcceleration=55, MoveDeceleration=70, TurnRate=900;
+        // Exponential easing rates (per second): ~90% of top speed in 0.19 s, stop in 0.14 s, turns settle in ~0.15 s.
+        const float MoveEase=12, StopEase=16, TurnEase=15, MinTurnRate=240;
         const string HeroKey="Rogue cube";
         float hitStopUntil;
         Vector3 moveVelocity;
         Quaternion aimFacing=Quaternion.identity;
         ArcadeFollowCamera followCamera;
+        Vector3 transferFocus;
 
         void Impact(float stop,float kick,Vector3 push)
         {
@@ -22,9 +24,24 @@ namespace CubeInvasion.Prototype
             if(stop<=0||paused||Application.isBatchMode)return;
             hitStopUntil=Mathf.Max(hitStopUntil,Time.unscaledTime+stop);Time.timeScale=HitStopScale;
         }
+        void FrameArena()
+        {
+            if(!followCamera&&view)followCamera=view.GetComponent<ArcadeFollowCamera>();
+            // During a transfer the view already leans toward the cube being walked onto.
+            if(followCamera)followCamera.SetArenaFocus(phase==Phase.Transfer?transferFocus:centre,phase==Phase.Combat||phase==Phase.Choice||phase==Phase.Transfer);
+        }
         void TickHitStop()
         {
             if(Time.timeScale<1&&(paused||phase!=Phase.Combat||Time.unscaledTime>=hitStopUntil))Time.timeScale=1;
+        }
+        // Stick response: a small dead zone, the inner quarter kept for slow focus walking, then full speed
+        // from ~65% thumb travel instead of only at the rim.
+        const float StickDeadZone=.06f, StickFullSpeed=.65f;
+        static float MoveResponse(float magnitude)
+        {
+            if(magnitude<StickDeadZone)return 0;
+            const float focus=.25f;
+            return magnitude<focus?magnitude:Mathf.Lerp(focus,1,Mathf.InverseLerp(focus,StickFullSpeed,magnitude));
         }
         void KillImpact(Vector3 at,Vector3 direction)
         {

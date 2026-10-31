@@ -37,7 +37,7 @@ namespace CubeInvasion.Prototype
         void LateUpdate()
         {
             FlushMenuSettings();
-            TickHitStop();
+            TickHitStop();FrameArena();
             TickAnimations(Time.deltaTime);
             if(!paused)TickHeroFace(Time.unscaledDeltaTime);
             if(!hud)return;

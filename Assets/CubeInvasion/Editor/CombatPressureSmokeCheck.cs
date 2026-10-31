@@ -116,7 +116,7 @@ public static class CombatPressureSmokeCheck
             Check(runningCadence>1&&Mathf.Approximately(recovery,expected)&&Mathf.Approximately((float)Get("shot"),Mathf.Max(0,expected-.2f)),"Changing speed changes current recovery without restarting the cooldown");
             float shot=(float)Get("shot"),clock=(float)Get("remaining");var before=player.position;Call("Update");
             Check((float)Get("shot")==shot&&(float)Get("remaining")==clock&&player.position==before,"Pause freezes fire recovery and combat clocks");joystick.OnPointerUp(pointer);
-            hud.SetFireRhythm(0,true,true);Check(hud.SafeRoot.Find("Fire rhythm").GetComponent<Text>().text=="ODAK ATEŞİ","Authored HUD explains focus mode beside the joystick");
+            hud.SetFireRhythm(0,true,true);Check(!hud.SafeRoot.Find("Fire rhythm").gameObject.activeSelf,"Fire rhythm label stays hidden during combat");
             // A ranged enemy must walk around cover instead of remaining behind it indefinitely.
             foreach(var f in foes)Put(f,"attack",100f);
             for(int side=0;side<4;side++)
