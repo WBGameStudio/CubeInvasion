@@ -79,10 +79,10 @@ namespace CubeInvasion.Prototype
         float AdvancedDamage(Foe foe,float damage)=>advancedBrains.TryGetValue(foe,out var brain)&&brain.weak>0?damage*1.3f:damage;
         string FailureGuidance(FailureKind kind)
         {
-            if(kind==FailureKind.EdgeFall)return "İtme işaretini görünce merkeze doğru hareket et.";
-            if(kind==FailureKind.Timeout)return "Joystiği merkeze yaklaştır: koşmayı azalt, daha sık ateş et.";
-            if(Mission.special==SpecialRule.ChainReactor)return "Parlayan enerji düğümünü sırayla vur.";
-            return "Siper kullan; saldırı uyarısı sırasında yön değiştir.";
+            if(kind==FailureKind.EdgeFall)return "When you see the push marker, move toward the center.";
+            if(kind==FailureKind.Timeout)return "Ease the joystick toward center: run less, fire more.";
+            if(Mission.special==SpecialRule.ChainReactor)return "Hit the glowing energy nodes in order.";
+            return "Use cover; change direction during attack warnings.";
         }
         void ResetExpansionCombat()
         {advancedBrains.Clear();teleportDestinations.Clear();summonQueue.Clear();ClearExpandedArena();ClearExpandedBoss();pickupBuffs.Clear();}

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CubeInvasion.Prototype.P2ContentCatalog
   weapons:
   - title: Pulse Pistol
-    description: "Dengeli tek at\u0131\u015F. Uzak hedeflerde g\xFCvenilir."
+    description: "Balanced single shot. Reliable at long range."
     model: Pulse pistol
     kind: 0
     damage: 6
@@ -24,8 +24,7 @@ MonoBehaviour:
     spread: 0
     color: {r: 0.1, g: 0.8, b: 1, a: 1}
   - title: Twin Blasters
-    description: "\u0130ki namludan birlikte ate\u015F. Orta mesafede yo\u011Fun
-      hasar."
+    description: "Twin barrels fire together. Heavy damage at mid range."
     model: Twin blasters
     kind: 1
     damage: 3.5
@@ -35,8 +34,7 @@ MonoBehaviour:
     spread: 3
     color: {r: 0.45, g: 0.5, b: 1, a: 1}
   - title: Scatter Shot
-    description: "Be\u015F sa\xE7ma, geni\u015F a\xE7\u0131. Yakla\u015F\u0131nca
-      tek hedefte de etkili."
+    description: "Five pellets, wide spread. Deadly up close on one target."
     model: Scatter shot
     kind: 2
     damage: 3
@@ -46,8 +44,7 @@ MonoBehaviour:
     spread: 28
     color: {r: 1, g: 0.63, b: 0.18, a: 1}
   - title: Rapid SMG
-    description: "K\xFC\xE7\xFCk mermiler, h\u0131zl\u0131 at\u0131\u015F. Hareket
-      ederek bask\u0131y\u0131 s\xFCrd\xFCr."
+    description: "Small rounds, high fire rate. Keep moving, keep the pressure."
     model: Rapid smg
     kind: 3
     damage: 2
@@ -57,7 +54,7 @@ MonoBehaviour:
     spread: 0
     color: {r: 0.25, g: 1, b: 0.62, a: 1}
   - title: Pierce Rifle
-    description: "S\u0131ral\u0131 hedefleri deler; \xF6n kalkan\u0131 a\u015Far."
+    description: "Pierces lined-up targets; beats front shields."
     model: Expansion PierceRifle
     kind: 4
     damage: 12
@@ -67,7 +64,7 @@ MonoBehaviour:
     spread: 0
     color: {r: 0.1, g: 0.8, b: 0.85, a: 1}
   - title: Ricochet Gun
-    description: "\u0130ki ek hedefe seker; siper ba\u011Flant\u0131y\u0131 keser."
+    description: "Bounces to two more targets; cover cuts the link."
     model: Expansion RicochetGun
     kind: 5
     damage: 8
@@ -77,7 +74,7 @@ MonoBehaviour:
     spread: 0
     color: {r: 1, g: 0.58, b: 0.2, a: 1}
   - title: Arc Launcher
-    description: "Yak\u0131n \xFC\xE7 hedefe zincir y\u0131ld\u0131r\u0131m."
+    description: "Chain lightning to three nearby targets."
     model: Expansion ArcLauncher
     kind: 6
     damage: 7
@@ -87,7 +84,7 @@ MonoBehaviour:
     spread: 0
     color: {r: 0.5, g: 0.4, b: 1, a: 1}
   - title: Rocket Pod
-    description: "Uyar\u0131l\u0131 alan patlamas\u0131; yak\u0131nda durma."
+    description: "Telegraphed area blast; don't stand close."
     model: Expansion RocketPod
     kind: 7
     damage: 24
@@ -97,7 +94,7 @@ MonoBehaviour:
     spread: 0
     color: {r: 0.4, g: 0.85, b: 1, a: 1}
   - title: Flame Sprayer
-    description: "K\u0131sa menzilli alev konisi."
+    description: "Short-range flame cone."
     model: Expansion FlameSprayer
     kind: 8
     damage: 2
@@ -107,7 +104,7 @@ MonoBehaviour:
     spread: 0
     color: {r: 1, g: 0.3, b: 0.12, a: 1}
   - title: Cryo Beam
-    description: "Hedefi yava\u015Flatan kesintisiz \u0131\u015F\u0131n."
+    description: "Steady beam that slows the target."
     model: Expansion CryoBeam
     kind: 9
     damage: 3
@@ -117,7 +114,7 @@ MonoBehaviour:
     spread: 0
     color: {r: 0.85, g: 0.25, b: 0.85, a: 1}
   - title: Orbit Drones
-    description: "\xC7evrende d\xF6nen iki savunma dronu."
+    description: "Two defense drones orbit you."
     model: Expansion OrbitDrones
     kind: 10
     damage: 5
@@ -127,7 +124,7 @@ MonoBehaviour:
     spread: 0
     color: {r: 0.1, g: 0.8, b: 0.85, a: 1}
   - title: Nova Cannon
-    description: "Yava\u015F, geni\u015F ve itici enerji dalgas\u0131."
+    description: "Slow, wide energy wave that pushes."
     model: Expansion NovaCannon
     kind: 11
     damage: 25
@@ -137,9 +134,8 @@ MonoBehaviour:
     spread: 0
     color: {r: 1, g: 0.58, b: 0.2, a: 1}
   missions:
-  - title: "\u0130lk Temas"
-    description: "Ka\xE7arken seyrek, yava\u015Flarken h\u0131zl\u0131 ate\u015F
-      et. Siperin etraf\u0131ndan a\xE7\u0131 bul."
+  - title: "First Contact"
+    description: "Fire slow on the run, fast when you ease off. Flank around cover."
     mode: 0
     accent: {r: 0.1, g: 0.75, b: 0.85, a: 1}
     cubes:
@@ -177,8 +173,7 @@ MonoBehaviour:
     special: 0
     boss: 0
   - title: Neon Yard
-    description: "Siper iki taraf\u0131n mermisini de durdurur. Yak\u0131n ve uzak
-      tehditleri birlikte y\xF6net."
+    description: "Cover blocks shots from both sides. Juggle near and far threats."
     mode: 0
     accent: {r: 0.3, g: 0.55, b: 1, a: 1}
     cubes:
@@ -225,8 +220,8 @@ MonoBehaviour:
     biome: 0
     special: 0
     boss: 0
-  - title: "\u0130tki Tesisi"
-    description: "\u0130ticinin turuncu konisinden \xE7\u0131k; kenarlarda oyalanma."
+  - title: "Push Works"
+    description: "Get out of the pusher's orange cone; don't linger at the edges."
     mode: 0
     accent: {r: 1, g: 0.56, b: 0.2, a: 1}
     cubes:
@@ -273,9 +268,8 @@ MonoBehaviour:
     biome: 0
     special: 0
     boss: 0
-  - title: Uzun Menzil
-    description: "Lazer \xE7izgisi sabitlenince yana ka\xE7. Ezicilerin darbesine
-      yakla\u015Fma."
+  - title: "Long Range"
+    description: "Dodge sideways when the laser line locks. Keep clear of crusher slams."
     mode: 0
     accent: {r: 0.7, g: 0.35, b: 1, a: 1}
     cubes:
@@ -332,9 +326,8 @@ MonoBehaviour:
     biome: 0
     special: 0
     boss: 0
-  - title: Son Hat
-    description: "\xC7apraz ate\u015F ve yak\u0131n d\xF6v\xFC\u015F bask\u0131s\u0131.
-      G\xFCvenli at\u0131\u015F aral\u0131klar\u0131 yarat."
+  - title: "Last Line"
+    description: "Crossfire and melee pressure. Make safe windows to shoot."
     mode: 0
     accent: {r: 0.95, g: 0.28, b: 0.45, a: 1}
     cubes:
@@ -392,8 +385,7 @@ MonoBehaviour:
     special: 0
     boss: 0
   - title: Gold Rush
-    description: "Hedefleri \xF6ld\xFCrmek yetmez. Her k\xFCp\xFCn alt\u0131n kotas\u0131n\u0131
-      s\xFCre dolmadan topla."
+    description: "Killing targets isn't enough. Hit each cube's gold quota before time runs out."
     mode: 1
     accent: {r: 1, g: 0.72, b: 0.2, a: 1}
     cubes:
@@ -431,8 +423,7 @@ MonoBehaviour:
     special: 0
     boss: 0
   - title: The Crusher
-    description: "Z\u0131rh, silah sistemi, \xE7ekirdek: \xFC\xE7 ayr\u0131 20 saniyelik
-      faz. Toplam boss can\u0131 kap\u0131larda s\u0131f\u0131rlanmaz."
+    description: "Armor, weapon system, core: three separate 20s phases. Total boss health never resets at gates."
     mode: 2
     accent: {r: 1, g: 0.32, b: 0.16, a: 1}
     cubes:
@@ -470,7 +461,7 @@ MonoBehaviour:
     special: 0
     boss: 0
   - title: "Neon Yard \xB7 8"
-    description: "EliteHunt \xB7 Tehlikeyi oku, kap\u0131n\u0131 se\xE7."
+    description: "EliteHunt \xB7 Read the danger, pick your gate."
     mode: 0
     accent: {r: 0.1, g: 0.8, b: 0.85, a: 1}
     cubes:
@@ -518,7 +509,7 @@ MonoBehaviour:
     special: 3
     boss: 0
   - title: "Neon Yard \xB7 9"
-    description: "ChainReactor \xB7 Tehlikeyi oku, kap\u0131n\u0131 se\xE7."
+    description: "ChainReactor \xB7 Read the danger, pick your gate."
     mode: 0
     accent: {r: 0.1, g: 0.8, b: 0.85, a: 1}
     cubes:
@@ -566,7 +557,7 @@ MonoBehaviour:
     special: 4
     boss: 0
   - title: The Crusher
-    description: "Her faz\u0131n hedefini 20 saniyede tamamla."
+    description: "Clear each phase's target in 20 seconds."
     mode: 2
     accent: {r: 0.1, g: 0.8, b: 0.85, a: 1}
     cubes:
@@ -604,8 +595,7 @@ MonoBehaviour:
     special: 0
     boss: 0
   - title: "Factory Rift \xB7 11"
-    description: "Yeni mekanikler, a\xE7\u0131k ka\xE7\u0131\u015F yollar\u0131 ve
-      iki \xF6d\xFCl rotas\u0131."
+    description: "New mechanics, open escape paths and two reward routes."
     mode: 0
     accent: {r: 1, g: 0.58, b: 0.2, a: 1}
     cubes:
@@ -663,7 +653,7 @@ MonoBehaviour:
     special: 0
     boss: 0
   - title: "Factory Rift \xB7 12"
-    description: "LowGravity \xB7 Tehlikeyi oku, kap\u0131n\u0131 se\xE7."
+    description: "LowGravity \xB7 Read the danger, pick your gate."
     mode: 0
     accent: {r: 1, g: 0.58, b: 0.2, a: 1}
     cubes:
@@ -711,7 +701,7 @@ MonoBehaviour:
     special: 5
     boss: 0
   - title: "Factory Rift \xB7 13"
-    description: "SurvivalFlip \xB7 Tehlikeyi oku, kap\u0131n\u0131 se\xE7."
+    description: "SurvivalFlip \xB7 Read the danger, pick your gate."
     mode: 0
     accent: {r: 1, g: 0.58, b: 0.2, a: 1}
     cubes:
@@ -769,7 +759,7 @@ MonoBehaviour:
     special: 1
     boss: 0
   - title: "Factory Rift \xB7 14"
-    description: "HealingStop \xB7 Tehlikeyi oku, kap\u0131n\u0131 se\xE7."
+    description: "HealingStop \xB7 Read the danger, pick your gate."
     mode: 0
     accent: {r: 1, g: 0.58, b: 0.2, a: 1}
     cubes:
@@ -817,7 +807,7 @@ MonoBehaviour:
     special: 6
     boss: 0
   - title: "Gold Rush \xB7 Factory Rift"
-    description: "Alt\u0131n, kasalar ve kilitli jackpot."
+    description: "Gold, crates and a locked jackpot."
     mode: 1
     accent: {r: 1, g: 0.58, b: 0.2, a: 1}
     cubes:
@@ -855,7 +845,7 @@ MonoBehaviour:
     special: 0
     boss: 0
   - title: "Factory Rift \xB7 16"
-    description: "BarrelParty \xB7 Tehlikeyi oku, kap\u0131n\u0131 se\xE7."
+    description: "BarrelParty \xB7 Read the danger, pick your gate."
     mode: 0
     accent: {r: 1, g: 0.58, b: 0.2, a: 1}
     cubes:
@@ -903,8 +893,7 @@ MonoBehaviour:
     special: 2
     boss: 0
   - title: "Factory Rift \xB7 17"
-    description: "Yeni mekanikler, a\xE7\u0131k ka\xE7\u0131\u015F yollar\u0131 ve
-      iki \xF6d\xFCl rotas\u0131."
+    description: "New mechanics, open escape paths and two reward routes."
     mode: 0
     accent: {r: 1, g: 0.58, b: 0.2, a: 1}
     cubes:
@@ -962,7 +951,7 @@ MonoBehaviour:
     special: 0
     boss: 0
   - title: "Factory Rift \xB7 18"
-    description: "EliteHunt \xB7 Tehlikeyi oku, kap\u0131n\u0131 se\xE7."
+    description: "EliteHunt \xB7 Read the danger, pick your gate."
     mode: 0
     accent: {r: 1, g: 0.58, b: 0.2, a: 1}
     cubes:
@@ -1010,7 +999,7 @@ MonoBehaviour:
     special: 3
     boss: 0
   - title: "Factory Rift \xB7 19"
-    description: "ChainReactor \xB7 Tehlikeyi oku, kap\u0131n\u0131 se\xE7."
+    description: "ChainReactor \xB7 Read the danger, pick your gate."
     mode: 0
     accent: {r: 1, g: 0.58, b: 0.2, a: 1}
     cubes:
@@ -1068,7 +1057,7 @@ MonoBehaviour:
     special: 4
     boss: 0
   - title: Furnace King
-    description: "Her faz\u0131n hedefini 20 saniyede tamamla."
+    description: "Clear each phase's target in 20 seconds."
     mode: 2
     accent: {r: 1, g: 0.58, b: 0.2, a: 1}
     cubes:
@@ -1106,8 +1095,7 @@ MonoBehaviour:
     special: 0
     boss: 1
   - title: "Circuit Abyss \xB7 21"
-    description: "Yeni mekanikler, a\xE7\u0131k ka\xE7\u0131\u015F yollar\u0131 ve
-      iki \xF6d\xFCl rotas\u0131."
+    description: "New mechanics, open escape paths and two reward routes."
     mode: 0
     accent: {r: 0.5, g: 0.4, b: 1, a: 1}
     cubes:
@@ -1165,7 +1153,7 @@ MonoBehaviour:
     special: 0
     boss: 1
   - title: "Circuit Abyss \xB7 22"
-    description: "LowGravity \xB7 Tehlikeyi oku, kap\u0131n\u0131 se\xE7."
+    description: "LowGravity \xB7 Read the danger, pick your gate."
     mode: 0
     accent: {r: 0.5, g: 0.4, b: 1, a: 1}
     cubes:
@@ -1213,7 +1201,7 @@ MonoBehaviour:
     special: 5
     boss: 1
   - title: "Circuit Abyss \xB7 23"
-    description: "SurvivalFlip \xB7 Tehlikeyi oku, kap\u0131n\u0131 se\xE7."
+    description: "SurvivalFlip \xB7 Read the danger, pick your gate."
     mode: 0
     accent: {r: 0.5, g: 0.4, b: 1, a: 1}
     cubes:
@@ -1271,7 +1259,7 @@ MonoBehaviour:
     special: 1
     boss: 1
   - title: "Circuit Abyss \xB7 24"
-    description: "HealingStop \xB7 Tehlikeyi oku, kap\u0131n\u0131 se\xE7."
+    description: "HealingStop \xB7 Read the danger, pick your gate."
     mode: 0
     accent: {r: 0.5, g: 0.4, b: 1, a: 1}
     cubes:
@@ -1319,7 +1307,7 @@ MonoBehaviour:
     special: 6
     boss: 1
   - title: "Circuit Abyss \xB7 25"
-    description: "Gauntlet \xB7 Tehlikeyi oku, kap\u0131n\u0131 se\xE7."
+    description: "Gauntlet \xB7 Read the danger, pick your gate."
     mode: 0
     accent: {r: 0.5, g: 0.4, b: 1, a: 1}
     cubes:
@@ -1377,7 +1365,7 @@ MonoBehaviour:
     special: 7
     boss: 1
   - title: "Circuit Abyss \xB7 26"
-    description: "BarrelParty \xB7 Tehlikeyi oku, kap\u0131n\u0131 se\xE7."
+    description: "BarrelParty \xB7 Read the danger, pick your gate."
     mode: 0
     accent: {r: 0.5, g: 0.4, b: 1, a: 1}
     cubes:
@@ -1425,8 +1413,7 @@ MonoBehaviour:
     special: 2
     boss: 1
   - title: "Circuit Abyss \xB7 27"
-    description: "Yeni mekanikler, a\xE7\u0131k ka\xE7\u0131\u015F yollar\u0131 ve
-      iki \xF6d\xFCl rotas\u0131."
+    description: "New mechanics, open escape paths and two reward routes."
     mode: 0
     accent: {r: 0.5, g: 0.4, b: 1, a: 1}
     cubes:
@@ -1484,7 +1471,7 @@ MonoBehaviour:
     special: 0
     boss: 1
   - title: "Circuit Abyss \xB7 28"
-    description: "EliteHunt \xB7 Tehlikeyi oku, kap\u0131n\u0131 se\xE7."
+    description: "EliteHunt \xB7 Read the danger, pick your gate."
     mode: 0
     accent: {r: 0.5, g: 0.4, b: 1, a: 1}
     cubes:
@@ -1532,7 +1519,7 @@ MonoBehaviour:
     special: 3
     boss: 1
   - title: "Circuit Abyss \xB7 29"
-    description: "ChainReactor \xB7 Tehlikeyi oku, kap\u0131n\u0131 se\xE7."
+    description: "ChainReactor \xB7 Read the danger, pick your gate."
     mode: 0
     accent: {r: 0.5, g: 0.4, b: 1, a: 1}
     cubes:
@@ -1590,7 +1577,7 @@ MonoBehaviour:
     special: 4
     boss: 1
   - title: Motherboard Hydra
-    description: "Her faz\u0131n hedefini 20 saniyede tamamla."
+    description: "Clear each phase's target in 20 seconds."
     mode: 2
     accent: {r: 0.5, g: 0.4, b: 1, a: 1}
     cubes:
@@ -1638,8 +1625,7 @@ MonoBehaviour:
     special: 0
     boss: 2
   - title: "Frozen Blocks \xB7 31"
-    description: "Yeni mekanikler, a\xE7\u0131k ka\xE7\u0131\u015F yollar\u0131 ve
-      iki \xF6d\xFCl rotas\u0131."
+    description: "New mechanics, open escape paths and two reward routes."
     mode: 0
     accent: {r: 0.4, g: 0.85, b: 1, a: 1}
     cubes:
@@ -1697,7 +1683,7 @@ MonoBehaviour:
     special: 0
     boss: 2
   - title: "Frozen Blocks \xB7 32"
-    description: "LowGravity \xB7 Tehlikeyi oku, kap\u0131n\u0131 se\xE7."
+    description: "LowGravity \xB7 Read the danger, pick your gate."
     mode: 0
     accent: {r: 0.4, g: 0.85, b: 1, a: 1}
     cubes:
@@ -1745,7 +1731,7 @@ MonoBehaviour:
     special: 5
     boss: 2
   - title: "Frozen Blocks \xB7 33"
-    description: "SurvivalFlip \xB7 Tehlikeyi oku, kap\u0131n\u0131 se\xE7."
+    description: "SurvivalFlip \xB7 Read the danger, pick your gate."
     mode: 0
     accent: {r: 0.4, g: 0.85, b: 1, a: 1}
     cubes:
@@ -1803,7 +1789,7 @@ MonoBehaviour:
     special: 1
     boss: 2
   - title: "Frozen Blocks \xB7 34"
-    description: "HealingStop \xB7 Tehlikeyi oku, kap\u0131n\u0131 se\xE7."
+    description: "HealingStop \xB7 Read the danger, pick your gate."
     mode: 0
     accent: {r: 0.4, g: 0.85, b: 1, a: 1}
     cubes:
@@ -1851,7 +1837,7 @@ MonoBehaviour:
     special: 6
     boss: 2
   - title: "Gold Rush \xB7 Frozen Blocks"
-    description: "Alt\u0131n, kasalar ve kilitli jackpot."
+    description: "Gold, crates and a locked jackpot."
     mode: 1
     accent: {r: 0.4, g: 0.85, b: 1, a: 1}
     cubes:
@@ -1889,7 +1875,7 @@ MonoBehaviour:
     special: 0
     boss: 2
   - title: "Frozen Blocks \xB7 36"
-    description: "BarrelParty \xB7 Tehlikeyi oku, kap\u0131n\u0131 se\xE7."
+    description: "BarrelParty \xB7 Read the danger, pick your gate."
     mode: 0
     accent: {r: 0.4, g: 0.85, b: 1, a: 1}
     cubes:
@@ -1937,8 +1923,7 @@ MonoBehaviour:
     special: 2
     boss: 2
   - title: "Frozen Blocks \xB7 37"
-    description: "Yeni mekanikler, a\xE7\u0131k ka\xE7\u0131\u015F yollar\u0131 ve
-      iki \xF6d\xFCl rotas\u0131."
+    description: "New mechanics, open escape paths and two reward routes."
     mode: 0
     accent: {r: 0.4, g: 0.85, b: 1, a: 1}
     cubes:
@@ -1996,7 +1981,7 @@ MonoBehaviour:
     special: 0
     boss: 2
   - title: "Frozen Blocks \xB7 38"
-    description: "EliteHunt \xB7 Tehlikeyi oku, kap\u0131n\u0131 se\xE7."
+    description: "EliteHunt \xB7 Read the danger, pick your gate."
     mode: 0
     accent: {r: 0.4, g: 0.85, b: 1, a: 1}
     cubes:
@@ -2044,7 +2029,7 @@ MonoBehaviour:
     special: 3
     boss: 2
   - title: "Frozen Blocks \xB7 39"
-    description: "ChainReactor \xB7 Tehlikeyi oku, kap\u0131n\u0131 se\xE7."
+    description: "ChainReactor \xB7 Read the danger, pick your gate."
     mode: 0
     accent: {r: 0.4, g: 0.85, b: 1, a: 1}
     cubes:
@@ -2102,7 +2087,7 @@ MonoBehaviour:
     special: 4
     boss: 2
   - title: Glacier Warden
-    description: "Her faz\u0131n hedefini 20 saniyede tamamla."
+    description: "Clear each phase's target in 20 seconds."
     mode: 2
     accent: {r: 0.4, g: 0.85, b: 1, a: 1}
     cubes:
@@ -2140,8 +2125,7 @@ MonoBehaviour:
     special: 0
     boss: 3
   - title: "Lava Foundry \xB7 41"
-    description: "Yeni mekanikler, a\xE7\u0131k ka\xE7\u0131\u015F yollar\u0131 ve
-      iki \xF6d\xFCl rotas\u0131."
+    description: "New mechanics, open escape paths and two reward routes."
     mode: 0
     accent: {r: 1, g: 0.3, b: 0.12, a: 1}
     cubes:
@@ -2199,7 +2183,7 @@ MonoBehaviour:
     special: 0
     boss: 3
   - title: "Lava Foundry \xB7 42"
-    description: "LowGravity \xB7 Tehlikeyi oku, kap\u0131n\u0131 se\xE7."
+    description: "LowGravity \xB7 Read the danger, pick your gate."
     mode: 0
     accent: {r: 1, g: 0.3, b: 0.12, a: 1}
     cubes:
@@ -2247,7 +2231,7 @@ MonoBehaviour:
     special: 5
     boss: 3
   - title: "Lava Foundry \xB7 43"
-    description: "SurvivalFlip \xB7 Tehlikeyi oku, kap\u0131n\u0131 se\xE7."
+    description: "SurvivalFlip \xB7 Read the danger, pick your gate."
     mode: 0
     accent: {r: 1, g: 0.3, b: 0.12, a: 1}
     cubes:
@@ -2305,7 +2289,7 @@ MonoBehaviour:
     special: 1
     boss: 3
   - title: "Lava Foundry \xB7 44"
-    description: "HealingStop \xB7 Tehlikeyi oku, kap\u0131n\u0131 se\xE7."
+    description: "HealingStop \xB7 Read the danger, pick your gate."
     mode: 0
     accent: {r: 1, g: 0.3, b: 0.12, a: 1}
     cubes:
@@ -2353,7 +2337,7 @@ MonoBehaviour:
     special: 6
     boss: 3
   - title: "Lava Foundry \xB7 45"
-    description: "Gauntlet \xB7 Tehlikeyi oku, kap\u0131n\u0131 se\xE7."
+    description: "Gauntlet \xB7 Read the danger, pick your gate."
     mode: 0
     accent: {r: 1, g: 0.3, b: 0.12, a: 1}
     cubes:
@@ -2411,7 +2395,7 @@ MonoBehaviour:
     special: 7
     boss: 3
   - title: "Lava Foundry \xB7 46"
-    description: "BarrelParty \xB7 Tehlikeyi oku, kap\u0131n\u0131 se\xE7."
+    description: "BarrelParty \xB7 Read the danger, pick your gate."
     mode: 0
     accent: {r: 1, g: 0.3, b: 0.12, a: 1}
     cubes:
@@ -2459,8 +2443,7 @@ MonoBehaviour:
     special: 2
     boss: 3
   - title: "Lava Foundry \xB7 47"
-    description: "Yeni mekanikler, a\xE7\u0131k ka\xE7\u0131\u015F yollar\u0131 ve
-      iki \xF6d\xFCl rotas\u0131."
+    description: "New mechanics, open escape paths and two reward routes."
     mode: 0
     accent: {r: 1, g: 0.3, b: 0.12, a: 1}
     cubes:
@@ -2518,7 +2501,7 @@ MonoBehaviour:
     special: 0
     boss: 3
   - title: "Lava Foundry \xB7 48"
-    description: "EliteHunt \xB7 Tehlikeyi oku, kap\u0131n\u0131 se\xE7."
+    description: "EliteHunt \xB7 Read the danger, pick your gate."
     mode: 0
     accent: {r: 1, g: 0.3, b: 0.12, a: 1}
     cubes:
@@ -2566,7 +2549,7 @@ MonoBehaviour:
     special: 3
     boss: 3
   - title: "Lava Foundry \xB7 49"
-    description: "ChainReactor \xB7 Tehlikeyi oku, kap\u0131n\u0131 se\xE7."
+    description: "ChainReactor \xB7 Read the danger, pick your gate."
     mode: 0
     accent: {r: 1, g: 0.3, b: 0.12, a: 1}
     cubes:
@@ -2624,7 +2607,7 @@ MonoBehaviour:
     special: 4
     boss: 3
   - title: Magma Titan
-    description: "Her faz\u0131n hedefini 20 saniyede tamamla."
+    description: "Clear each phase's target in 20 seconds."
     mode: 2
     accent: {r: 1, g: 0.3, b: 0.12, a: 1}
     cubes:
@@ -2672,8 +2655,7 @@ MonoBehaviour:
     special: 0
     boss: 4
   - title: "Void Core \xB7 51"
-    description: "Yeni mekanikler, a\xE7\u0131k ka\xE7\u0131\u015F yollar\u0131 ve
-      iki \xF6d\xFCl rotas\u0131."
+    description: "New mechanics, open escape paths and two reward routes."
     mode: 0
     accent: {r: 0.85, g: 0.25, b: 0.85, a: 1}
     cubes:
@@ -2731,7 +2713,7 @@ MonoBehaviour:
     special: 0
     boss: 4
   - title: "Void Core \xB7 52"
-    description: "LowGravity \xB7 Tehlikeyi oku, kap\u0131n\u0131 se\xE7."
+    description: "LowGravity \xB7 Read the danger, pick your gate."
     mode: 0
     accent: {r: 0.85, g: 0.25, b: 0.85, a: 1}
     cubes:
@@ -2779,7 +2761,7 @@ MonoBehaviour:
     special: 5
     boss: 4
   - title: "Void Core \xB7 53"
-    description: "SurvivalFlip \xB7 Tehlikeyi oku, kap\u0131n\u0131 se\xE7."
+    description: "SurvivalFlip \xB7 Read the danger, pick your gate."
     mode: 0
     accent: {r: 0.85, g: 0.25, b: 0.85, a: 1}
     cubes:
@@ -2837,7 +2819,7 @@ MonoBehaviour:
     special: 1
     boss: 4
   - title: "Void Core \xB7 54"
-    description: "HealingStop \xB7 Tehlikeyi oku, kap\u0131n\u0131 se\xE7."
+    description: "HealingStop \xB7 Read the danger, pick your gate."
     mode: 0
     accent: {r: 0.85, g: 0.25, b: 0.85, a: 1}
     cubes:
@@ -2885,7 +2867,7 @@ MonoBehaviour:
     special: 6
     boss: 4
   - title: "Gold Rush \xB7 Void Core"
-    description: "Alt\u0131n, kasalar ve kilitli jackpot."
+    description: "Gold, crates and a locked jackpot."
     mode: 1
     accent: {r: 0.85, g: 0.25, b: 0.85, a: 1}
     cubes:
@@ -2923,7 +2905,7 @@ MonoBehaviour:
     special: 0
     boss: 4
   - title: "Void Core \xB7 56"
-    description: "BarrelParty \xB7 Tehlikeyi oku, kap\u0131n\u0131 se\xE7."
+    description: "BarrelParty \xB7 Read the danger, pick your gate."
     mode: 0
     accent: {r: 0.85, g: 0.25, b: 0.85, a: 1}
     cubes:
@@ -2971,8 +2953,7 @@ MonoBehaviour:
     special: 2
     boss: 4
   - title: "Void Core \xB7 57"
-    description: "Yeni mekanikler, a\xE7\u0131k ka\xE7\u0131\u015F yollar\u0131 ve
-      iki \xF6d\xFCl rotas\u0131."
+    description: "New mechanics, open escape paths and two reward routes."
     mode: 0
     accent: {r: 0.85, g: 0.25, b: 0.85, a: 1}
     cubes:
@@ -3030,7 +3011,7 @@ MonoBehaviour:
     special: 0
     boss: 4
   - title: "Void Core \xB7 58"
-    description: "EliteHunt \xB7 Tehlikeyi oku, kap\u0131n\u0131 se\xE7."
+    description: "EliteHunt \xB7 Read the danger, pick your gate."
     mode: 0
     accent: {r: 0.85, g: 0.25, b: 0.85, a: 1}
     cubes:
@@ -3078,7 +3059,7 @@ MonoBehaviour:
     special: 3
     boss: 4
   - title: "Void Core \xB7 59"
-    description: "ChainReactor \xB7 Tehlikeyi oku, kap\u0131n\u0131 se\xE7."
+    description: "ChainReactor \xB7 Read the danger, pick your gate."
     mode: 0
     accent: {r: 0.85, g: 0.25, b: 0.85, a: 1}
     cubes:
@@ -3136,7 +3117,7 @@ MonoBehaviour:
     special: 4
     boss: 4
   - title: Void Architect
-    description: "Her faz\u0131n hedefini 20 saniyede tamamla."
+    description: "Clear each phase's target in 20 seconds."
     mode: 2
     accent: {r: 0.85, g: 0.25, b: 0.85, a: 1}
     cubes:

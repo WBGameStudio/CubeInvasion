@@ -3,11 +3,11 @@ namespace CubeInvasion.Prototype
 {
     public sealed partial class InvasionPrototype
     {
-        static string ThreatLabel(RouteOffer offer) => offer.eliteIndex>=0?"elit":System.Array.Exists(offer.encounter.enemies,e=>e==ContentEnemy.Healer)?"tamirci + destek":System.Array.Exists(offer.encounter.enemies,e=>e==ContentEnemy.Shielder)?"kalkanlı":System.Array.Exists(offer.encounter.enemies,e=>e==ContentEnemy.Bomber)?"bombacı":System.Array.Exists(offer.encounter.enemies,e=>e==ContentEnemy.Crusher)?"boss":
-            System.Array.Exists(offer.encounter.enemies,e=>e==ContentEnemy.Sniper||e==ContentEnemy.Gunner)?"menzilli":"yakın dövüş";
+        static string ThreatLabel(RouteOffer offer) => offer.eliteIndex>=0?"elite":System.Array.Exists(offer.encounter.enemies,e=>e==ContentEnemy.Healer)?"healer + support":System.Array.Exists(offer.encounter.enemies,e=>e==ContentEnemy.Shielder)?"shielded":System.Array.Exists(offer.encounter.enemies,e=>e==ContentEnemy.Bomber)?"bomber":System.Array.Exists(offer.encounter.enemies,e=>e==ContentEnemy.Crusher)?"boss":
+            System.Array.Exists(offer.encounter.enemies,e=>e==ContentEnemy.Sniper||e==ContentEnemy.Gunner)?"ranged":"melee";
         BranchCard BranchPreviewCard(RouteOffer offer,bool right) => new BranchCard {
-            direction=right?"SAĞ KAPI":"İLERİ KAPI",title=RewardLabel(offer.reward).Replace("\n"," · "),
-            detail=HasGoldRushVariants?GoldRushVariantSettings.Name(offer.encounter.goldVariant)+$" · {offer.encounter.enemies.Length} düşman":$"{offer.encounter.enemies.Length} hedef · {ThreatLabel(offer)}",
+            direction=right?"RIGHT GATE":"FORWARD GATE",title=RewardLabel(offer.reward).Replace("\n"," · "),
+            detail=HasGoldRushVariants?GoldRushVariantSettings.Name(offer.encounter.goldVariant)+$" · {offer.encounter.enemies.Length} enemies":$"{offer.encounter.enemies.Length} targets · {ThreatLabel(offer)}",
             accent=VoidToyPalette.Reward(offer.reward.reward),risk=Mathf.Clamp(offer.reward.risk,1,3)};
         Material RouteIconMaterial()
         {
@@ -20,7 +20,7 @@ namespace CubeInvasion.Prototype
             var label=gate.GetComponentInChildren<TextMesh>();ApplyGateFont(label);
             // The HUD offer cards carry reward and risk; the world sign stays hidden so the two never overlap.
             label.GetComponent<Renderer>().enabled=false;
-            label.text=(gate.name.StartsWith("Right")?"SAĞ · ":"İLERİ · ")+RewardLabel(offer.reward)+$"\nRİSK {offer.reward.risk}/3 · {offer.encounter.enemies.Length} HEDEF";
+            label.text=(gate.name.StartsWith("Right")?"RIGHT · ":"FORWARD · ")+RewardLabel(offer.reward)+$"\nRISK {offer.reward.risk}/3 · {offer.encounter.enemies.Length} TARGETS";
             label.fontSize=64;label.characterSize=.04f;
             // Gate color names the reward family (heal, power, gold, shield); risk stays on the pips and label.
             Color tint=VoidToyPalette.Reward(offer.reward.reward);

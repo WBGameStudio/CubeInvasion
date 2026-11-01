@@ -21,7 +21,7 @@ namespace CubeInvasion.Prototype
             var catalog=Instantiate(source);catalog.name=source.name+" Runtime 60";
             var weapons=new WeaponSpec[12];Array.Copy(source.weapons,weapons,Math.Min(4,source.weapons.Length));
             string[] names={"Pierce Rifle","Ricochet Gun","Arc Launcher","Rocket Pod","Flame Sprayer","Cryo Beam","Orbit Drones","Nova Cannon"};
-            string[] roles={"Sıralı hedefleri deler; ön kalkanı aşar.","İki ek hedefe seker; siper bağlantıyı keser.","Yakın üç hedefe zincir yıldırım.","Uyarılı alan patlaması; yakında durma.","Kısa menzilli alev konisi.","Hedefi yavaşlatan kesintisiz ışın.","Çevrende dönen iki savunma dronu.","Yavaş, geniş ve itici enerji dalgası."};
+            string[] roles={"Pierces lined-up targets; beats front shields.","Bounces to two more targets; cover cuts the link.","Chain lightning to three nearby targets.","Telegraphed area blast; don't stand close.","Short-range flame cone.","Steady beam that slows the target.","Two defense drones orbit you.","Slow, wide energy wave that pushes."};
             float[] dmg={12,8,7,24,2,3,5,25},rate={1,.8f,.65f,2,.16f,.25f,.45f,2.2f};
             for(int i=4;i<12;i++)weapons[i]=new WeaponSpec {title=names[i-4],description=roles[i-4],kind=(ContentWeapon)i,model="Expansion "+(ContentWeapon)i,damage=dmg[i-4],interval=rate[i-4],projectileLife=i==8?.3f:1,pellets=1,color=Colors[(i-4)%6]};
             catalog.weapons=weapons;catalog.missions=new MissionSpec[60];
@@ -32,7 +32,7 @@ namespace CubeInvasion.Prototype
                 int biome=(level-1)/10;bool boss=level%10==0,gold=!boss&&(level==15||level==35||level==55);
                 var special=!boss&&!gold?Rule(level):SpecialRule.None;int count=special==SpecialRule.Gauntlet?5:boss?(level==30||level>=50?4:3):gold?3:level<11?4:4+(level%2);
                 var mission=new MissionSpec {title=boss?BossName((BossIdentity)(level/10-1)):gold?"Gold Rush · "+Biomes[biome]:Biomes[biome]+" · "+level,
-                    description=boss?"Her fazın hedefini 20 saniyede tamamla.":gold?"Altın, kasalar ve kilitli jackpot.":special!=SpecialRule.None?special+" · Tehlikeyi oku, kapını seç.":"Yeni mekanikler, açık kaçış yolları ve iki ödül rotası.",
+                    description=boss?"Clear each phase's target in 20 seconds.":gold?"Gold, crates and a locked jackpot.":special!=SpecialRule.None?special+" · Read the danger, pick your gate.":"New mechanics, open escape paths and two reward routes.",
                     mode=boss?MissionMode.Boss:gold?MissionMode.GoldRush:MissionMode.Combat,accent=Colors[biome],biome=biome,boss=(BossIdentity)Mathf.Max(0,level/10-1),special=special,cubes=new EncounterSpec[count]};
                 for(int c=0;c<count;c++)
                 {

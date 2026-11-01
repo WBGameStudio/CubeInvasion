@@ -168,7 +168,7 @@ namespace CubeInvasion.Prototype
             health=Mathf.Max(0,health-damage);invulnerability=.55f;hurtFlash=.18f;knockback=push;
             if(playerAnimation)playerAnimation.Hit();
             feedback.Play(CombatFeedback.Cue.Hurt);feedback.Burst(player.position,danger,.8f,.2f,true);HurtImpact(push);
-            if(health<=0)Fail("Canın tükendi");
+            if(health<=0)Fail("Out of health");
         }
         void TickEnemies(float dt)
         {

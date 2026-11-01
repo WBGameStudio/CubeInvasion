@@ -22,17 +22,17 @@ namespace CubeInvasion.Prototype
             transform.SetParent(safeRoot,false);var root=(RectTransform)transform;
             root.anchorMin=Vector2.zero;root.anchorMax=Vector2.one;root.offsetMin=root.offsetMax=Vector2.zero;
             loadout=Rect("Arsenal progression",transform,Vector2.zero,Vector2.one,Vector2.zero,Vector2.zero).gameObject;
-            gold=Label("Persistent wallet",loadout.transform,"ALTIN 0",18,new Vector2(265,-66),new Vector2(-26,-25));gold.alignment=TextAnchor.MiddleRight;gold.color=new Color(1,.72f,.2f);
+            gold=Label("Persistent wallet",loadout.transform,"GOLD 0",18,new Vector2(265,-66),new Vector2(-26,-25));gold.alignment=TextAnchor.MiddleRight;gold.color=new Color(1,.72f,.2f);
             detail=Label("Arsenal stats",loadout.transform,"",15,new Vector2(26,-625),new Vector2(-26,-591));
-            buy=Button("Unlock weapon",loadout.transform,"SİLAHI AÇ",new Vector2(26,-719),new Vector2(-26,-637));
+            buy=Button("Unlock weapon",loadout.transform,"UNLOCK WEAPON",new Vector2(26,-719),new Vector2(-26,-637));
             upgrades=new Button[3];
             for(int i=0;i<3;i++)upgrades[i]=Button("Upgrade "+i,loadout.transform,"",new Vector2(26+i*166,-719),new Vector2(181+i*166,-637));
             notice=Label("Transaction feedback",loadout.transform,"",13,new Vector2(26,-753),new Vector2(-26,-724));notice.color=new Color(1,.72f,.2f);
             blocked=Rect("Save recovery",transform,Vector2.zero,Vector2.one,Vector2.zero,Vector2.zero).gameObject;
             var overlay=blocked.AddComponent<Image>();overlay.color=ink;overlay.raycastTarget=true;
-            Label("Save title",blocked.transform,"KAYIT BEKLİYOR",27,new Vector2(26,-340),new Vector2(-26,-280));
+            Label("Save title",blocked.transform,"SAVE PENDING",27,new Vector2(26,-340),new Vector2(-26,-280));
             saveMessage=Label("Save error",blocked.transform,"",18,new Vector2(26,-470),new Vector2(-26,-350));
-            retrySave=Button("Retry save",blocked.transform,"KAYDI YENİDEN DENE",new Vector2(26,-560),new Vector2(-26,-490));
+            retrySave=Button("Retry save",blocked.transform,"RETRY SAVE",new Vector2(26,-560),new Vector2(-26,-490));
             blocked.SetActive(false);
         }
         public void Bind(Action unlock,Action<WeaponUpgrade> upgrade,Action retry)
@@ -45,20 +45,20 @@ namespace CubeInvasion.Prototype
         {
             loadout.SetActive(phase=="Loadout"&&!frontEndMode);blocked.SetActive(phase=="SaveBlocked");saveMessage.text=message;
             if(phase!="Loadout"||frontEndMode)return;
-            gold.text=$"ALTIN {profile.gold}";var state=profile.weapons[inspected];
+            gold.text=$"GOLD {profile.gold}";var state=profile.weapons[inspected];
             float dps=weapon.NominalDps*(1+state.damage*rules.damagePerLevel)*(1+state.fireRate*rules.fireRatePerLevel);
-            detail.text=$"DPS {dps:0.0} · Menzil {18*weapon.projectileLife*(1+state.range*rules.rangePerLevel):0.0} m";
-            notice.text=message??(profile.lastResult!=null?$"Son deneme: +{profile.lastResult.gold} altın · {profile.lastResult.cubes} küp":"Kazanılan altınla silah açabilir ve yükseltebilirsin.");
+            detail.text=$"DPS {dps:0.0} · Range {18*weapon.projectileLife*(1+state.range*rules.rangePerLevel):0.0} m";
+            notice.text=message??(profile.lastResult!=null?$"Last run: +{profile.lastResult.gold} gold · {profile.lastResult.cubes} cubes":"Spend earned gold to unlock and upgrade weapons.");
             buy.gameObject.SetActive(!state.owned);buy.interactable=profile.gold>=rules.Price(inspected);
-            buy.GetComponentInChildren<Text>().text=$"{weapon.title.ToUpperInvariant()} AÇ · {rules.Price(inspected)} ALTIN";
+            buy.GetComponentInChildren<Text>().text=$"UNLOCK {weapon.title.ToUpperInvariant()} · {rules.Price(inspected)} GOLD";
             for(int i=0;i<3;i++)
             {
                 var kind=(WeaponUpgrade)i;int level=state.Level(kind),cap=rules.Cap(kind),cost=rules.UpgradeCost(kind,level);
                 upgrades[i].gameObject.SetActive(state.owned);upgrades[i].interactable=state.owned&&level<cap&&profile.gold>=cost;
-                string title=i==0?"HASAR":i==1?"ATIŞ HIZI":"MENZİL";
+                string title=i==0?"DAMAGE":i==1?"FIRE RATE":"RANGE";
                 float from=i==0?weapon.damage*(1+level*rules.damagePerLevel):i==1?1/weapon.interval*(1+level*rules.fireRatePerLevel):18*weapon.projectileLife*(1+level*rules.rangePerLevel);
                 float to=i==0?weapon.damage*(1+(level+1)*rules.damagePerLevel):i==1?1/weapon.interval*(1+(level+1)*rules.fireRatePerLevel):18*weapon.projectileLife*(1+(level+1)*rules.rangePerLevel);
-                upgrades[i].GetComponentInChildren<Text>().text=$"{title} {level}/{cap}\n"+(level==cap?"MAKSİMUM":$"{from:0.0} → {to:0.0}\n{cost} ALTIN");
+                upgrades[i].GetComponentInChildren<Text>().text=$"{title} {level}/{cap}\n"+(level==cap?"MAX":$"{from:0.0} → {to:0.0}\n{cost} GOLD");
             }
         }
         public void PulsePurchase()

@@ -64,23 +64,23 @@ namespace CubeInvasion.Prototype
                     if(!tutorialMoved&&Vector3.Distance(player.position,tutorialOrigin)>.6f)
                     { tutorialMoved=true;RecordValidation("tutorial_moved"); }
                     float elapsed=20-remaining;
-                    if(stage==1&&!tutorialMoved)message="SOL ALTTAKİ JOYSTICK İLE HAREKET ET";
-                    else if(stage==1&&elapsed<9)message="PARMAĞINI KALDIRMADAN YAVAŞLA · DAHA HIZLI ATEŞ ET";
-                    else if(stage==2&&elapsed<6)message="HEPSİNİ 20 SANİYE İÇİNDE İNDİR · KENARDAN UZAK DUR";
+                    if(stage==1&&!tutorialMoved)message="MOVE WITH THE JOYSTICK, BOTTOM LEFT";
+                    else if(stage==1&&elapsed<9)message="SLOW DOWN WITHOUT LIFTING · FIRE FASTER";
+                    else if(stage==2&&elapsed<6)message="DOWN THEM ALL IN 20 S · STAY OFF THE EDGE";
                 }
-                else if(phase==Phase.Choice)message="KAPIDAKİ GÜÇLENDİRMEYİ SEÇMEK İÇİN İÇİNDEN GEÇ";
-                else if(phase==Phase.Transfer)message="YENİ KÜP, AYNI MACERA · HAZIR OL";
+                else if(phase==Phase.Choice)message="WALK THROUGH A GATE TO PICK ITS POWER-UP";
+                else if(phase==Phase.Transfer)message="NEW CUBE, SAME ADVENTURE · GET READY";
             }
             if(HasMeta&&!paused&&phase==Phase.Combat&&stage==1&&remaining>14&&missionIndex>0)
             {
                 switch(missionIndex)
                 {
-                    case 1:message="SİPER İKİ TARAFIN MERMİSİNİ DE KESER · AÇI DEĞİŞTİR";break;
-                    case 2:message="KÜP ALTINLARI BANKALANIR · MARKETTE SİLAHINI GELİŞTİR";break;
-                    case 3:message="VARİLLERİ DÜŞMANLARIN YAKININDA PATLAT";break;
-                    case 4:message="KIRMIZI KONİDEN ÇIK · İTİCİ SALDIRI HAZIRLIYOR";break;
-                    case 5:message="ALTINLARI TOPLA · SÜRE BİTMEDEN KOTAYI DOLDUR";break;
-                    case 6:message="KIRMIZI İŞARETLERDEN KAÇ · BOSS ÜÇ FAZLI";break;
+                    case 1:message="COVER BLOCKS SHOTS BOTH WAYS · CHANGE ANGLE";break;
+                    case 2:message="CUBE GOLD IS BANKED · UPGRADE YOUR WEAPON IN THE SHOP";break;
+                    case 3:message="BLOW UP BARRELS NEAR ENEMIES";break;
+                    case 4:message="LEAVE THE RED CONE · PUSHER IS WINDING UP";break;
+                    case 5:message="COLLECT GOLD · FILL THE QUOTA BEFORE TIME RUNS OUT";break;
+                    case 6:message="DODGE THE RED MARKERS · BOSS HAS 3 PHASES";break;
                 }
             }
             if((HasCrusherObjectives||(HasGoldRushVariants&&GoldVariant!=GoldRushVariant.CoinSprint))&&phase==Phase.Combat)message=""; // The existing objective pill carries the phase instruction.

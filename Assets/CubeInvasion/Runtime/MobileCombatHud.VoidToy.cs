@@ -125,9 +125,9 @@ namespace CubeInvasion.Prototype
                 pauseInfo=VoidToyStyle.Label("Pause info",card.transform,uiFont,20,TextAnchor.MiddleCenter,VoidToyPalette.Muted);
                 VoidToyStyle.Place(pauseInfo.rectTransform,new Vector2(0,1),new Vector2(1,1),new Vector2(10,-160),new Vector2(-10,-122));VoidToyStyle.Outline(pauseInfo);
                 var resume=VoidToyStyle.Button("Resume",card.transform,tile,VoidToyPalette.Cyan,new Vector2(0,1),new Vector2(1,1),new Vector2(16,-300),new Vector2(-16,-214),uiFont,30,VoidToyPalette.Ink,out var resumeLabel);
-                resumeLabel.text="DEVAM";resume.onClick.RemoveAllListeners();resume.onClick.AddListener(()=>pauseAction?.Invoke());VoidToyStyle.AddShine(resume);
+                resumeLabel.text="RESUME";resume.onClick.RemoveAllListeners();resume.onClick.AddListener(()=>pauseAction?.Invoke());VoidToyStyle.AddShine(resume);
                 var sound=VoidToyStyle.Button("Sound toggle",card.transform,tile,VoidToyPalette.Panel,new Vector2(0,1),new Vector2(1,1),new Vector2(16,-388),new Vector2(-16,-320),uiFont,21,VoidToyPalette.Text,out pauseSound);
-                pauseSound.text="Ses açık";sound.onClick.RemoveAllListeners();sound.onClick.AddListener(()=>muteAction?.Invoke());
+                pauseSound.text="Sound on";sound.onClick.RemoveAllListeners();sound.onClick.AddListener(()=>muteAction?.Invoke());
                 if(Application.isPlaying)VoidToyStyle.AnimateShine((RectTransform)resume.transform,gameObject);
             }
             if(result)VoidToyStyle.Surface(result.GetComponent<Image>(),tile,VoidToyPalette.Panel);

@@ -27,12 +27,12 @@ namespace CubeInvasion.Prototype
             var root=(RectTransform)transform;root.anchorMin=Vector2.zero;root.anchorMax=Vector2.one;root.offsetMin=root.offsetMax=Vector2.zero;
             loadout=Panel("Mission loadout",transform,Vector2.zero,Vector2.one,Vector2.zero,Vector2.zero,ink).gameObject;
             Label("Brand",loadout.transform,"CUBE / INVASION",20,new Vector2(26,-66),new Vector2(-26,-25),cyan);
-            Label("Chapter",loadout.transform,"GÖREV SEÇİMİ",13,new Vector2(26,-109),new Vector2(-26,-82),Color.white);
+            Label("Chapter",loadout.transform,"MISSION SELECT",13,new Vector2(26,-109),new Vector2(-26,-82),Color.white);
             missionTitle=Label("Mission title",loadout.transform,"",29,new Vector2(26,-166),new Vector2(-26,-113),Color.white);
             missionDescription=Label("Mission description",loadout.transform,"",17,new Vector2(26,-270),new Vector2(-26,-175),new Color(.72f,.8f,.9f));
-            previous=MakeButton("Previous mission",loadout.transform,"‹  ÖNCEKİ",new Vector2(26,-325),new Vector2(258,-279));
-            next=MakeButton("Next mission",loadout.transform,"SONRAKİ  ›",new Vector2(282,-325),new Vector2(-26,-279));
-            Label("Arsenal",loadout.transform,"SİLAHINI SEÇ",14,new Vector2(26,-376),new Vector2(-26,-345),Color.white);
+            previous=MakeButton("Previous mission",loadout.transform,"‹  PREV",new Vector2(26,-325),new Vector2(258,-279));
+            next=MakeButton("Next mission",loadout.transform,"NEXT  ›",new Vector2(282,-325),new Vector2(-26,-279));
+            Label("Arsenal",loadout.transform,"PICK YOUR WEAPON",14,new Vector2(26,-376),new Vector2(-26,-345),Color.white);
             string[] names={"PULSE PISTOL","TWIN BLASTERS","SCATTER SHOT","RAPID SMG"};
             weapons=new Button[4];weaponLabels=new Text[4];
             for(int i=0;i<4;i++)
@@ -42,14 +42,14 @@ namespace CubeInvasion.Prototype
                 weaponLabels[i]=weapons[i].GetComponentInChildren<Text>();
             }
             weaponDescription=Label("Weapon description",loadout.transform,"",17,new Vector2(26,-632),new Vector2(-26,-530),new Color(.72f,.8f,.9f));
-            Label("Controls",loadout.transform,"Joystick ile hareket et. En yakın hedefe otomatik ateş.\nKüp temizlenince güçlendirme kapısından geç.",16,new Vector2(26,-737),new Vector2(-26,-647),Color.white);
-            deploy=MakeButton("Deploy",loadout.transform,"GÖREVE BAŞLA",new Vector2(26,-833),new Vector2(-26,-759));
+            Label("Controls",loadout.transform,"Move with the joystick. Auto-fires at the nearest target.\nAfter clearing a cube, walk through a power-up gate.",16,new Vector2(26,-737),new Vector2(-26,-647),Color.white);
+            deploy=MakeButton("Deploy",loadout.transform,"START MISSION",new Vector2(26,-833),new Vector2(-26,-759));
             result=Panel("Mission result",transform,new Vector2(0,.22f),new Vector2(1,.78f),new Vector2(22,0),new Vector2(-22,0),ink).gameObject;
             resultTitle=Label("Result title",result.transform,"",27,new Vector2(20,-80),new Vector2(-20,-20),Color.white);
             resultDescription=Label("Result detail",result.transform,"",17,new Vector2(20,-160),new Vector2(-20,-86),new Color(.72f,.8f,.9f));
-            advance=MakeButton("Advance",result.transform,"SONRAKİ GÖREV",new Vector2(24,-228),new Vector2(-24,-172));
-            retry=MakeButton("Retry",result.transform,"TEKRAR DENE",new Vector2(24,-296),new Vector2(-24,-240));
-            menu=MakeButton("Menu",result.transform,"GÖREV / SİLAH SEÇ",new Vector2(24,-364),new Vector2(-24,-308));
+            advance=MakeButton("Advance",result.transform,"NEXT MISSION",new Vector2(24,-228),new Vector2(-24,-172));
+            retry=MakeButton("Retry",result.transform,"RETRY",new Vector2(24,-296),new Vector2(-24,-240));
+            menu=MakeButton("Menu",result.transform,"MISSION / WEAPON",new Vector2(24,-364),new Vector2(-24,-308));
             loadout.SetActive(true);result.SetActive(false);BuildBossPanel();ApplyVoidToyStyle();
         }
         [SerializeField] Image resultEmblem;
@@ -64,12 +64,12 @@ namespace CubeInvasion.Prototype
         public void SetProgression(MetaProfile profile,P3MetaSettings settings,int inspected,int mission)
         {
             bool lockedMission=profile.highestMission<mission;
-            if(lockedMission)missionDescription.text="KİLİTLİ GÖREV · Önce önceki görevi tamamla.\n"+missionDescription.text;
+            if(lockedMission)missionDescription.text="LOCKED MISSION · Finish the previous mission first.\n"+missionDescription.text;
             deploy.interactable=!lockedMission&&profile.weapons[inspected].owned;
             string[] names={"PULSE PISTOL","TWIN BLASTERS","SCATTER SHOT","RAPID SMG"};
             for(int i=0;i<weapons.Length;i++)
             {
-                weaponLabels[i].text=names[i]+(profile.weapons[i].owned?i==profile.selectedWeapon?"\nSEÇİLİ":"\nAÇIK":$"\n{settings.Price(i)} ALTIN");
+                weaponLabels[i].text=names[i]+(profile.weapons[i].owned?i==profile.selectedWeapon?"\nSELECTED":"\nUNLOCKED":$"\n{settings.Price(i)} GOLD");
                 weapons[i].GetComponent<Image>().color=i==inspected?cyan:tile;
                 weaponLabels[i].color=i==inspected?ink:Color.white;
             }
@@ -77,7 +77,7 @@ namespace CubeInvasion.Prototype
             {
                 var run=profile.run;
                 // Calm summary: what this run earned, in one line. The reason already sits in red above the title.
-                resultDescription.text=run.won?$"+{VoidToyPalette.FormatGold(run.gold)} altın · {run.cubes} küp · {run.kills} hedef":$"{run.cubes} küp temizlendi · {VoidToyPalette.FormatGold(run.gold)} altın korundu";
+                resultDescription.text=run.won?$"+{VoidToyPalette.FormatGold(run.gold)} gold · {run.cubes} cubes · {run.kills} targets":$"{run.cubes} cubes cleared · {VoidToyPalette.FormatGold(run.gold)} gold kept";
             }
         }
         void BuildBossPanel()
@@ -95,7 +95,7 @@ namespace CubeInvasion.Prototype
             if(!bossPanel)return;bossPanel.SetActive(visible);
             if(!visible)return;
             bossFill.rectTransform.anchorMax=new Vector2(Mathf.Clamp01(health/Mathf.Max(1,total)),1);
-            bossLabel.text=$"THE CRUSHER · {Mathf.CeilToInt(health)}/{total:0} · "+(phase==1?"ZIRH":phase==2?"SİLAH SİSTEMİ":"ÇEKİRDEK");
+            bossLabel.text=$"THE CRUSHER · {Mathf.CeilToInt(health)}/{total:0} · "+(phase==1?"ARMOR":phase==2?"WEAPON SYSTEM":"CORE");
         }
         public void SetBossCaption(string caption) {if(bossLabel)bossLabel.text=caption;}
         public void Bind(Action<int> mission,Action<int> weapon,Action start,Action restart,Action following,Action select)
@@ -112,17 +112,17 @@ namespace CubeInvasion.Prototype
             if(choosing&&!frontEndMode)
             {
                 missionTitle.text=$"{missionIndex+1:00} / {mission.title}";
-                string mode=mission.mode==MissionMode.Boss?"3 FAZLI BOSS":mission.mode==MissionMode.GoldRush?"ALTIN KOTASI":"SAVAŞ";
-                missionDescription.text=$"{mode} · {mission.cubes.Length} KÜP · HER KÜP 20 sn\n{mission.description}";
+                string mode=mission.mode==MissionMode.Boss?"3-PHASE BOSS":mission.mode==MissionMode.GoldRush?"GOLD QUOTA":"COMBAT";
+                missionDescription.text=$"{mode} · {mission.cubes.Length} CUBES · 20 s PER CUBE\n{mission.description}";
                 weaponDescription.text=weapon.title+"\n"+weapon.description;
                 for(int i=0;i<weapons.Length;i++) { weapons[i].GetComponent<Image>().color=i==weaponIndex?cyan:tile;weaponLabels[i].color=i==weaponIndex?ink:Color.white; }
             }
             if(!ended)shownEnded=false;
             if(ended)
             {
-                bool timeout=!won&&reason!=null&&reason.Contains("saniye"),fell=!won&&reason!=null&&reason.Contains("düştün");
-                resultTitle.text=won?"Temizlendi":timeout?"Küp çöktü":fell?"Düştün":"Can bitti";resultTitle.color=VoidToyPalette.Text;
-                if(reasonLabel) {reasonLabel.text=won?$"Bölüm {missionIndex+1}":timeout?"Süre doldu":fell?"Kenardan düştün":"Canın tükendi";reasonLabel.color=won?VoidToyPalette.Muted:VoidToyPalette.DangerText;}
+                bool timeout=!won&&reason!=null&&FirstLineHas(reason,"Time's up"),fell=!won&&reason!=null&&FirstLineHas(reason,"fell");
+                resultTitle.text=won?"Cleared":timeout?"Cube collapsed":fell?"You fell":"Out of HP";resultTitle.color=VoidToyPalette.Text;
+                if(reasonLabel) {reasonLabel.text=won?$"Chapter {missionIndex+1}":timeout?"Time's up":fell?"You fell off the edge":"Out of health";reasonLabel.color=won?VoidToyPalette.Muted:VoidToyPalette.DangerText;}
                 if(resultIcon) {resultIcon.gameObject.SetActive(won);resultCheck.SetActive(won);}
                 if(resultShards)resultShards.SetActive(!won);
                 // One cyan primary per state: advance after a win, retry after a fail.
@@ -135,12 +135,19 @@ namespace CubeInvasion.Prototype
                 }
                 if(retry) {var shine=retry.transform.Find("Shine");if(shine)shine.gameObject.SetActive(!canAdvance);}
                 if(resultEmblem)resultEmblem.sprite=won?victoryEmblem:failureEmblem;
-                resultDescription.text=won?mission.title+$"\nBankalanan altın: {wallet}":reason+"\nTamamlanan küplerin altını korundu.";
+                resultDescription.text=won?mission.title+$"\nGold banked: {wallet}":reason+"\nGold from cleared cubes was kept.";
                 advance.gameObject.SetActive(won&&missionIndex<count-1);
-                retry.GetComponentInChildren<Text>().text=won?"Yeniden oyna":"TEKRAR";shownEnded=true;
-                if(menu)menu.GetComponentInChildren<Text>().text="Yola dön";
-                if(won&&missionIndex==count-1&&!metaMode)resultDescription.text+="\nTüm görevler tamamlandı.";
+                retry.GetComponentInChildren<Text>().text=won?"Play again":"RETRY";shownEnded=true;
+                if(menu)menu.GetComponentInChildren<Text>().text="Back to path";
+                if(won&&missionIndex==count-1&&!metaMode)resultDescription.text+="\nAll missions complete.";
             }
+        }
+        // Failure reasons come from InvasionPrototype; only the headline (first line) is matched, case-insensitively.
+        static bool FirstLineHas(string reason,params string[] keys)
+        {
+            int cut=reason.IndexOf('\n');string head=cut<0?reason:reason.Substring(0,cut);
+            foreach(var key in keys)if(head.IndexOf(key,System.StringComparison.OrdinalIgnoreCase)>=0)return true;
+            return false;
         }
         public void ApplyVoidToyStyle()
         {

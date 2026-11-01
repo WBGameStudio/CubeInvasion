@@ -93,7 +93,7 @@ namespace CubeInvasion.Prototype
             gearButton.onClick.AddListener(()=>ShowPage(MenuPage.Settings));
             // Three destinations as quiet text tabs; Road and Settings stay reachable from the path and the gear.
             var dock=Rect("Navigation dock",transform,new Vector2(0,0),new Vector2(1,0),new Vector2(0,0),new Vector2(0,96));
-            string[] navNames={"Yol","Bölümler","Silahlar","Pilot","Ayarlar"};int[] slots={0,-1,1,2,-1};navigation=new Button[5];
+            string[] navNames={"Road","Chapters","Weapons","Pilot","Settings"};int[] slots={0,-1,1,2,-1};navigation=new Button[5];
             for(int i=0;i<5;i++)
             {
                 int index=i,slot=Mathf.Max(0,slots[i]);var tab=Button("Tab "+i,dock,navNames[i],new Vector2(slot*180,-96),new Vector2(slot*180+180,0),18);
@@ -146,7 +146,7 @@ namespace CubeInvasion.Prototype
             background.sprite=null;background.color=VoidToyPalette.Void;
             var aspect=background.GetComponent<AspectRatioFitter>();if(aspect)aspect.enabled=false;
             shade.color=Color.clear;
-            string[] names={homeTitle,"Bölüm yolu","Silahlar","Pilot","Ayarlar"};section.text=names[(int)page];
+            string[] names={homeTitle,"Chapter path","Weapons","Pilot","Settings"};section.text=names[(int)page];
             for(int i=0;i<navigation.Length;i++)
             {
                 bool selected=i==(int)page;navigation[i].GetComponent<Image>().color=Color.clear;navigation[i].GetComponentInChildren<Text>().color=selected?white:muted;
@@ -180,9 +180,9 @@ namespace CubeInvasion.Prototype
             activeMission=mission;
             wallet.text=VoidToyPalette.FormatGold(profile.gold);
             int completed=0;foreach(bool done in profile.completed)if(done)completed++;
-            homeProgress.text=$"{completed} / {content.missions.Length} GÖREV";
+            homeProgress.text=$"{completed} / {content.missions.Length} MISSIONS";
             progressFill.rectTransform.anchorMax=new Vector2((float)completed/content.missions.Length,1);
-            homeLaunch.text=mission>profile.highestMission?$"KİLİTLİ · {mission+1}":$"OYNA · {mission+1}";
+            homeLaunch.text=mission>profile.highestMission?$"LOCKED · {mission+1}":$"PLAY · {mission+1}";
             var play=pages[0].transform.Find("Play campaign");bool playable=mission<=profile.highestMission&&profile.weapons[equipped].owned;
             play.GetComponent<Button>().interactable=playable;
             // A locked level gets a quiet surface; only a playable level gets the shining cyan action.
@@ -194,7 +194,7 @@ namespace CubeInvasion.Prototype
                 bool open=i<=profile.highestMission,done=profile.completed[i],selected=i==mission;
                 var color=selected?VoidToyPalette.Cyan:done?VoidToyPalette.Health:open?VoidToyPalette.Cobalt:VoidToyPalette.Track;
                 nodeRings[i].color=homeRings[i].color=color;
-                nodeNumbers[i].text=homeNumbers[i].text=open||done?(i+1).ToString():"KİLİT";
+                nodeNumbers[i].text=homeNumbers[i].text=open||done?(i+1).ToString():"LOCKED";
                 nodeNumbers[i].fontSize=homeNumbers[i].fontSize=open?34:15;
                 nodeNumbers[i].color=homeNumbers[i].color=selected?VoidToyPalette.Ink:Color.white;
                 // Home shows the journey as a compact cube strip: numbers only, locked tiles stay blank.
@@ -204,49 +204,49 @@ namespace CubeInvasion.Prototype
             if(sheetTitle)
             {
                 var level=content.missions[mission];string sentence=level.description;int stop=sentence.IndexOf('.');if(stop>0)sentence=sentence.Substring(0,stop);
-                string kind=level.mode==MissionMode.Boss?$"Boss · {level.cubes.Length} faz":level.mode==MissionMode.GoldRush?"Altın kotası":sentence;
-                sheetNumber.text=$"Bölüm {mission+1}";sheetTitle.text=level.title;sheetInfo.text=$"{level.cubes.Length} küp · her küp 20 saniye\n{kind}";
+                string kind=level.mode==MissionMode.Boss?$"Boss · {level.cubes.Length} phases":level.mode==MissionMode.GoldRush?"Gold quota":sentence;
+                sheetNumber.text=$"Chapter {mission+1}";sheetTitle.text=level.title;sheetInfo.text=$"{level.cubes.Length} cubes · 20 seconds per cube\n{kind}";
                 sheetWeapon.text=content.weapons[equipped].title;
                 bool open=mission<=profile.highestMission&&profile.weapons[equipped].owned;sheetPlay.interactable=open;
-                sheetPlay.GetComponent<Image>().color=open?VoidToyPalette.Cyan:VoidToyPalette.Raised;var playText=sheetPlay.GetComponentInChildren<Text>();playText.text=open?"OYNA":"KİLİTLİ";playText.color=open?VoidToyPalette.Ink:VoidToyPalette.Disabled;
+                sheetPlay.GetComponent<Image>().color=open?VoidToyPalette.Cyan:VoidToyPalette.Raised;var playText=sheetPlay.GetComponentInChildren<Text>();playText.text=open?"PLAY":"LOCKED";playText.color=open?VoidToyPalette.Ink:VoidToyPalette.Disabled;
                 var sheetShine=sheetPlay.transform.Find("Shine");if(sheetShine)sheetShine.gameObject.SetActive(open);
             }
             var current=content.missions[mission];roadTitle.text=$"{mission+1:00}  {current.title}";
-            roadDescription.text=mission>profile.highestMission?"Önce önceki görevi tamamla.":$"{current.cubes.Length} KÜP · HER KÜP 20 sn\n"+current.description;
+            roadDescription.text=mission>profile.highestMission?"Finish the previous mission first.":$"{current.cubes.Length} CUBES · 20 s PER CUBE\n"+current.description;
             roadPlay.interactable=mission<=profile.highestMission&&profile.weapons[equipped].owned;
-            roadPlay.GetComponentInChildren<Text>().text=mission>profile.highestMission?"GÖREV KİLİTLİ":$"BÖLÜM {mission+1} OYNA";
+            roadPlay.GetComponentInChildren<Text>().text=mission>profile.highestMission?"MISSION LOCKED":$"PLAY CHAPTER {mission+1}";
             for(int i=0;i<weaponCards.Length;i++)
             {
                 bool owned=profile.weapons[i].owned;weaponCards[i].GetComponent<Image>().color=i==inspected?VoidToyPalette.Cobalt:panel;
-                weaponTags[i].text=owned?(i==equipped?"KUŞANILDI":"AÇIK"):$"{rules.Price(i)} ALTIN";
+                weaponTags[i].text=owned?(i==equipped?"EQUIPPED":"UNLOCKED"):$"{rules.Price(i)} GOLD";
                 weaponTags[i].color=owned?cyan:gold;
             }
             var spec=content.weapons[inspected];var state=profile.weapons[inspected];
             weaponHero.sprite=art.weapons[inspected];if(content.weapons.Length>4) {var preview=weaponHero.GetComponent<WeaponModelPreview>();if(!preview)preview=weaponHero.gameObject.AddComponent<WeaponModelPreview>();preview.Show(content.weapons[inspected]);}weaponTitle.text=spec.title;weaponDescription.text=spec.description;
-            var resolved=new WeaponRuntimeStats(spec,state,rules);weaponStats.text=$"DPS {resolved.Dps:0.0}   /   MENZİL {resolved.Range:0.0} m";
+            var resolved=new WeaponRuntimeStats(spec,state,rules);weaponStats.text=$"DPS {resolved.Dps:0.0}   /   RANGE {resolved.Range:0.0} m";
             buyWeapon.gameObject.SetActive(!state.owned);buyWeapon.interactable=profile.gold>=rules.Price(inspected);
-            buyWeapon.GetComponentInChildren<Text>().text=$"SİLAHI AÇ  ·  {rules.Price(inspected)} ALTIN";
+            buyWeapon.GetComponentInChildren<Text>().text=$"UNLOCK WEAPON  ·  {rules.Price(inspected)} GOLD";
             for(int i=0;i<weaponUpgrades.Length;i++)
             {
                 var kind=(WeaponUpgrade)i;int level=state.Level(kind),cost=rules.UpgradeCost(kind,level);bool max=level>=rules.Cap(kind);if(content.weapons.Length==12&&inspected==0&&i==0&&level==0&&profile.highestMission>=2)cost=0;
                 weaponUpgrades[i].gameObject.SetActive(state.owned);if(weaponUpgradeInfo!=null&&weaponUpgradeInfo.Length==weaponUpgrades.Length)weaponUpgradeInfo[i].transform.parent.gameObject.SetActive(state.owned);weaponUpgrades[i].interactable=!max&&profile.gold>=cost;
-                string title=i==0?"HASAR":i==1?"ATIŞ HIZI":i==2?"MENZİL":i==3?"ÖZEL EVRİM":"DÖNGÜ";
+                string title=i==0?"DAMAGE":i==1?"FIRE RATE":i==2?"RANGE":i==3?"SPECIAL EVO":"CYCLE";
                 float step=(i==0?rules.damagePerLevel:i==1?rules.fireRatePerLevel:rules.rangePerLevel)*100;
                 if(weaponUpgradeInfo!=null&&weaponUpgradeInfo.Length==weaponUpgrades.Length)
                 {
-                    weaponUpgradeInfo[i].text=$"{title}   SV {level}/{rules.Cap(kind)}\n"+(max?"Maksimum seviye":i==3?"Silaha özel etki +1":$"Sonraki seviye +%{(i==4?4:step):0}");
-                    weaponUpgrades[i].GetComponentInChildren<Text>().text=max?"MAKS.":cost==0?"ÜCRETSİZ":$"{cost}";
+                    weaponUpgradeInfo[i].text=$"{title}   LV {level}/{rules.Cap(kind)}\n"+(max?"Max level":i==3?"Weapon-specific effect +1":$"Next level +{(i==4?4:step):0}%");
+                    weaponUpgrades[i].GetComponentInChildren<Text>().text=max?"MAX":cost==0?"FREE":$"{cost}";
                 }
-                else weaponUpgrades[i].GetComponentInChildren<Text>().text=$"{title}  {level}/{rules.Cap(kind)}\n"+(max?"MAKSİMUM":$"+%{step:0} · {cost} ALTIN");
+                else weaponUpgrades[i].GetComponentInChildren<Text>().text=$"{title}  {level}/{rules.Cap(kind)}\n"+(max?"MAX":$"+{step:0}% · {cost} GOLD");
                 if(i>=3)continue;
                 var character=(CharacterUpgrade)i;int rank=profile.CharacterLevel(character),price=rules.CharacterCost(character,rank);bool capped=rank>=rules.characterCap;
                 characterUpgrades[i].interactable=!capped&&profile.gold>=price;
-                characterUpgrades[i].GetComponentInChildren<Text>().text=capped?"MAKS.":VoidToyPalette.FormatGold(price);
-                characterLevels[i].text=$"SEVİYE {rank}/{rules.characterCap}\n"+(i==0?$"{100+rank*10} → {100+(rank+1)*10} CAN":i==1?$"{4.5f*(1+rank*.03f):0.00} → {4.5f*(1+(rank+1)*.03f):0.00} m/sn":$"{1+rank*.2f:0.0} → {1+(rank+1)*.2f:0.0} m");
-                if(capped)characterLevels[i].text=$"SEVİYE {rank}/{rules.characterCap} · MAKSİMUM";
+                characterUpgrades[i].GetComponentInChildren<Text>().text=capped?"MAX":VoidToyPalette.FormatGold(price);
+                characterLevels[i].text=$"LEVEL {rank}/{rules.characterCap}\n"+(i==0?$"{100+rank*10} → {100+(rank+1)*10} HP":i==1?$"{4.5f*(1+rank*.03f):0.00} → {4.5f*(1+(rank+1)*.03f):0.00} m/s":$"{1+rank*.2f:0.0} → {1+(rank+1)*.2f:0.0} m");
+                if(capped)characterLevels[i].text=$"LEVEL {rank}/{rules.characterCap} · MAX";
             }
             LayoutArsenal(profile,rules,content,inspected,equipped);
-            pilotStats.text=$"CAN  {100+profile.vitality*10}\nHIZ  {4.5f*(1+profile.agility*.03f):0.00}\nALAN  {1+profile.magnet*.2f:0.0} m";
+            pilotStats.text=$"HP  {100+profile.vitality*10}\nSPD  {4.5f*(1+profile.agility*.03f):0.00}\nAREA  {1+profile.magnet*.2f:0.0} m";
         }
         static readonly Vector2[] pathPoints={new Vector2(195,640),new Vector2(270,584),new Vector2(300,528),new Vector2(250,472),new Vector2(170,416),new Vector2(116,364),new Vector2(78,302),new Vector2(160,248),new Vector2(250,192),new Vector2(195,124)};
         static readonly string[] biomeTitles={"Neon Yard","Factory Rift","Circuit Abyss","Frozen Blocks","Lava Foundry","Void Core"};
@@ -292,8 +292,8 @@ namespace CubeInvasion.Prototype
             var scout=content.Find("Path scout") as RectTransform;
             if(scout) {scout.gameObject.SetActive(currentShown);if(currentShown)scout.anchoredPosition=Point(current)+new Vector2(0,70);scout.SetAsLastSibling();}
             int biome=count>=10?first/10:0;
-            homeTitle=count>=10?biomeTitles[Mathf.Clamp(biome,0,5)]:"Bölüm yolu";
-            if(homeBiome)homeBiome.text=count>=10?$"Biyom {biome+1} · bölüm {first+1}–{last+1}":$"Bölüm 1–{count}";
+            homeTitle=count>=10?biomeTitles[Mathf.Clamp(biome,0,5)]:"Chapter path";
+            if(homeBiome)homeBiome.text=count>=10?$"Biome {biome+1} · chapter {first+1}–{last+1}":$"Chapter 1–{count}";
             if(page==MenuPage.Home&&section)section.text=homeTitle;
         }
         void OpenLevelSheet()
@@ -335,13 +335,13 @@ namespace CubeInvasion.Prototype
                     if(cost<bestCost) {best=i;bestCost=cost;}
                 }
                 var label=primaryUpgrade.GetComponentInChildren<Text>();
-                if(best<0) {label.text="MAKSİMUM";primaryUpgrade.interactable=false;}
+                if(best<0) {label.text="MAX";primaryUpgrade.interactable=false;}
                 else
                 {
-                    primaryKind=(WeaponUpgrade)best;string[] names={"HASAR","ATIŞ HIZI","MENZİL","ÖZEL EVRİM","DÖNGÜ"};
+                    primaryKind=(WeaponUpgrade)best;string[] names={"DAMAGE","FIRE RATE","RANGE","SPECIAL EVO","CYCLE"};
                     float step=(best==0?rules.damagePerLevel:best==1?rules.fireRatePerLevel:rules.rangePerLevel)*100;
-                    string gain=best==3?"+1":$"+%{(best==4?4:step):0}";
-                    label.text=bestCost==0?$"{names[best]} {gain} · ÜCRETSİZ":$"{names[best]} {gain} · {VoidToyPalette.FormatGold(bestCost)}";
+                    string gain=best==3?"+1":$"+{(best==4?4:step):0}%";
+                    label.text=bestCost==0?$"{names[best]} {gain} · FREE":$"{names[best]} {gain} · {VoidToyPalette.FormatGold(bestCost)}";
                     primaryUpgrade.interactable=profile.gold>=bestCost;
                 }
                 bool can=primaryUpgrade.interactable;primaryUpgrade.GetComponent<Image>().color=can?VoidToyPalette.Cyan:VoidToyPalette.Raised;label.color=can?VoidToyPalette.Ink:VoidToyPalette.Disabled;
@@ -350,7 +350,7 @@ namespace CubeInvasion.Prototype
             }
             weaponDescription.text=content.weapons[inspected].description;
             // Ownership rides on the stats line so the description never wraps an orphaned status word.
-            weaponStats.text+=state.owned?(inspected==equipped?"   ·   KUŞANILDI":""):"   ·   KİLİTLİ";
+            weaponStats.text+=state.owned?(inspected==equipped?"   ·   EQUIPPED":""):"   ·   LOCKED";
         }
         Tween pulseTween,scoutTween;
         // Ambient motion only in Play: the Play button shine, the next-level pulse and the Scout's bob.
@@ -381,11 +381,11 @@ namespace CubeInvasion.Prototype
         {
             if(settingsPresented&&Mathf.Approximately(musicSlider.value,music)&&Mathf.Approximately(sfxSlider.value,sfx)&&muteToggle.isOn==mute&&hapticsToggle.isOn==haptic&&frameToggle.isOn==highFrames)return;
             settingsPresented=true;quiet=true;musicSlider.value=music;sfxSlider.value=sfx;muteToggle.isOn=mute;hapticsToggle.isOn=haptic;frameToggle.isOn=highFrames;quiet=false;
-            musicValue.text=$"%{music*100:0}";sfxValue.text=$"%{sfx*100:0}";
+            musicValue.text=$"{music*100:0}%";sfxValue.text=$"{sfx*100:0}%";
         }
         void SettingsEvent()
         {
-            musicValue.text=$"%{musicSlider.value*100:0}";sfxValue.text=$"%{sfxSlider.value*100:0}";
+            musicValue.text=$"{musicSlider.value*100:0}%";sfxValue.text=$"{sfxSlider.value*100:0}%";
             if(!quiet)settingsChanged?.Invoke(musicSlider.value,sfxSlider.value,muteToggle.isOn,hapticsToggle.isOn,frameToggle.isOn);
         }
         void OnRectTransformDimensionsChange() { if(roadScroll)roadLayoutDirty=true; }

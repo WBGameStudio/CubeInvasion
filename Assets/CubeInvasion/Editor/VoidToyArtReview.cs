@@ -194,7 +194,7 @@ public static class VoidToyArtReview
             EditorSceneManager.ClosePreviewScene(scene);
         }
     }
-    // KİP review: turntable, the six screen-face expressions, and the in-game 45/45 shot among graphite enemies.
+    // KIP review: turntable, the six screen-face expressions, and the in-game 45/45 shot among graphite enemies.
     [MenuItem("Cube Invasion/Art/Void Toy/Render Rogue Cube Review")]
     public static void RogueCube()
     {

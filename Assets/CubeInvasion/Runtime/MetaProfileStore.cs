@@ -47,23 +47,23 @@ namespace CubeInvasion.Prototype
             bool primaryExists=File.Exists(path),backupExists=File.Exists(path+".bak");
             if(TryRead(path,out var profile))Data=profile;
             else if(incompatible)
-            { Data=NewProfile(0);CanWrite=false;Message="Kayıt daha yeni bir oyun sürümüne ait. Mevcut dosyalar korundu."; }
+            { Data=NewProfile(0);CanWrite=false;Message="Save is from a newer game version. Existing files were kept."; }
             else if(TryRead(path+".bak",out profile))
             {
-                Data=profile;Message="Yedek kayıt kurtarıldı.";
+                Data=profile;Message="Backup save restored.";
                 // Keep the good backup intact until the next valid primary commit.
                 try { if(primaryExists)File.Copy(path,path+".corrupt",true);File.Copy(path+".bak",path,true); }
-                catch(Exception e) when(e is IOException||e is UnauthorizedAccessException) { CanWrite=false;Message="Kayıt kurtarıldı; dosyaya erişilemiyor."; }
+                catch(Exception e) when(e is IOException||e is UnauthorizedAccessException) { CanWrite=false;Message="Save restored; file can't be accessed."; }
             }
             else if(primaryExists||backupExists)
             {
-                Data=NewProfile(0);CanWrite=false;Message="Kayıt dosyaları okunamadı. Mevcut dosyalar korunuyor; kayıt erişimini kontrol edip yeniden dene.";
+                Data=NewProfile(0);CanWrite=false;Message="Couldn't read save files. Existing files are kept; check save access and retry.";
             }
             else
             {
                 Data=NewProfile(Mathf.Max(0,legacyGold));
                 if(!Persist(Data))CanWrite=false;
-                else if(legacyGold>0)Message="Önceki altın bakiyesi aktarıldı.";
+                else if(legacyGold>0)Message="Previous gold balance carried over.";
             }
         }
         MetaProfile NewProfile(int gold)
@@ -131,13 +131,13 @@ namespace CubeInvasion.Prototype
                 return true;
             }
             catch(Exception e) when(e is IOException||e is UnauthorizedAccessException)
-            { Message="Kayıt yazılamadı. İşlem uygulanmadı; yeniden deneyebilirsin.";return false; }
+            { Message="Couldn't write save. Nothing was applied; you can retry.";return false; }
         }
         bool Commit(MetaProfile next)
         {
-            if(!CanWrite) { Message="Kayıt dosyasına erişilemiyor; işlem uygulanmadı.";return false; }
+            if(!CanWrite) { Message="Can't access save file; nothing was applied.";return false; }
             next.revision=Data.revision+1;
-            if(!Valid(next)) { Message="Kayıt doğrulanamadı; işlem uygulanmadı.";return false; }
+            if(!Valid(next)) { Message="Couldn't verify save; nothing was applied.";return false; }
             if(!Persist(next))return false;
             Data=next;Message=null;return true;
         }
@@ -165,26 +165,26 @@ namespace CubeInvasion.Prototype
         public bool Unlock(int weapon)
         {
             if(weapon<0||weapon>=Data.weapons.Length)return false;
-            if(IsOwned(weapon)) { Message="Bu silah zaten açık.";return false; }
+            if(IsOwned(weapon)) { Message="This weapon is already unlocked.";return false; }
             int cost=settings.Price(weapon);
-            if(Data.gold<cost) { Message=$"{cost-Data.gold} altın daha gerekli.";return false; }
+            if(Data.gold<cost) { Message=$"Need {cost-Data.gold} more gold.";return false; }
             var next=Copy();next.gold-=cost;next.weapons[weapon].owned=true;next.selectedWeapon=weapon;return Commit(next);
         }
         public bool Upgrade(int weapon,WeaponUpgrade kind)
         {
-            if(!IsOwned(weapon)) { Message="Önce silahı aç.";return false; }
+            if(!IsOwned(weapon)) { Message="Unlock the weapon first.";return false; }
             int level=Data.weapons[weapon].Level(kind);
-            if(level>=settings.Cap(kind)) { Message="Maksimum seviyede.";return false; }
+            if(level>=settings.Cap(kind)) { Message="Already at max level.";return false; }
             int cost=settings.unlockPrices.Length==12&&weapon==0&&kind==WeaponUpgrade.Damage&&level==0&&Data.highestMission>=2?0:settings.UpgradeCost(kind,level);
-            if(Data.gold<cost) { Message=$"{cost-Data.gold} altın daha gerekli.";return false; }
+            if(Data.gold<cost) { Message=$"Need {cost-Data.gold} more gold.";return false; }
             var next=Copy();next.gold-=cost;next.weapons[weapon].Add(kind);return Commit(next);
         }
         public bool UpgradeCharacter(CharacterUpgrade kind)
         {
             int level=Data.CharacterLevel(kind);
-            if(level>=settings.characterCap) { Message="Maksimum seviyede.";return false; }
+            if(level>=settings.characterCap) { Message="Already at max level.";return false; }
             int price=settings.CharacterCost(kind,level);
-            if(Data.gold<price) { Message=$"{price-Data.gold} altın daha gerekli.";return false; }
+            if(Data.gold<price) { Message=$"Need {price-Data.gold} more gold.";return false; }
             var next=Copy();next.gold-=price;
             if(kind==CharacterUpgrade.Vitality)next.vitality++;else if(kind==CharacterUpgrade.Agility)next.agility++;else next.magnet++;
             return Commit(next);

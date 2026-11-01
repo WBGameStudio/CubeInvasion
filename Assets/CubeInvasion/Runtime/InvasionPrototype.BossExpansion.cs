@@ -16,11 +16,11 @@ namespace CubeInvasion.Prototype
         {
             get
             {
-                if(Mission.boss==BossIdentity.FurnaceKing)return stage==1?$"BOSS YAKININDA VARİL · {furnaceBarrels}/3":stage==2?"ATEŞ HALKASI · AÇILAN ÇEKİRDEĞİ VUR":"GÖVDEYİ YOK ET";
-                if(Mission.boss==BossIdentity.MotherboardHydra)return stage<3?"BAŞ DÜĞÜMLERİ · "+objectiveNodes.Count:stage==3?"ELEKTRİK SÜTUNLARI · "+objectiveNodes.Count:"ANA ÇEKİRDEĞİ YOK ET";
-                if(Mission.boss==BossIdentity.GlacierWarden)return stage==1?"BUZ KALKANINI KIR · "+objectiveNodes.Count:stage==2?"İKİ MİNYON DALGASINI BİTİR":"BUZ ÇEKİRDEĞİNİ YOK ET";
-                if(Mission.boss==BossIdentity.MagmaTitan)return stage==1?"TAŞ KOLU PARÇALA":stage==2?$"GÜVENLİ ALANDA KAL · {bossSafeTime:0.0}/2":stage==3?"ZAYIF NOKTALAR · "+objectiveNodes.Count:"TİTANI BİTİR";
-                return stage==1?"PORTALLARI KAPAT · "+objectiveNodes.Count:stage==2?"KLONLARI AYRIŞTIR · "+objectiveNodes.Count:stage==3?"ENERJİ KÜPLERİ · "+objectiveNodes.Count:"PARLAK ÇEKİRDEKLİ GERÇEK BOSSU VUR";
+                if(Mission.boss==BossIdentity.FurnaceKing)return stage==1?$"BARRELS NEAR BOSS · {furnaceBarrels}/3":stage==2?"RING OF FIRE · HIT THE OPEN CORE":"DESTROY THE BODY";
+                if(Mission.boss==BossIdentity.MotherboardHydra)return stage<3?"HEAD NODES · "+objectiveNodes.Count:stage==3?"ELECTRIC PYLONS · "+objectiveNodes.Count:"DESTROY THE MAIN CORE";
+                if(Mission.boss==BossIdentity.GlacierWarden)return stage==1?"BREAK THE ICE SHIELD · "+objectiveNodes.Count:stage==2?"CLEAR TWO MINION WAVES":"DESTROY THE ICE CORE";
+                if(Mission.boss==BossIdentity.MagmaTitan)return stage==1?"SMASH THE STONE ARM":stage==2?$"STAY IN THE SAFE ZONE · {bossSafeTime:0.0}/2":stage==3?"WEAK POINTS · "+objectiveNodes.Count:"FINISH THE TITAN";
+                return stage==1?"CLOSE THE PORTALS · "+objectiveNodes.Count:stage==2?"EXPOSE THE CLONES · "+objectiveNodes.Count:stage==3?"ENERGY CUBES · "+objectiveNodes.Count:"HIT THE REAL BOSS · BRIGHT CORE";
             }
         }
         void ClearExpandedBoss()
@@ -48,7 +48,7 @@ namespace CubeInvasion.Prototype
                 else
                 {
                     int count=Mission.boss==BossIdentity.MagmaTitan?(stage==3?4:1):Mission.boss==BossIdentity.VoidArchitect&&stage==3?3:2;
-                    for(int i=0;i<count;i++) {float a=(i+.5f)*Mathf.PI*2/count;SpawnObjectiveNode(i,centre+new Vector3(Mathf.Sin(a)*2.4f,.6f,1+Mathf.Cos(a)*1.7f),expandedBoss.maxHp/count,stage==1?"Faz kaynağı":"Enerji hedefi");}
+                    for(int i=0;i<count;i++) {float a=(i+.5f)*Mathf.PI*2/count;SpawnObjectiveNode(i,centre+new Vector3(Mathf.Sin(a)*2.4f,.6f,1+Mathf.Cos(a)*1.7f),expandedBoss.maxHp/count,stage==1?"Phase source":"Energy target");}
                 }
             }
             else if(Mission.boss==BossIdentity.VoidArchitect&&stage==4)

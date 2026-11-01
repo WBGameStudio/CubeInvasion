@@ -69,23 +69,23 @@ public static class P2ContentBuilder
         Debug.Log("CUBE_P2_CATALOG_OK");
     }
     static WeaponSpec[] Weapons()=>new[] {
-        new WeaponSpec {title="Pulse Pistol",description="Dengeli tek atış. Uzak hedeflerde güvenilir.",kind=ContentWeapon.PulsePistol,model="Pulse pistol",damage=6,interval=.5f,pellets=1,color=new Color(.1f,.8f,1)},
-        new WeaponSpec {title="Twin Blasters",description="İki namludan birlikte ateş. Orta mesafede yoğun hasar.",kind=ContentWeapon.TwinBlasters,model="Twin blasters",damage=3.5f,interval=.48f,pellets=2,spread=3,color=new Color(.45f,.5f,1)},
-        new WeaponSpec {title="Scatter Shot",description="Beş saçma, geniş açı. Yaklaşınca tek hedefte de etkili.",kind=ContentWeapon.ScatterShot,model="Scatter shot",damage=3,interval=.9f,pellets=5,spread=28,projectileLife=.32f,color=new Color(1,.63f,.18f)},
-        new WeaponSpec {title="Rapid SMG",description="Küçük mermiler, hızlı atış. Hareket ederek baskıyı sürdür.",kind=ContentWeapon.RapidSmg,model="Rapid smg",damage=2,interval=.14f,pellets=1,color=new Color(.25f,1,.62f)}
+        new WeaponSpec {title="Pulse Pistol",description="Balanced single shot. Reliable at long range.",kind=ContentWeapon.PulsePistol,model="Pulse pistol",damage=6,interval=.5f,pellets=1,color=new Color(.1f,.8f,1)},
+        new WeaponSpec {title="Twin Blasters",description="Twin barrels fire together. Heavy damage at mid range.",kind=ContentWeapon.TwinBlasters,model="Twin blasters",damage=3.5f,interval=.48f,pellets=2,spread=3,color=new Color(.45f,.5f,1)},
+        new WeaponSpec {title="Scatter Shot",description="Five pellets, wide spread. Deadly up close on one target.",kind=ContentWeapon.ScatterShot,model="Scatter shot",damage=3,interval=.9f,pellets=5,spread=28,projectileLife=.32f,color=new Color(1,.63f,.18f)},
+        new WeaponSpec {title="Rapid SMG",description="Small rounds, high fire rate. Keep moving, keep the pressure.",kind=ContentWeapon.RapidSmg,model="Rapid smg",damage=2,interval=.14f,pellets=1,color=new Color(.25f,1,.62f)}
     };
     static EncounterSpec Wave(bool cover,bool barrels,params ContentEnemy[] enemies)=>new EncounterSpec {cover=cover,barrels=barrels,enemies=enemies};
     static MissionSpec[] Missions()
     {
         var g=ContentEnemy.Grunt;var r=ContentEnemy.Sprinter;var a=ContentEnemy.Gunner;var p=ContentEnemy.Pusher;var s=ContentEnemy.Sniper;var b=ContentEnemy.Bruiser;var boss=ContentEnemy.Crusher;
         return new[] {
-            new MissionSpec {title="İlk Temas",description="İstilacıları temizle. Kapılar arasında canını ve gücünü yönet.",accent=new Color(.1f,.75f,.85f),cubes=new[]{Wave(false,false,g,g,g),Wave(false,false,g,g,r),Wave(false,false,g,r,r)}},
-            new MissionSpec {title="Neon Yard",description="Atıcıların serilerini oku. Siperler düşman mermilerini keser.",accent=new Color(.3f,.55f,1),cubes=new[]{Wave(true,false,g,g,a),Wave(false,true,g,r,r),Wave(true,true,g,g,a,a),Wave(true,false,r,r,a)}},
-            new MissionSpec {title="İtki Tesisi",description="İticinin turuncu konisinden çık; kenarlarda oyalanma.",accent=new Color(1,.56f,.2f),cubes=new[]{Wave(false,false,p,g,g),Wave(true,false,p,r,r),Wave(false,true,p,p,g),Wave(true,true,p,a,r)}},
-            new MissionSpec {title="Uzun Menzil",description="Lazer çizgisi sabitlenince yana kaç. Ezicilerin darbesine yaklaşma.",accent=new Color(.7f,.35f,1),cubes=new[]{Wave(true,false,s,g,g),Wave(false,true,b,r),Wave(true,false,s,s,a),Wave(false,true,b,p,r),Wave(true,true,s,b,g)}},
-            new MissionSpec {title="Son Hat",description="Üç tehdide kadar karışık karşılaşmalar. Her kapı aynı savaş aşamasına çıkar.",accent=new Color(.95f,.28f,.45f),cubes=new[]{Wave(true,true,a,a,r,r),Wave(false,true,b,p,g),Wave(true,false,s,a,g,g),Wave(false,true,b,r,r,p),Wave(true,true,b,s,p)}},
-            new MissionSpec {title="Gold Rush",description="Hedefleri öldürmek yetmez. Her küpün altın kotasını süre dolmadan topla.",mode=MissionMode.GoldRush,accent=new Color(1,.72f,.2f),cubes=new[]{new EncounterSpec {goldQuota=40,enemies=new[]{g,g}},new EncounterSpec {goldQuota=50,enemies=new[]{r,r,g}},new EncounterSpec {goldQuota=60,enemies=new[]{r,a},cover=true}}},
-            new MissionSpec {title="The Crusher",description="Zırh, silah sistemi, çekirdek: üç ayrı 20 saniyelik faz. Toplam boss canı kapılarda sıfırlanmaz.",mode=MissionMode.Boss,accent=new Color(1,.32f,.16f),cubes=new[]{Wave(false,false,boss,g),Wave(true,false,boss,r,r),Wave(false,true,boss,a,g)}}
+            new MissionSpec {title="First Contact",description="Clear the invaders. Manage your health and power between gates.",accent=new Color(.1f,.75f,.85f),cubes=new[]{Wave(false,false,g,g,g),Wave(false,false,g,g,r),Wave(false,false,g,r,r)}},
+            new MissionSpec {title="Neon Yard",description="Read the gunners' bursts. Cover blocks enemy shots.",accent=new Color(.3f,.55f,1),cubes=new[]{Wave(true,false,g,g,a),Wave(false,true,g,r,r),Wave(true,true,g,g,a,a),Wave(true,false,r,r,a)}},
+            new MissionSpec {title="Push Works",description="Get out of the pusher's orange cone; don't linger at the edges.",accent=new Color(1,.56f,.2f),cubes=new[]{Wave(false,false,p,g,g),Wave(true,false,p,r,r),Wave(false,true,p,p,g),Wave(true,true,p,a,r)}},
+            new MissionSpec {title="Long Range",description="Dodge sideways when the laser line locks. Keep clear of crusher slams.",accent=new Color(.7f,.35f,1),cubes=new[]{Wave(true,false,s,g,g),Wave(false,true,b,r),Wave(true,false,s,s,a),Wave(false,true,b,p,r),Wave(true,true,s,b,g)}},
+            new MissionSpec {title="Last Line",description="Mixed fights with up to three threats. Every gate leads to the same battle stage.",accent=new Color(.95f,.28f,.45f),cubes=new[]{Wave(true,true,a,a,r,r),Wave(false,true,b,p,g),Wave(true,false,s,a,g,g),Wave(false,true,b,r,r,p),Wave(true,true,b,s,p)}},
+            new MissionSpec {title="Gold Rush",description="Killing targets isn't enough. Hit each cube's gold quota before time runs out.",mode=MissionMode.GoldRush,accent=new Color(1,.72f,.2f),cubes=new[]{new EncounterSpec {goldQuota=40,enemies=new[]{g,g}},new EncounterSpec {goldQuota=50,enemies=new[]{r,r,g}},new EncounterSpec {goldQuota=60,enemies=new[]{r,a},cover=true}}},
+            new MissionSpec {title="The Crusher",description="Armor, weapon system, core: three separate 20s phases. Total boss health never resets at gates.",mode=MissionMode.Boss,accent=new Color(1,.32f,.16f),cubes=new[]{Wave(false,false,boss,g),Wave(true,false,boss,r,r),Wave(false,true,boss,a,g)}}
         };
     }
     static Material Paint(string name,Color color,bool glow=false)

@@ -144,9 +144,9 @@ namespace CubeInvasion.Prototype
             get
             {
                 if(!HasCrusherObjectives||crusherBoss==null)return null;
-                if(stage==1) {int left=0;foreach(float hp in crusherArmorHealth)if(hp>0)left++;return left>0?$"ZIRH · {left}/2 PANEL":"KALAN DESTEKLERİ TEMİZLE";}
-                if(stage==2)return $"KALKAN · {CrusherSupportLeft} DRONE";
-                return crusherBoss.hp>0?$"ÇEKİRDEK · {Mathf.CeilToInt(crusherBoss.hp)} CAN":"KALAN DESTEKLERİ TEMİZLE";
+                if(stage==1) {int left=0;foreach(float hp in crusherArmorHealth)if(hp>0)left++;return left>0?$"ARMOR · {left}/2 PANELS":"CLEAR REMAINING SUPPORTS";}
+                if(stage==2)return $"SHIELD · {CrusherSupportLeft} DRONES";
+                return crusherBoss.hp>0?$"CORE · {Mathf.CeilToInt(crusherBoss.hp)} HP":"CLEAR REMAINING SUPPORTS";
             }
         }
         void TickCrusherPush(Foe foe,float dt,Vector3 toward,float distance)

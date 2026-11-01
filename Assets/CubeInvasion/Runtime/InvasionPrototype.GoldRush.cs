@@ -11,7 +11,7 @@ namespace CubeInvasion.Prototype
         GoldCrate goldTarget;
         int goldCratesBroken,goldCarriersKilled,goldKeys;
         bool jackpotOpened;
-        const string GoldMissionDescription="3 KÜP · HER KÜP 20 sn\nAltın topla, 6 kasayı kır; son kapıda altın sürüsü veya jackpot seç.";
+        const string GoldMissionDescription="3 CUBES · 20 s EACH\nCollect gold, break 6 crates; pick gold swarm or jackpot at the last gate.";
         bool HasGoldRushVariants=>goldRushVariants&&goldRushVariants.enabled&&IsGoldRush;
         GoldRushVariant GoldVariant=>HasGoldRushVariants?(activeOffer!=null&&activeOffer.stage==stage?activeOffer.encounter.goldVariant:GoldRushVariantSettings.ForStage(stage,0)):GoldRushVariant.CoinSprint;
         bool HasAimTarget=>currentTarget!=null||goldTarget!=null||barrelTarget!=null;
@@ -87,7 +87,7 @@ namespace CubeInvasion.Prototype
             else {goldCratesBroken++;RecordValidation("gold_crate_broken",goldCratesBroken.ToString());}
         }
         bool GoldObjectiveComplete=>GoldVariant==GoldRushVariant.CrateBreaker?goldCratesBroken>=6:GoldVariant==GoldRushVariant.GoldenSwarm?goldCarriersKilled>=5:GoldVariant==GoldRushVariant.Jackpot?goldKeys==3&&jackpotOpened:quotaGold>=Encounter.goldQuota;
-        string GoldObjectiveText=>GoldVariant==GoldRushVariant.CrateBreaker?$"KASA KIR · {goldCratesBroken}/6":GoldVariant==GoldRushVariant.GoldenSwarm?$"ALTIN SÜRÜSÜ {goldCarriersKilled}/5":GoldVariant==GoldRushVariant.Jackpot?(goldKeys<3?$"ANAHTAR {goldKeys}/3":"SANDIĞI KIR"):$"ALTIN {quotaGold}/{Encounter.goldQuota}";
+        string GoldObjectiveText=>GoldVariant==GoldRushVariant.CrateBreaker?$"BREAK CRATES · {goldCratesBroken}/6":GoldVariant==GoldRushVariant.GoldenSwarm?$"GOLD SWARM {goldCarriersKilled}/5":GoldVariant==GoldRushVariant.Jackpot?(goldKeys<3?$"KEYS {goldKeys}/3":"BREAK THE CHEST"):$"GOLD {quotaGold}/{Encounter.goldQuota}";
         bool GoldSpawnBlocked(Vector3 at)
         {foreach(var crate in goldCrates)if(crate.body&&FlatDistance(at,crate.body.position)<.95f)return true;return false;}
         void FinishGoldObjectives(bool clear)

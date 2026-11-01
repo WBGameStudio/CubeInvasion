@@ -33,13 +33,13 @@ namespace CubeInvasion.Prototype
         {
             if(phase!=Phase.Loadout||index<0||index>=content.missions.Length)return;
             if(index<=profile.Data.highestMission&&!profile.Select(index,weaponIndex))metaNotice=profile.Message;
-            else { missionIndex=index;metaNotice=index>profile.Data.highestMission?"Bu görev için önceki bölümü tamamla.":null; }
+            else { missionIndex=index;metaNotice=index>profile.Data.highestMission?"Clear the previous chapter first.":null; }
             RefreshContentHud();
         }
         void UpgradePilot(CharacterUpgrade kind)
         {
             if(!HasMeta||phase!=Phase.Loadout)return;
-            if(profile.UpgradeCharacter(kind)) { wallet=profile.Data.gold;metaNotice="Scout geliştirmesi kaydedildi.";PlayMetaSuccess(false); }
+            if(profile.UpgradeCharacter(kind)) { wallet=profile.Data.gold;metaNotice="Scout upgrade saved.";PlayMetaSuccess(false); }
             else { metaNotice=profile.Message;feedback.Play(CombatFeedback.Cue.Denied); }
             RefreshContentHud();
         }

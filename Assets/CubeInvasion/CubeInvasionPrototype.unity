@@ -569,7 +569,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u2039  \xD6NCEK\u0130"
+  m_Text: "\u2039  PREV"
 --- !u!222 &15779832
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1170,8 +1170,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "Joystick ile hareket et. En yak\u0131n hedefe otomatik ate\u015F.\nK\xFCp
-    temizlenince g\xFC\xE7lendirme kap\u0131s\u0131ndan ge\xE7."
+  m_Text: "Move with the joystick. Auto-fire at the nearest target.\nClear the cube, then take a power-up gate."
 --- !u!222 &32873581
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1677,7 +1676,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "Bir d\xFC\u011F\xFCme dokun, g\xF6revini se\xE7."
+  m_Text: "Tap a node to pick your mission."
 --- !u!222 &52287686
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2066,7 +2065,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "K\u0130L\u0130T"
+  m_Text: "LOCKED"
 --- !u!222 &60521831
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2161,7 +2160,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Silahlar
+  m_Text: "Weapons"
 --- !u!222 &64602877
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2316,7 +2315,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "PULSE PISTOL A\xC7 \xB7 0 ALTIN"
+  m_Text: "UNLOCK PULSE PISTOL \xB7 0 GOLD"
 --- !u!222 &81449643
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2426,7 +2425,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "SEV\u0130YE 0/5\n4.50 \u2192 4.64 m/sn"
+  m_Text: "LEVEL 0/5\n4.50 \u2192 4.64 m/s"
 --- !u!222 &88877422
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3389,7 +3388,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "S\u0130LAHINI SE\xC7"
+  m_Text: "PICK YOUR WEAPON"
 --- !u!222 &146698940
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3821,7 +3820,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "K\xDCP 1/3"
+  m_Text: "CUBE 1/3"
 --- !u!222 &181245056
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3931,7 +3930,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "De\u011Fi\u015Ftir"
+  m_Text: "Change"
 --- !u!222 &186717122
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4011,7 +4010,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "HASAR 0/10\n6.0 \u2192 6.3\n35 ALTIN"
+  m_Text: "DAMAGE 0/10\n6.0 \u2192 6.3\n35 GOLD"
 --- !u!222 &187583762
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4736,7 +4735,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "B\xF6l\xFCm 1"
+  m_Text: "Chapter 1"
 --- !u!222 &222284973
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -5097,11 +5096,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'CAN  100
-
-    HIZ  4.50
-
-    ALAN  1.0 m'
+  m_Text: "HP  100\nSPD  4.50\nAREA  1.0 m"
 --- !u!222 &232726374
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -5577,7 +5572,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: OYNA
+  m_Text: "PLAY"
 --- !u!222 &274612979
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -5860,7 +5855,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: ALAN
+  m_Text: "AREA"
 --- !u!222 &287294950
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -5955,7 +5950,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "Ses a\xE7\u0131k"
+  m_Text: "Sound on"
 --- !u!222 &288389929
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6200,7 +6195,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "Titre\u015Fim"
+  m_Text: "Haptics"
 --- !u!222 &302626247
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6542,7 +6537,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Uzun Menzil
+  m_Text: "Long Range"
 --- !u!222 &306443730
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6637,7 +6632,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Son Hat
+  m_Text: "Last Line"
 --- !u!222 &307258170
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -7091,7 +7086,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: CAN
+  m_Text: "HP"
 --- !u!222 &324741365
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -7632,7 +7627,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: SES
+  m_Text: "SOUND"
 --- !u!222 &336535767
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -8364,9 +8359,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'RAPID SMG
-
-    600 ALTIN'
+  m_Text: "RAPID SMG\n600 GOLD"
 --- !u!222 &355006088
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -8476,7 +8469,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "MENZ\u0130L +%4 \xB7 30"
+  m_Text: "RANGE +4% \xB7 30"
 --- !u!222 &358908997
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -9002,7 +8995,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "S\u0130LAHI A\xC7  \xB7  0 ALTIN"
+  m_Text: "UNLOCK WEAPON  \xB7  0 GOLD"
 --- !u!222 &404046998
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -9265,9 +9258,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'SCATTER SHOT
-
-    350 ALTIN'
+  m_Text: "SCATTER SHOT\n350 GOLD"
 --- !u!222 &407412556
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -9631,7 +9622,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "SAN\u0130YE"
+  m_Text: "SECONDS"
 --- !u!222 &440962632
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -9931,7 +9922,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Yol
+  m_Text: "Path"
 --- !u!222 &455665396
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -10493,7 +10484,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Sessiz mod
+  m_Text: "Mute"
 --- !u!222 &486351847
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -11135,7 +11126,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: TEKRAR OYNA
+  m_Text: "PLAY AGAIN"
 --- !u!222 &552793576
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -11546,7 +11537,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "Kapal\u0131: pil dostu 30 FPS"
+  m_Text: "Off: battery-saving 30 FPS"
 --- !u!222 &569529562
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -12364,7 +12355,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "B\xF6l\xFCmler"
+  m_Text: "Chapters"
 --- !u!222 &623082702
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -12611,7 +12602,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: CAN 100
+  m_Text: "HP 100"
 --- !u!222 &647497816
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -12890,7 +12881,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "G\xD6REV / S\u0130LAH SE\xC7"
+  m_Text: "MISSION / WEAPON"
 --- !u!222 &650120188
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -13355,7 +13346,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "B\xF6l\xFCm yolu"
+  m_Text: "Chapter path"
 --- !u!222 &655954761
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -13792,7 +13783,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "B\xF6l\xFCm 1\u20137"
+  m_Text: "Chapter 1\u20137"
 --- !u!222 &673438023
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -14097,7 +14088,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "PULSE PISTOL\nSE\xC7\u0130L\u0130"
+  m_Text: "PULSE PISTOL\nSELECTED"
 --- !u!222 &684398663
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -14840,7 +14831,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u0130lk Temas"
+  m_Text: "First Contact"
 --- !u!222 &750719625
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -15178,7 +15169,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "01  \u0130lk Temas"
+  m_Text: "01  First Contact"
 --- !u!222 &759945151
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -15273,7 +15264,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "OYNA \xB7 1"
+  m_Text: "PLAY \xB7 1"
 --- !u!222 &760171996
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -15708,7 +15699,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "MENZ\u0130L 0/5\n18.0 \u2192 18.7\n30 ALTIN"
+  m_Text: "RANGE 0/5\n18.0 \u2192 18.7\n30 GOLD"
 --- !u!222 &780546781
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -15908,7 +15899,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "B\xD6L\xDCM 1 OYNA"
+  m_Text: "PLAY CHAPTER 1"
 --- !u!222 &800455487
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -16785,8 +16776,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1.3
-  m_Text: "3 k\xFCp \xB7 her k\xFCp 20 saniye\nKa\xE7arken seyrek, yava\u015Flarken
-    h\u0131zl\u0131 ate\u015F et"
+  m_Text: "3 cubes \xB7 20 s per cube\nFire slow on the run, fast when you ease off"
 --- !u!222 &884476057
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -16881,7 +16871,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "MENZ\u0130L   SV 0/5\nSonraki seviye +%4"
+  m_Text: "RANGE   LV 0/5\nNext level +4%"
 --- !u!222 &885741831
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -17443,7 +17433,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: DEVAM
+  m_Text: "CONTINUE"
 --- !u!222 &910606976
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -17523,7 +17513,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "KAYDI YEN\u0130DEN DENE"
+  m_Text: "RETRY SAVE"
 --- !u!222 &919347595
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -17783,7 +17773,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u0130lk Temas"
+  m_Text: "First Contact"
 --- !u!222 &923226467
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -19681,7 +19671,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "KU\u015EANILDI"
+  m_Text: "EQUIPPED"
 --- !u!222 &1024002162
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -19871,7 +19861,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "Her geli\u015Ftirme oyunda ger\xE7ek bir avantaj."
+  m_Text: "Every upgrade is a real in-game edge."
 --- !u!222 &1027573370
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -20254,7 +20244,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "SEV\u0130YE 0/5\n1.0 \u2192 1.2 m"
+  m_Text: "LEVEL 0/5\n1.0 \u2192 1.2 m"
 --- !u!222 &1062302616
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -20349,7 +20339,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "S\u0130LAH"
+  m_Text: "WEAPON"
 --- !u!222 &1068301612
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -20539,7 +20529,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "At\u0131\u015F h\u0131z\u0131"
+  m_Text: "Fire rate"
 --- !u!222 &1083730699
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -20709,7 +20699,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Ayarlar
+  m_Text: "Settings"
 --- !u!222 &1084550527
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -20804,7 +20794,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "T\xFCm y\xFCkseltmeler"
+  m_Text: "All upgrades"
 --- !u!222 &1085020258
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -21140,7 +21130,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u0130tki Tesisi"
+  m_Text: "Push Works"
 --- !u!222 &1105434583
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -21629,7 +21619,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "01 / \u0130lk Temas"
+  m_Text: "01 / First Contact"
 --- !u!222 &1119679695
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -21914,7 +21904,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "ATI\u015E HIZI 0/5\n2.0 \u2192 2.1\n50 ALTIN"
+  m_Text: "FIRE RATE 0/5\n2.0 \u2192 2.1\n50 GOLD"
 --- !u!222 &1141027991
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -22009,7 +21999,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "G\xD6REV SE\xC7\u0130M\u0130"
+  m_Text: "MISSION SELECT"
 --- !u!222 &1148537860
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -22119,7 +22109,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "Y\xFCkseltmeler"
+  m_Text: "Upgrades"
 --- !u!222 &1150440281
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -22199,7 +22189,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "SONRAK\u0130 G\xD6REV"
+  m_Text: "NEXT MISSION"
 --- !u!222 &1161196477
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -22479,7 +22469,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "K\xFCp avc\u0131s\u0131"
+  m_Text: "Cube hunter"
 --- !u!222 &1191813772
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -22724,7 +22714,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Hasar
+  m_Text: "Damage"
 --- !u!222 &1226469855
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -23086,7 +23076,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "Pulse Pistol\nDengeli tek at\u0131\u015F. Uzak hedeflerde g\xFCvenilir."
+  m_Text: "Pulse Pistol\nBalanced single shot. Reliable at long range."
 --- !u!222 &1262176746
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -23343,7 +23333,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "K\u0130L\u0130T"
+  m_Text: "LOCKED"
 --- !u!222 &1283712936
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -23438,7 +23428,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "K\u0130L\u0130T"
+  m_Text: "LOCKED"
 --- !u!222 &1293764107
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -23518,7 +23508,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: TEKRAR DENE
+  m_Text: "RETRY"
 --- !u!222 &1294132073
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -23950,7 +23940,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "G\xD6REVE BA\u015ELA"
+  m_Text: "START MISSION"
 --- !u!222 &1309805569
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -24250,7 +24240,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "K\u0130L\u0130T"
+  m_Text: "LOCKED"
 --- !u!222 &1320939020
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -25001,7 +24991,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 350 ALTIN
+  m_Text: "350 GOLD"
 --- !u!222 &1385573306
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -26245,7 +26235,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "SONRAK\u0130  \u203A"
+  m_Text: "NEXT  \u203A"
 --- !u!222 &1465831270
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -26780,8 +26770,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "SAVA\u015E \xB7 3 K\xDCP \xB7 HER K\xDCP 20 sn\n\u0130stilac\u0131lar\u0131
-    temizle. Kap\u0131lar aras\u0131nda can\u0131n\u0131 ve g\xFCc\xFCn\xFC y\xF6net."
+  m_Text: "BATTLE \xB7 3 CUBES \xB7 20 s EACH\nClear the invaders. Manage your health and power between gates."
 --- !u!222 &1512352555
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -26891,7 +26880,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: '%100'
+  m_Text: "100%"
 --- !u!222 &1515458378
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -26971,7 +26960,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: ALTIN 0
+  m_Text: "GOLD 0"
 --- !u!222 &1517792426
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -27775,9 +27764,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'TWIN BLASTERS
-
-    150 ALTIN'
+  m_Text: "TWIN BLASTERS\n150 GOLD"
 --- !u!222 &1533266619
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -28350,7 +28337,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "0 / 7 G\xD6REV"
+  m_Text: "0 / 7 MISSIONS"
 --- !u!222 &1568040656
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -28615,7 +28602,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: '%100'
+  m_Text: "100%"
 --- !u!222 &1586464858
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -29181,7 +29168,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: HIZ
+  m_Text: "SPD"
 --- !u!222 &1633803095
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -29276,7 +29263,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "Dengeli tek at\u0131\u015F. Uzak hedeflerde g\xFCvenilir."
+  m_Text: "Balanced single shot. Reliable at long range."
 --- !u!222 &1634408646
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -30094,9 +30081,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'HASAR   SV 0/10
-
-    Sonraki seviye +%5'
+  m_Text: "DAMAGE   LV 0/10\nNext level +5%"
 --- !u!222 &1673178605
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -30412,7 +30397,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "YA\u015EAM \xC7EK\u0130RDE\u011E\u0130"
+  m_Text: "LIFE CORE"
 --- !u!222 &1687091810
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -30492,7 +30477,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "DPS 12.0 \xB7 Menzil 18.0 m"
+  m_Text: "DPS 12.0 \xB7 Range 18.0 m"
 --- !u!222 &1689307953
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -30602,7 +30587,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "K\u0130L\u0130T"
+  m_Text: "LOCKED"
 --- !u!222 &1692706892
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -30772,7 +30757,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Efektler
+  m_Text: "SFX"
 --- !u!222 &1718810885
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -31264,7 +31249,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "HAREKET S\u0130STEM\u0130"
+  m_Text: "MOVE SYSTEM"
 --- !u!222 &1727011530
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -31685,7 +31670,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "T\xFCm sesleri kapat"
+  m_Text: "Mute all sounds"
 --- !u!222 &1745440007
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -32540,7 +32525,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "Darbe ve \xF6d\xFCl geri bildirimi"
+  m_Text: "Hit and reward feedback"
 --- !u!222 &1787310503
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -32845,7 +32830,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: ALTIN 0
+  m_Text: "GOLD 0"
 --- !u!222 &1818689877
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -33410,7 +33395,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "ODAK ATE\u015E\u0130"
+  m_Text: "FOCUS FIRE"
 --- !u!222 &1851927155
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -33580,7 +33565,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "Duraklat\u0131ld\u0131"
+  m_Text: "Paused"
 --- !u!222 &1859615763
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -33885,7 +33870,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: TOPLAMA ALANI
+  m_Text: "PICKUP RADIUS"
 --- !u!222 &1882516160
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -34727,7 +34712,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "DPS 12.0   /   MENZ\u0130L 18.0 m   \xB7   KU\u015EANILDI"
+  m_Text: "DPS 12.0   /   RANGE 18.0 m   \xB7   EQUIPPED"
 --- !u!222 &1943113853
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -35274,7 +35259,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "SEV\u0130YE 0/5\n100 \u2192 110 CAN"
+  m_Text: "LEVEL 0/5\n100 \u2192 110 HP"
 --- !u!222 &1963520407
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -35520,7 +35505,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "SES VE M\xDCZ\u0130K"
+  m_Text: "SOUND & MUSIC"
 --- !u!222 &1971397869
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -35695,7 +35680,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "KAYIT BEKL\u0130YOR"
+  m_Text: "SAVE PENDING"
 --- !u!222 &1979797332
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -35805,8 +35790,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "3 K\xDCP \xB7 HER K\xDCP 20 sn\nKa\xE7arken seyrek, yava\u015Flarken h\u0131zl\u0131
-    ate\u015F et. Siperin etraf\u0131ndan a\xE7\u0131 bul."
+  m_Text: "3 CUBES \xB7 20 s EACH\nFire slow on the run, fast when you ease off. Flank around cover."
 --- !u!222 &1981768878
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -36528,7 +36512,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "ATI\u015E HIZI   SV 0/5\nSonraki seviye +%4"
+  m_Text: "FIRE RATE   LV 0/5\nNext level +4%"
 --- !u!222 &2047207337
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -37096,7 +37080,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "Ses, titre\u015Fim ve kare h\u0131z\u0131."
+  m_Text: "Sound, haptics and frame rate."
 --- !u!222 &2069090717
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -37528,7 +37512,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "P\u0130LOT"
+  m_Text: "PILOT"
 --- !u!222 &2076818251
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -37623,7 +37607,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u0130lk Temas"
+  m_Text: "First Contact"
 --- !u!222 &2083537427
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -37718,7 +37702,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 600 ALTIN
+  m_Text: "600 GOLD"
 --- !u!222 &2090307841
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -37813,7 +37797,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 150 ALTIN
+  m_Text: "150 GOLD"
 --- !u!222 &2094311723
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -38078,7 +38062,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "M\xFCzik"
+  m_Text: "Music"
 --- !u!222 &2102127284
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -38248,7 +38232,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Menzil
+  m_Text: "Range"
 --- !u!222 &2104729305
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -38403,7 +38387,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "Kazan\u0131lan alt\u0131nla silah a\xE7abilir ve y\xFCkseltebilirsin."
+  m_Text: "Spend earned gold to unlock and upgrade weapons."
 --- !u!222 &2124798680
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -38513,7 +38497,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Kapat
+  m_Text: "Close"
 --- !u!222 &2127057687
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -38703,7 +38687,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "K\u0130L\u0130T"
+  m_Text: "LOCKED"
 --- !u!222 &2145595473
 CanvasRenderer:
   m_ObjectHideFlags: 0

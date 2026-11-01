@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d616d77a05e6455eb057ba7caec8acd, type: 3}
   m_Name: HealthRoute
   m_EditorClassIdentifier: Assembly-CSharp::CubeInvasion.Prototype.CubeRouteDefinition
-  title: "\u015Eifa"
+  title: "Heal"
   reward: 0
   value: 30
   duration: 2

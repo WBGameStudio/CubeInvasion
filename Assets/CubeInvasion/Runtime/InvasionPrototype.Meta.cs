@@ -48,8 +48,8 @@ namespace CubeInvasion.Prototype
             else if(profile.Data.run!=null&&!profile.Data.run.ended)
             {
                 var previous=profile.Data.run;
-                if(!profile.FailRun(previous.id,"Önceki oturum sonlandı",previous.kills,previous.seconds))BlockSave(ReloadProfile);
-                else metaNotice="Önceki denemenin tamamlanan küp altınları korundu.";
+                if(!profile.FailRun(previous.id,"Previous session ended",previous.kills,previous.seconds))BlockSave(ReloadProfile);
+                else metaNotice="Gold from cubes cleared last run was kept.";
             }
         }
         void ReloadProfile()
@@ -59,7 +59,7 @@ namespace CubeInvasion.Prototype
             RefreshContentHud();
         }
         void BlockSave(Action retry)
-        { retrySave=retry;phase=Phase.SaveBlocked;SetPaused(true);metaNotice=profile.Message??"Kayıt tamamlanamadı."; }
+        { retrySave=retry;phase=Phase.SaveBlocked;SetPaused(true);metaNotice=profile.Message??"Save failed."; }
         void RetrySave()
         {
             var retry=retrySave;if(retry==null)return;
@@ -69,7 +69,7 @@ namespace CubeInvasion.Prototype
         {
             if(!HasMeta)return true;
             if(index<0||index>=content.missions.Length||index>profile.Data.highestMission||(!profile.IsOwned(weaponIndex)||!profile.IsOwned(inspectedWeapon)))
-            { metaNotice="Önce önceki görevi tamamla ve açık bir silah seç.";RefreshContentHud();return false; }
+            { metaNotice="Finish the previous mission and pick an unlocked weapon.";RefreshContentHud();return false; }
             if(!profile.BeginRun(index,weaponIndex)) { metaNotice=profile.Message;RefreshContentHud();return false; }
             runVitality=profile.Data.vitality;runAgility=profile.Data.agility;runMagnet=profile.Data.magnet;
             runId=profile.Data.run.id;runSeconds=0;runKills=0;metaNotice=null;
@@ -94,7 +94,7 @@ namespace CubeInvasion.Prototype
             if(!HasMeta||phase!=Phase.Loadout)return;
             int previousGold=profile.Data.gold;
             if(profile.Unlock(inspectedWeapon))
-            { RecordEconomy("weapon_unlocked",null,previousGold-profile.Data.gold);weaponIndex=inspectedWeapon;wallet=profile.Data.gold;metaNotice="Silah açıldı.";PlayMetaSuccess(true); }
+            { RecordEconomy("weapon_unlocked",null,previousGold-profile.Data.gold);weaponIndex=inspectedWeapon;wallet=profile.Data.gold;metaNotice="Weapon unlocked.";PlayMetaSuccess(true); }
             else { metaNotice=profile.Message;feedback.Play(CombatFeedback.Cue.Denied); }
             RefreshContentHud();
         }
@@ -103,7 +103,7 @@ namespace CubeInvasion.Prototype
             if(!HasMeta||phase!=Phase.Loadout)return;
             int previousGold=profile.Data.gold;
             if(profile.Upgrade(inspectedWeapon,kind))
-            { RecordEconomy("weapon_upgraded",kind.ToString(),previousGold-profile.Data.gold);wallet=profile.Data.gold;metaNotice="Yükseltme kaydedildi.";PlayMetaSuccess(false); }
+            { RecordEconomy("weapon_upgraded",kind.ToString(),previousGold-profile.Data.gold);wallet=profile.Data.gold;metaNotice="Upgrade saved.";PlayMetaSuccess(false); }
             else { metaNotice=profile.Message;feedback.Play(CombatFeedback.Cue.Denied); }
             RefreshContentHud();
         }

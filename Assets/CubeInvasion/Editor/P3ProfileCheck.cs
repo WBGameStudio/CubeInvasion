@@ -47,7 +47,7 @@ public static class P3ProfileCheck
             int revision=store.Data.revision;
             Check(store.BankCube(run,1,9000,9,99,false)&&store.Data.revision==revision&&store.Data.gold==before+27,"Duplicate cube cannot re-award gold");
             Check(!store.BankCube(run,3,10,3,9,false),"Out-of-order cube cannot skip an encounter");
-            Check(store.FailRun(run,"Kenardan düştün",4,12)&&store.Data.lastResult.gold==27&&store.Data.lastResult.cubes==1,"Fail preserves only already banked cube earnings");
+            Check(store.FailRun(run,"You fell off the edge",4,12)&&store.Data.lastResult.gold==27&&store.Data.lastResult.cubes==1,"Fail preserves only already banked cube earnings");
             Check(store.Data.highestMission==0&&!store.Data.completed[0],"Failed attempt does not unlock next mission");
             Check(store.BeginRun(0,1)&&store.Data.run.id!=run,"Retry has a new transaction identity");run=store.Data.run.id;
             Check(!store.BankCube("stale-run",1,100,1,1,false),"Stale callbacks from prior attempts are rejected");

@@ -165,7 +165,7 @@ namespace CubeInvasion.Prototype
             centre=Vector3.zero; stage=1; health=100; remaining=20;
             wallet=PlayerPrefs.GetInt("CI.Wallet",0);
             platform=Arena(centre,false,cyan);
-            // KİP is authored at world scale; the Scout mesh relied on the body's squashed transform.
+            // KIP is authored at world scale; the Scout mesh relied on the body's squashed transform.
             bool rogue=artLibrary&&artLibrary.TryGet(HeroKey,out _);
             if(rogue)playerBody.localScale=Vector3.one;
             playerAnimation=AnimateActor(playerBody,player,rogue?HeroKey:"Armored body",playerVisor,gun);
@@ -251,7 +251,7 @@ namespace CubeInvasion.Prototype
             var label=new GameObject("Upgrade label").AddComponent<TextMesh>();
             label.transform.SetParent(root,false); label.transform.position=root.position+Vector3.up*2.6f;
             label.transform.rotation=view.transform.rotation;
-            label.text=HasBranches?"ÖNCE KÜPÜ TEMİZLE":RewardLabel(route); label.anchor=TextAnchor.MiddleCenter; label.alignment=TextAlignment.Center;
+            label.text=HasBranches?"CLEAR THE CUBE FIRST":RewardLabel(route); label.anchor=TextAnchor.MiddleCenter; label.alignment=TextAlignment.Center;
             label.fontSize=64; label.characterSize=.035f; label.color=Color.white;
             // Route cards carry the info during combat; the sign only appears once offers are revealed.
             if(IsBoss||HasBranches)label.GetComponent<Renderer>().enabled=false;
@@ -260,17 +260,17 @@ namespace CubeInvasion.Prototype
         }
         string RewardLabel(CubeRouteDefinition route)
         {
-            if(!route)return "ROTA";
+            if(!route)return "ROUTE";
             switch(route.reward)
             {
-                case RouteReward.Health:return $"+{route.value:0} CAN";
-                case RouteReward.Damage:return $"+%{route.value:0} HASAR\n{route.duration} KÜP";
-                case RouteReward.FireRate:return $"+%{route.value:0} ATIŞ\n{route.duration} KÜP";
-                case RouteReward.Shield:return $"{route.value:0} KALKAN\n1 KÜP";
-                case RouteReward.Gold:return $"TEMİZLE +{route.value:0} ALTIN";
-                case RouteReward.Elite:return $"ELİT · TEMİZLE +{route.value:0} ALTIN";
-                case RouteReward.Blast:return "2 VARİL · +%20 PATLAMA";
-                default:return $"+%{route.value:0} MIKNATIS\n{route.duration} KÜP";
+                case RouteReward.Health:return $"+{route.value:0} HP";
+                case RouteReward.Damage:return $"+{route.value:0}% DAMAGE\n{route.duration} CUBES";
+                case RouteReward.FireRate:return $"+{route.value:0}% FIRE RATE\n{route.duration} CUBES";
+                case RouteReward.Shield:return $"{route.value:0} SHIELD\n1 CUBE";
+                case RouteReward.Gold:return $"CLEAR +{route.value:0} GOLD";
+                case RouteReward.Elite:return $"ELITE · CLEAR +{route.value:0} GOLD";
+                case RouteReward.Blast:return "2 BARRELS · +20% BLAST";
+                default:return $"+{route.value:0}% MAGNET\n{route.duration} CUBES";
             }
         }
         bool InJoystickArea(Vector2 p) => p.y>Screen.height*.58f && p.x<Screen.width*.55f;
@@ -396,7 +396,7 @@ namespace CubeInvasion.Prototype
                 if(HasMeta)runSeconds+=dt;
                 invulnerability-=dt;
                 MovePlayer(stick,dt);
-                if(Mathf.Abs(player.position.x-centre.x)>ArenaHalfX || Mathf.Abs(player.position.z-centre.z)>Half) { Fail("Kenardan düştün",FailureKind.EdgeFall); return; }
+                if(Mathf.Abs(player.position.x-centre.x)>ArenaHalfX || Mathf.Abs(player.position.z-centre.z)>Half) { Fail("You fell off the edge",FailureKind.EdgeFall); return; }
                 TickExpandedArena(dt);
                 if(phase!=Phase.Combat)return;
                 TickEnemies(dt);
@@ -406,11 +406,11 @@ namespace CubeInvasion.Prototype
                 TickPulses(dt);
                 TickWorldFeel(dt);
                 if(phase!=Phase.Combat)return;
-                if(Mathf.Abs(player.position.x-centre.x)>ArenaHalfX || Mathf.Abs(player.position.z-centre.z)>Half) { Fail("Kenardan düştün",FailureKind.EdgeFall); return; }
+                if(Mathf.Abs(player.position.x-centre.x)>ArenaHalfX || Mathf.Abs(player.position.z-centre.z)>Half) { Fail("You fell off the edge",FailureKind.EdgeFall); return; }
                 // Resolve valid damage before timeout, using only the frame's remaining combat time.
                 remaining=clock.Remaining;
                 var outcome=clock.Resolve(ObjectiveComplete);if(outcome==CubeOutcome.Cleared)Clear();
-                else if(outcome==CubeOutcome.Timeout)Fail("20 saniye doldu",FailureKind.Timeout);
+                else if(outcome==CubeOutcome.Timeout)Fail("Time's up (20 s)",FailureKind.Timeout);
             }
             else if(phase==Phase.Choice)
             {
@@ -596,24 +596,24 @@ namespace CubeInvasion.Prototype
             GUI.Box(new Rect(16,20,448,110),GUIContent.none);
             GUI.Label(new Rect(20,25,440,24),"CUBE INVASION   /   NEON YARD",smallStyle);
             GUI.contentColor=remaining<=5?danger:Color.white;
-            GUI.Label(new Rect(20,48,440,42),remaining.ToString("00.0")+" sn",titleStyle); GUI.contentColor=Color.white;
-            GUI.Label(new Rect(20,93,440,28),$"KÜP {stage}/3   •   {foes.Count} HEDEF   •   CAN {health:0}   •   ALTIN {wallet}",smallStyle);
-            if(GUI.Button(new Rect(380,138,80,35),paused?"DEVAM":"DURAKLAT",smallStyle)) paused=!paused;
-            if(damageCubes>0) GUI.Label(new Rect(10,140,280,30),$"HASAR +%{damageBonus*100:0}  /  {damageCubes} küp",smallStyle);
+            GUI.Label(new Rect(20,48,440,42),remaining.ToString("00.0")+" s",titleStyle); GUI.contentColor=Color.white;
+            GUI.Label(new Rect(20,93,440,28),$"CUBE {stage}/3   •   {foes.Count} TARGETS   •   HP {health:0}   •   GOLD {wallet}",smallStyle);
+            if(GUI.Button(new Rect(380,138,80,35),paused?"RESUME":"PAUSE",smallStyle)) paused=!paused;
+            if(damageCubes>0) GUI.Label(new Rect(10,140,280,30),$"DAMAGE +{damageBonus*100:0}%  /  {damageCubes} cubes",smallStyle);
             if(phase==Phase.Choice)
             {
-                GUI.Label(new Rect(20,180,440,55),"KÜP TEMİZLENDİ\nGüçlendirme almak için bir kapıdan geç",labelStyle);
+                GUI.Label(new Rect(20,180,440,55),"CUBE CLEARED\nWalk through a gate for a power-up",labelStyle);
             }
             if(phase==Phase.Failed||phase==Phase.Won)
             {
                 GUI.Box(new Rect(30,h*.36f,420,185),GUIContent.none);
-                GUI.Label(new Rect(30,h*.36f+15,420,45),phase==Phase.Won?"BÖLÜM TAMAMLANDI":"LEVEL FAIL",titleStyle);
-                GUI.Label(new Rect(30,h*.36f+65,420,30),phase==Phase.Won?"3 küp temizlendi. Altın bankalandı.":reason,labelStyle);
-                if(GUI.Button(new Rect(85,h*.36f+115,310,50),"TEKRAR OYNA",buttonStyle))
+                GUI.Label(new Rect(30,h*.36f+15,420,45),phase==Phase.Won?"CHAPTER COMPLETE":"LEVEL FAIL",titleStyle);
+                GUI.Label(new Rect(30,h*.36f+65,420,30),phase==Phase.Won?"3 cubes cleared. Gold banked.":reason,labelStyle);
+                if(GUI.Button(new Rect(85,h*.36f+115,310,50),"PLAY AGAIN",buttonStyle))
                     UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
             }
-            if(paused) GUI.Label(new Rect(20,h*.25f,440,45),"DURAKLATILDI",titleStyle);
-            GUI.Label(new Rect(15,h-60,450,45),"WASD / Ok tuşları veya sol alanda sürükle\nBaktığın yöne otomatik ateş · Kapıdan geç, güçlen",smallStyle);
+            if(paused) GUI.Label(new Rect(20,h*.25f,440,45),"PAUSED",titleStyle);
+            GUI.Label(new Rect(15,h-60,450,45),"WASD / Arrow keys or drag on the left\nAuto-fire where you face · Pass a gate, power up",smallStyle);
             DrawJoystick(scale,h);
         }
         void DrawJoystick(float scale,float h)

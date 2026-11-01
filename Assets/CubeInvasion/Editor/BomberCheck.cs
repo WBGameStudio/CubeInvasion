@@ -53,7 +53,7 @@ public static class BomberCheck
                 // Completion must not add mandatory corpse-fuse time to the 20s budget.
                 RemoveAll();bomber=Spawn(ContentEnemy.Bomber,new Vector3(0,.6f,0));Set("remaining",.1f);Hit(bomber,1000);Check((bool)Prop("ObjectiveComplete"),"Last bomber death immediately satisfies elimination goal");Call("TickDeathCharges",.01f);Check(((IList)Get("deathCharges")).Count==0,"Successful objective cancels harmful post-clear charge");Call("Clear");Check(Get("phase").ToString()=="Choice","Final kill at deadline clears without waiting for corpse");
                 Fresh();RemoveAll();bomber=Spawn(ContentEnemy.Bomber,new Vector3(0,.6f,0));Spawn(ContentEnemy.Bruiser,new Vector3(3,.6f,3));Hit(bomber,1000);int bank=(int)Get("wallet");Call("Fail","TEST TIMEOUT",Enum.Parse(typeof(InvasionPrototype).GetNestedType("FailureKind",BindingFlags.NonPublic),"Timeout"));Check(((IList)Get("deathCharges")).Count==0&&(int)Get("wallet")==bank,"Failure cancels charges and does not bank unfinished drops");
-                Fresh();var mission=(MissionSpec)Prop("Mission");Check(mission.cubes[1].enemies[0]==ContentEnemy.Bomber&&mission.cubes[1].enemies[2]==ContentEnemy.Bruiser,"Son Hat includes two Bombers plus Bruiser at second cube");
+                Fresh();var mission=(MissionSpec)Prop("Mission");Check(mission.cubes[1].enemies[0]==ContentEnemy.Bomber&&mission.cubes[1].enemies[2]==ContentEnemy.Bruiser,"Last Line includes two Bombers plus Bruiser at second cube");
                 foreach(var foe in new ArrayList((IList)Get("foes")))Hit(foe,1000);Call("Clear");Call("SetPaused",false);step=1;return;
             }
             if(step==1)
@@ -70,7 +70,7 @@ public static class BomberCheck
                 if(Get("phase").ToString()=="Transfer")return;Call("SetPaused",true);
                 if((int)Get("stage")==3) {bool found=false;foreach(var foe in (IList)Get("foes"))if(Item(foe,"kind").ToString()=="Bomber")found=true;Check(found,"Second bomber encounter survives the other gate direction");}
                 foreach(var foe in new ArrayList((IList)Get("foes")))Hit(foe,1000);Call("Clear");Check(((IList)Get("deathCharges")).Count==0,"Cleared cubes leave no armed charges");
-                if(Get("phase").ToString()=="Won") {Check((int)Get("stage")==5,"Expanded Son Hat completes with original five-cube length");Finish(0);return;}
+                if(Get("phase").ToString()=="Won") {Check((int)Get("stage")==5,"Expanded Last Line completes with original five-cube length");Finish(0);return;}
                 Call("SetPaused",false);step=3;
             }
         }

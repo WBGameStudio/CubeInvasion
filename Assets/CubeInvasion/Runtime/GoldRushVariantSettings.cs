@@ -15,6 +15,6 @@ namespace CubeInvasion.Prototype
             if(variant==GoldRushVariant.Jackpot) {var guards=new ContentEnemy[3];for(int i=0;i<3;i++)guards[i]=i<source.Length?source[i]:ContentEnemy.Grunt;return guards;}
             return source;
         }
-        public static string Name(GoldRushVariant variant)=>variant==GoldRushVariant.CrateBreaker?"6 KASA":variant==GoldRushVariant.GoldenSwarm?"ALTIN SÜRÜSÜ":variant==GoldRushVariant.Jackpot?"JACKPOT":"ALTIN TOPLA";
+        public static string Name(GoldRushVariant variant)=>variant==GoldRushVariant.CrateBreaker?"6 CRATES":variant==GoldRushVariant.GoldenSwarm?"GOLD SWARM":variant==GoldRushVariant.Jackpot?"JACKPOT":"COLLECT GOLD";
     }
 }

@@ -110,10 +110,10 @@ namespace CubeInvasion.Prototype
             if(cachedBuffText!=null&&cachedDamage==damageCubes&&cachedRate==routeRateCubes&&cachedMagnet==routeMagnetCubes&&cachedBonus==bonus)return cachedBuffText;
             cachedDamage=damageCubes;cachedRate=routeRateCubes;cachedMagnet=routeMagnetCubes;cachedBonus=bonus;
             var text=new List<string>(4);
-            if(damageCubes>0)text.Add($"HASAR +%{damageBonus*100:0} ({damageCubes})");
-            if(routeRateCubes>0)text.Add($"ATIŞ +%{RouteRate*100:0} ({routeRateCubes})");
-            if(routeMagnetCubes>0)text.Add($"MIKNATIS +%{RouteMagnet*100:0} ({routeMagnetCubes})");
-            if(phase==Phase.Combat&&RouteClearBonus>0)text.Add($"TEMİZLE +{RouteClearBonus} ALTIN");
+            if(damageCubes>0)text.Add($"DAMAGE +{damageBonus*100:0}% ({damageCubes})");
+            if(routeRateCubes>0)text.Add($"FIRE RATE +{RouteRate*100:0}% ({routeRateCubes})");
+            if(routeMagnetCubes>0)text.Add($"MAGNET +{RouteMagnet*100:0}% ({routeMagnetCubes})");
+            if(phase==Phase.Combat&&RouteClearBonus>0)text.Add($"CLEAR +{RouteClearBonus} GOLD");
             return cachedBuffText=string.Join(" · ",text);
         }
         void RefreshRouteHud()

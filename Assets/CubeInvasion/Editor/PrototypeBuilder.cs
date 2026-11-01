@@ -9,8 +9,8 @@ public static class PrototypeBuilder
     public static void Build()
     {
         const string folder="Assets/CubeInvasion";
-        var right=Route(folder+"/HealthRoute.asset", "Şifa",RouteReward.Health,30,3,0);
-        var forward=Route(folder+"/DamageRoute.asset", "Cephanelik",RouteReward.Damage,15,2,1);
+        var right=Route(folder+"/HealthRoute.asset", "Heal",RouteReward.Health,30,3,0);
+        var forward=Route(folder+"/DamageRoute.asset", "Arsenal",RouteReward.Damage,15,2,1);
         var scene=EditorSceneManager.NewScene(NewSceneSetup.EmptyScene,NewSceneMode.Single);
         var runtime=new GameObject("Cube Invasion P0").AddComponent<InvasionPrototype>();
         runtime.rightRoute=right; runtime.forwardRoute=forward;

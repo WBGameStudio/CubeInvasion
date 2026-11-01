@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CubeInvasion.Prototype.P2ContentCatalog
   weapons:
   - title: Pulse Pistol
-    description: "Dengeli tek at\u0131\u015F. Uzak hedeflerde g\xFCvenilir."
+    description: "Balanced single shot. Reliable at long range."
     model: Pulse pistol
     kind: 0
     damage: 6
@@ -24,8 +24,7 @@ MonoBehaviour:
     spread: 0
     color: {r: 0.1, g: 0.8, b: 1, a: 1}
   - title: Twin Blasters
-    description: "\u0130ki namludan birlikte ate\u015F. Orta mesafede yo\u011Fun
-      hasar."
+    description: "Twin barrels fire together. Heavy damage at mid range."
     model: Twin blasters
     kind: 1
     damage: 3.5
@@ -35,8 +34,7 @@ MonoBehaviour:
     spread: 3
     color: {r: 0.45, g: 0.5, b: 1, a: 1}
   - title: Scatter Shot
-    description: "Be\u015F sa\xE7ma, geni\u015F a\xE7\u0131. Yakla\u015F\u0131nca
-      tek hedefte de etkili."
+    description: "Five pellets, wide spread. Deadly up close on one target."
     model: Scatter shot
     kind: 2
     damage: 3
@@ -46,8 +44,7 @@ MonoBehaviour:
     spread: 28
     color: {r: 1, g: 0.63, b: 0.18, a: 1}
   - title: Rapid SMG
-    description: "K\xFC\xE7\xFCk mermiler, h\u0131zl\u0131 at\u0131\u015F. Hareket
-      ederek bask\u0131y\u0131 s\xFCrd\xFCr."
+    description: "Small rounds, high fire rate. Keep moving, keep the pressure."
     model: Rapid smg
     kind: 3
     damage: 2
@@ -57,9 +54,8 @@ MonoBehaviour:
     spread: 0
     color: {r: 0.25, g: 1, b: 0.62, a: 1}
   missions:
-  - title: "\u0130lk Temas"
-    description: "Ka\xE7arken seyrek, yava\u015Flarken h\u0131zl\u0131 ate\u015F
-      et. Siperin etraf\u0131ndan a\xE7\u0131 bul."
+  - title: "First Contact"
+    description: "Fire slow on the run, fast when you ease off. Flank around cover."
     mode: 0
     accent: {r: 0.1, g: 0.75, b: 0.85, a: 1}
     cubes:
@@ -85,8 +81,7 @@ MonoBehaviour:
       healOffset: {x: 2.7, y: 1.7}
       goldQuota: 30
   - title: Neon Yard
-    description: "Siper iki taraf\u0131n mermisini de durdurur. Yak\u0131n ve uzak
-      tehditleri birlikte y\xF6net."
+    description: "Cover blocks shots from both sides. Juggle near and far threats."
     mode: 0
     accent: {r: 0.3, g: 0.55, b: 1, a: 1}
     cubes:
@@ -118,8 +113,8 @@ MonoBehaviour:
       coverOffset: {x: 0.65, y: 0.55}
       healOffset: {x: -2.7, y: 1.7}
       goldQuota: 30
-  - title: "\u0130tki Tesisi"
-    description: "\u0130ticinin turuncu konisinden \xE7\u0131k; kenarlarda oyalanma."
+  - title: "Push Works"
+    description: "Get out of the pusher's orange cone; don't linger at the edges."
     mode: 0
     accent: {r: 1, g: 0.56, b: 0.2, a: 1}
     cubes:
@@ -151,9 +146,8 @@ MonoBehaviour:
       coverOffset: {x: 0.65, y: 0.55}
       healOffset: {x: -2.7, y: 1.7}
       goldQuota: 30
-  - title: Uzun Menzil
-    description: "Lazer \xE7izgisi sabitlenince yana ka\xE7. Ezicilerin darbesine
-      yakla\u015Fma."
+  - title: "Long Range"
+    description: "Dodge sideways when the laser line locks. Keep clear of crusher slams."
     mode: 0
     accent: {r: 0.7, g: 0.35, b: 1, a: 1}
     cubes:
@@ -192,9 +186,8 @@ MonoBehaviour:
       coverOffset: {x: -0.65, y: 0.75}
       healOffset: {x: 2.7, y: 1.7}
       goldQuota: 30
-  - title: Son Hat
-    description: "\xC7apraz ate\u015F ve yak\u0131n d\xF6v\xFC\u015F bask\u0131s\u0131.
-      G\xFCvenli at\u0131\u015F aral\u0131klar\u0131 yarat."
+  - title: "Last Line"
+    description: "Crossfire and melee pressure. Make safe windows to shoot."
     mode: 0
     accent: {r: 0.95, g: 0.28, b: 0.45, a: 1}
     cubes:
@@ -234,8 +227,7 @@ MonoBehaviour:
       healOffset: {x: 2.7, y: 1.7}
       goldQuota: 30
   - title: Gold Rush
-    description: "Hedefleri \xF6ld\xFCrmek yetmez. Her k\xFCp\xFCn alt\u0131n kotas\u0131n\u0131
-      s\xFCre dolmadan topla."
+    description: "Killing targets isn't enough. Hit each cube's gold quota before time runs out."
     mode: 1
     accent: {r: 1, g: 0.72, b: 0.2, a: 1}
     cubes:
@@ -261,8 +253,7 @@ MonoBehaviour:
       healOffset: {x: 2.7, y: 1.7}
       goldQuota: 60
   - title: The Crusher
-    description: "Z\u0131rh, silah sistemi, \xE7ekirdek: \xFC\xE7 ayr\u0131 20 saniyelik
-      faz. Toplam boss can\u0131 kap\u0131larda s\u0131f\u0131rlanmaz."
+    description: "Armor, weapon system, core: three separate 20s phases. Total boss health never resets at gates."
     mode: 2
     accent: {r: 1, g: 0.32, b: 0.16, a: 1}
     cubes:

@@ -45,7 +45,7 @@ namespace CubeInvasion.Prototype
             if(Mission.special==SpecialRule.HealingStop) {SpawnPickup(centre+new Vector3(-2.3f,.45f,0),true,20);SpawnPickup(centre+new Vector3(2.3f,.45f,0),true,20);}
             if(missionIndex>=7&&(missionIndex+stage)%3==0)SpawnSpecialPickup(centre+new Vector3(-2,.45f,-.3f),true);
             if(missionIndex>=7&&(missionIndex+stage)%4==0)SpawnSpecialPickup(centre+new Vector3(2,.45f,-.3f),false);
-            if(Mission.special==SpecialRule.ChainReactor)for(int i=0;i<3;i++)SpawnObjectiveNode(i,centre+new Vector3((i-1)*2.4f,.6f,2.7f),12,"Enerji düğümü");
+            if(Mission.special==SpecialRule.ChainReactor)for(int i=0;i<3;i++)SpawnObjectiveNode(i,centre+new Vector3((i-1)*2.4f,.6f,2.7f),12,"Energy node");
 
         }
         void SetArenaWidth(Transform arena,float width)
@@ -137,9 +137,9 @@ namespace CubeInvasion.Prototype
         string ExpandedObjectiveText(string fallback)
         {
             if(HasExpandedBoss)return ExpandedBossObjective;
-            if(Mission.special==SpecialRule.ChainReactor)return "ENERJİ DÜĞÜMLERİ · "+nextObjectiveNode+"/3";
-            if(survivalWavePending)return "SON DALGA GELİYOR · "+Mathf.CeilToInt(4-specialClock);
-            return fallback+(temporaryAmp>0?" · HASAR +%30":"")+(temporaryMagnet>0?" · MIKNATIS":"");
+            if(Mission.special==SpecialRule.ChainReactor)return "ENERGY NODES · "+nextObjectiveNode+"/3";
+            if(survivalWavePending)return "FINAL WAVE IN · "+Mathf.CeilToInt(4-specialClock);
+            return fallback+(temporaryAmp>0?" · DAMAGE +30%":"")+(temporaryMagnet>0?" · MAGNET":"");
         }
     }
 }

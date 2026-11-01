@@ -11,7 +11,7 @@ namespace CubeInvasion.Prototype
         public readonly float expectedSeconds;
         public RouteOffer(CubeRouteDefinition reward,EncounterSpec encounter,int stage,int seed,int eliteIndex,float expectedSeconds)
         {this.reward=reward;this.encounter=encounter;this.stage=stage;this.seed=seed;this.eliteIndex=eliteIndex;this.expectedSeconds=expectedSeconds;}
-        public string Summary=>$"{reward.reward} / R{reward.risk} / {encounter.enemies.Length} hedef / küp {stage}"+(encounter.goldVariant==GoldRushVariant.CoinSprint?"":" / "+encounter.goldVariant);
+        public string Summary=>$"{reward.reward} / R{reward.risk} / {encounter.enemies.Length} targets / cube {stage}"+(encounter.goldVariant==GoldRushVariant.CoinSprint?"":" / "+encounter.goldVariant);
     }
     public static class RouteDirector
     {

@@ -2,7 +2,7 @@ using UnityEngine;
 using CubeInvasion.Prototype;
 using CubeInvasion.ArtTools;
 
-// KİP, the "Rogue cube" player hero (Documentation/RogueCube_Hero_Brief_TR.md): a cream factory cube that
+// KIP, the "Rogue cube" player hero (Documentation/RogueCube_Hero_Brief_TR.md): a cream factory cube that
 // changed sides. The body is the head; screen-face, cyan scarf, antenna and two stubby legs carry the read.
 public static partial class VoidToyArtGeometry
 {

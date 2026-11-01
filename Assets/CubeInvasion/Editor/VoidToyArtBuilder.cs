@@ -19,7 +19,7 @@ public static class VoidToyArtBuilder
     public static string Prefab(string key)=>Root+"/Prefabs/"+Slug(key)+".prefab";
     static IEnumerable<string> Keys=>VoidToyArtGeometry.Actors.Concat(VoidToyArtGeometry.Weapons).Concat(VoidToyArtGeometry.Props)
         .Concat(VoidToyArtGeometry.ExpansionActors).Concat(VoidToyArtGeometry.ExpansionWeapons).Append("Frozen patch").Append(VoidToyArtGeometry.Hero);
-    // Loaded at runtime (Resources.Load "RogueCubeFaces") to swap KİP's screen-face expressions.
+    // Loaded at runtime (Resources.Load "RogueCubeFaces") to swap KIP's screen-face expressions.
     public const string HeroFacesPath="Assets/CubeInvasion/Resources/RogueCubeFaces.asset";
     const string PresentationPath="Assets/CubeInvasion/Resources/CampaignPresentation.asset",ExpansionBackupPath=Root+"/ExpansionArtBackup.asset";
     public static bool IsActive(ToyArtLibrary.Model model)=>model!=null&&model.mesh&&AssetDatabase.GetAssetPath(model.mesh).StartsWith(Root+"/");
@@ -70,7 +70,7 @@ public static class VoidToyArtBuilder
         Debug.Log("CUBE_VOIDTOY_ASSETS_OK: "+Keys.Count(VoidToyArtGeometry.Actor)+" articulated actors, "+Keys.Count(VoidToyArtGeometry.Weapon)+" weapons and "+Keys.Count(k=>!VoidToyArtGeometry.Actor(k)&&!VoidToyArtGeometry.Weapon(k))+" props / tiles in "+Root);
         return snapshot;
     }
-    // KİP expression variants: one entry per expression, rig = LeftEye / RightEye / Mouth meshes on the default face pivots.
+    // KIP expression variants: one entry per expression, rig = LeftEye / RightEye / Mouth meshes on the default face pivots.
     static void BuildHeroFaces()
     {
         var faces=AssetDatabase.LoadAssetAtPath<ToyArtLibrary>(HeroFacesPath);if(!faces) {faces=ScriptableObject.CreateInstance<ToyArtLibrary>();AssetDatabase.CreateAsset(faces,HeroFacesPath);}

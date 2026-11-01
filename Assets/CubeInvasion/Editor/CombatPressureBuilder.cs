@@ -45,9 +45,9 @@ public static class CombatPressureBuilder
                     cube.healOffset=new Vector2(c%2==0?2.7f:-2.7f,1.7f);
                 }
             }
-            catalog.missions[0].description="Kaçarken seyrek, yavaşlarken hızlı ateş et. Siperin etrafından açı bul.";
-            catalog.missions[1].description="Siper iki tarafın mermisini de durdurur. Yakın ve uzak tehditleri birlikte yönet.";
-            catalog.missions[4].description="Çapraz ateş ve yakın dövüş baskısı. Güvenli atış aralıkları yarat.";
+            catalog.missions[0].description="Fire slowly on the run, fast when you slow down. Find angles around cover.";
+            catalog.missions[1].description="Cover stops shots from both sides. Juggle close and far threats together.";
+            catalog.missions[4].description="Crossfire and melee pressure. Create safe windows to shoot.";
             catalog.pressureRevision=2;EditorUtility.SetDirty(catalog);
         }
         var hud=(MobileCombatHud)data.FindProperty("hud").objectReferenceValue;
@@ -57,7 +57,7 @@ public static class CombatPressureBuilder
         {
             var obj=new GameObject("Fire rhythm",typeof(RectTransform),typeof(CanvasRenderer),typeof(Text));obj.transform.SetParent(hud.SafeRoot,false);
             var rect=obj.GetComponent<RectTransform>();rect.anchorMin=rect.anchorMax=Vector2.zero;rect.pivot=new Vector2(.5f,0);rect.anchoredPosition=new Vector2(110,214);rect.sizeDelta=new Vector2(208,42);
-            label=obj.GetComponent<Text>();label.font=hud.SafeRoot.GetComponentInChildren<Text>(true).font;label.fontSize=15;label.fontStyle=FontStyle.Bold;label.alignment=TextAnchor.MiddleCenter;label.raycastTarget=false;label.color=new Color(.35f,1,.8f);label.text="ODAK ATEŞİ";
+            label=obj.GetComponent<Text>();label.font=hud.SafeRoot.GetComponentInChildren<Text>(true).font;label.fontSize=15;label.fontStyle=FontStyle.Bold;label.alignment=TextAnchor.MiddleCenter;label.raycastTarget=false;label.color=new Color(.35f,1,.8f);label.text="FOCUS FIRE";
         }
         var outline=label.GetComponent<Outline>();if(!outline)outline=label.gameObject.AddComponent<Outline>();
         outline.effectColor=new Color(.015f,.055f,.09f,.95f);outline.effectDistance=new Vector2(1.2f,-1.2f);outline.useGraphicAlpha=true;

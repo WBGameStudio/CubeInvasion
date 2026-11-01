@@ -15,7 +15,7 @@ namespace CubeInvasion.Prototype
         public void SetRouteStatus(string text,float shield)
         {
             if(!buffText)return;
-            buffText.text=shield>0?(string.IsNullOrEmpty(text)?"":text+" · ")+$"KALKAN {shield:0}":text;
+            buffText.text=shield>0?(string.IsNullOrEmpty(text)?"":text+" · ")+$"SHIELD {shield:0}":text;
             buffText.resizeTextForBestFit=true;buffText.resizeTextMinSize=12;buffText.resizeTextMaxSize=17;
         }
         [SerializeField] Text timer, status, healthLabel, gold, hint, resultTitle, resultDetail, pauseText, soundText, buffText;
@@ -45,7 +45,7 @@ namespace CubeInvasion.Prototype
         public void SetCampaignMode(bool value) { campaignMode=value; }
         public void SetMissionInfo(int stage,int total,string objective,bool suppressHint=false)
         {
-            status.text=$"KÜP {stage}/{total}";cubeTotal=total;ShowCubeDots(stage);
+            status.text=$"CUBE {stage}/{total}";cubeTotal=total;ShowCubeDots(stage);
             if(objectiveText)objectiveText.text=objective;else status.text+="\n"+objective;
             if(suppressHint)hint.text="";
         }
@@ -75,13 +75,13 @@ namespace CubeInvasion.Prototype
             SafeRoot=Rect("Safe area",transform,Vector2.zero,Vector2.one,Vector2.zero,Vector2.zero);
             var top=Panel("Combat header",SafeRoot,new Vector2(0,1),new Vector2(1,1),new Vector2(16,-144),new Vector2(-16,-12),navy);
             timer=Label("Timer",top,"20.0",42,TextAnchor.MiddleLeft,new Vector2(18,-70),new Vector2(190,-12));
-            status=Label("Objectives",top,"KÜP 1/3",17,TextAnchor.UpperRight,new Vector2(210,-65),new Vector2(-18,-18));
+            status=Label("Objectives",top,"CUBE 1/3",17,TextAnchor.UpperRight,new Vector2(210,-65),new Vector2(-18,-18));
             gold=Label("Gold",top,"0",16,TextAnchor.UpperRight,new Vector2(210,-100),new Vector2(-18,-68));
             var bar=Panel("Timer track",top,new Vector2(0,1),new Vector2(1,1),new Vector2(18,-119),new Vector2(-18,-109),VoidToyPalette.Raised);
             timerFill=Panel("Time remaining",bar,Vector2.zero,Vector2.one,Vector2.zero,Vector2.zero,cyan).GetComponent<Image>();
             var healthTrack=Panel("Health track",SafeRoot,new Vector2(0,1),new Vector2(1,1),new Vector2(28,-170),new Vector2(-140,-156),navy);
             healthFill=Panel("Health",healthTrack,Vector2.zero,Vector2.one,Vector2.zero,Vector2.zero,VoidToyPalette.Health).GetComponent<Image>();
-            healthLabel=Label("Health number",SafeRoot,"CAN 100",14,TextAnchor.MiddleLeft,new Vector2(28,-200),new Vector2(-180,-172));
+            healthLabel=Label("Health number",SafeRoot,"HP 100",14,TextAnchor.MiddleLeft,new Vector2(28,-200),new Vector2(-180,-172));
             pauseText=Button("Pause",SafeRoot,"II",new Vector2(1,1),new Vector2(-104,-200),new Vector2(-20,-154),pause);
             soundText=Button("Sound",SafeRoot,"SES",new Vector2(1,0),new Vector2(-100,30),new Vector2(-20,74),mute);
             buffText=Label("Buff",SafeRoot,"",14,TextAnchor.MiddleLeft,new Vector2(28,-228),new Vector2(-20,-202));
@@ -93,13 +93,13 @@ namespace CubeInvasion.Prototype
             var knob=Panel("Thumb",joystickRoot,new Vector2(.5f,.5f),new Vector2(.5f,.5f),new Vector2(-25,-25),new Vector2(25,25),VoidToyPalette.Text);
             knob.GetComponent<Image>().sprite=joystickSprite;knob.GetComponent<Image>().raycastTarget=false;joystick.knob=knob;
             pauseOverlay=Panel("Paused",SafeRoot,new Vector2(0,.45f),new Vector2(1,.55f),new Vector2(24,0),new Vector2(-24,0),navy).gameObject;
-            var pauseLabel=Label("Pause label",pauseOverlay.transform,"DURAKLATILDI",24,TextAnchor.MiddleCenter,Vector2.zero,Vector2.zero);
+            var pauseLabel=Label("Pause label",pauseOverlay.transform,"PAUSED",24,TextAnchor.MiddleCenter,Vector2.zero,Vector2.zero);
             pauseLabel.rectTransform.anchorMin=Vector2.zero;pauseLabel.rectTransform.anchorMax=Vector2.one;
             pauseOverlay.SetActive(false);
             result=Panel("Result",SafeRoot,new Vector2(0,.34f),new Vector2(1,.67f),new Vector2(24,0),new Vector2(-24,0),navy).gameObject;
             resultTitle=Label("Result title",result.transform,"",28,TextAnchor.MiddleCenter,new Vector2(12,-75),new Vector2(-12,-12));
             resultDetail=Label("Result details",result.transform,"",17,TextAnchor.MiddleCenter,new Vector2(18,-146),new Vector2(-18,-78));
-            Button("Retry",result.transform,"TEKRAR OYNA",new Vector2(.5f,0),new Vector2(-155,24),new Vector2(155,82),retry);
+            Button("Retry",result.transform,"PLAY AGAIN",new Vector2(.5f,0),new Vector2(-155,24),new Vector2(155,82),retry);
             result.SetActive(false);ApplyVoidToyStyle(camera);ApplySafeArea();
         }
         static void BindButton(Text label,Action action)
@@ -141,24 +141,24 @@ namespace CubeInvasion.Prototype
             if(objectivePill) {objectivePill.color=Color.clear;objectivePill.gameObject.SetActive(phase!="Choice"&&phase!="Transfer");}
             if(objectiveText)objectiveText.color=final?VoidToyPalette.DangerText:VoidToyPalette.Text;
             float share=Mathf.Clamp01(hp/maxHealth);
-            healthFill.rectTransform.anchorMax=new Vector2(share,1);healthLabel.text=$"CAN {hp:0}/{maxHealth:0}";
+            healthFill.rectTransform.anchorMax=new Vector2(share,1);healthLabel.text=$"HP {hp:0}/{maxHealth:0}";
             healthFill.color=share<=.25f?danger:share<=.5f?VoidToyPalette.Warm:VoidToyPalette.Health;
-            status.text=$"KÜP {stage}/3";if(objectiveText)objectiveText.text=$"{enemies} düşman";else status.text+=$"\n{enemies} HEDEF";ShowCubeDots(stage);
+            status.text=$"CUBE {stage}/3";if(objectiveText)objectiveText.text=$"{enemies} enemies";else status.text+=$"\n{enemies} TARGETS";ShowCubeDots(stage);
             gold.text=pending>0?$"{VoidToyPalette.FormatGold(wallet)} +{pending}":VoidToyPalette.FormatGold(wallet);
             FloatGold(wallet+pending,combat||phase=="Choice");
-            buffText.text=buffCubes>0?$"HASAR +%{buff*100:0} · {buffCubes} KÜP":"";
-            hint.text=phase=="Choice"?"Temizlendi\nBir kapıdan yürü":"";
+            buffText.text=buffCubes>0?$"DAMAGE +{buff*100:0}% · {buffCubes} CUBES":"";
+            hint.text=phase=="Choice"?"Cleared\nWalk through a gate":"";
             hint.color=phase=="Choice"?VoidToyPalette.Health:VoidToyPalette.Text;
             pauseText.text=paused?"":"II";pauseText.fontSize=26;
             // While paused the overlay's big frozen time is the only clock on screen.
             timer.enabled=timerFill.enabled=!paused;var timerTrack=timerFill.transform.parent?timerFill.transform.parent.GetComponent<Image>():null;if(timerTrack&&timerTrack!=timerTile)timerTrack.enabled=!paused;if(objectiveText)objectiveText.enabled=!paused;
-            if(soundText)soundText.text=muted?"SESSİZ":"SES";pauseOverlay.SetActive(paused&&phase!="Loadout"&&phase!="SaveBlocked"&&phase!="Won"&&phase!="Failed");
-            if(paused&&pauseInfo) {if(pauseTime)pauseTime.text=seconds.ToString("0.0");pauseInfo.text=$"Süre durdu · küp {stage}/{cubeTotal}";pauseSound.text=muted?"Ses kapalı":"Ses açık";}
+            if(soundText)soundText.text=muted?"MUTED":"SOUND";pauseOverlay.SetActive(paused&&phase!="Loadout"&&phase!="SaveBlocked"&&phase!="Won"&&phase!="Failed");
+            if(paused&&pauseInfo) {if(pauseTime)pauseTime.text=seconds.ToString("0.0");pauseInfo.text=$"Time stopped · cube {stage}/{cubeTotal}";pauseSound.text=muted?"Sound off":"Sound on";}
             bool ended=phase=="Won"||phase=="Failed";result.SetActive(ended&&!campaignMode);
             if(ended)
             {
-                resultTitle.text=phase=="Won"?"TEMİZLENDİ!":"KÜP ÇÖKTÜ";resultTitle.color=phase=="Won"?VoidToyPalette.Gold:VoidToyPalette.DangerText;
-                resultDetail.text=phase=="Won"?$"3 küp temizlendi\nBankalanan altın: {wallet}":reason;
+                resultTitle.text=phase=="Won"?"CLEARED!":"CUBE COLLAPSED";resultTitle.color=phase=="Won"?VoidToyPalette.Gold:VoidToyPalette.DangerText;
+                resultDetail.text=phase=="Won"?$"3 cubes cleared\nGold banked: {wallet}":reason;
             }
             if(paused||ended||(phase=="Loadout"||phase=="SaveBlocked")||phase=="Transfer"||(phase=="Collapse"||phase=="Falling"||phase=="Dying"))joystick.ResetInput();
             bool steerable=!paused&&!ended&&phase!="Loadout"&&phase!="SaveBlocked"&&phase!="Transfer"&&phase!="Collapse"&&phase!="Falling"&&phase!="Dying";

@@ -11,7 +11,7 @@ public class GateController : MonoBehaviour
     Rigidbody rb;
 
     private GameObject gate;
-    [Header("*** ENEMİES ***")]
+    [Header("*** ENEMIES ***")]
     public int EnemyCountOnCube = 0;
 
     //Created a timerInterval variable to call the GateOpening function in every (timerInterval) seconds.

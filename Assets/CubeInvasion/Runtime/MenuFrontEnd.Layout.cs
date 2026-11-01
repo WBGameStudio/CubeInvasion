@@ -15,8 +15,8 @@ namespace CubeInvasion.Prototype
             progressFill=Image("Progress fill",track,VoidToyPalette.Health);Stretch(progressFill.rectTransform);
             homeProgress=Label("Campaign progress label",root,"",15,new Vector2(20,-258),new Vector2(-20,-232),muted);
             progress.gameObject.SetActive(false);homeProgress.gameObject.SetActive(false);
-            var arsenal=Button("Open arsenal",root,"SİLAH",new Vector2(16,-500),new Vector2(102,-406),14);arsenal.gameObject.SetActive(false);
-            var pilot=Button("Open pilot",root,"PİLOT",new Vector2(438,-500),new Vector2(-16,-406),14);pilot.gameObject.SetActive(false);
+            var arsenal=Button("Open arsenal",root,"WEAPON",new Vector2(16,-500),new Vector2(102,-406),14);arsenal.gameObject.SetActive(false);
+            var pilot=Button("Open pilot",root,"PILOT",new Vector2(438,-500),new Vector2(-16,-406),14);pilot.gameObject.SetActive(false);
             homeMission=Label("Current mission",root,"",17,new Vector2(24,-0),new Vector2(-24,-0),muted);homeMission.alignment=TextAnchor.MiddleCenter;Bottom(homeMission.rectTransform,214,240);
             var launch=Button("Play campaign",root,"",new Vector2(32,-807),new Vector2(-32,-718),28,true);homeLaunch=launch.GetComponentInChildren<Text>();Bottom((RectTransform)launch.transform,124,208);
             VoidToyStyle.AddShine(launch);
@@ -33,8 +33,8 @@ namespace CubeInvasion.Prototype
             sheetTitle=Label("Sheet title",sheet.transform,"",36,new Vector2(28,-116),new Vector2(-28,-68),white);
             sheetInfo=Label("Sheet info",sheet.transform,"",19,new Vector2(28,-226),new Vector2(-28,-132),white);sheetInfo.lineSpacing=1.3f;sheetInfo.alignment=TextAnchor.UpperLeft;
             sheetWeapon=Label("Sheet weapon",sheet.transform,"",19,new Vector2(28,-282),new Vector2(-150,-246),white);
-            sheetWeaponLink=Button("Change weapon",sheet.transform,"Değiştir",new Vector2(380,-284),new Vector2(-16,-244),17);sheetWeaponLink.GetComponent<Image>().color=Color.clear;sheetWeaponLink.GetComponentInChildren<Text>().color=muted;
-            sheetPlay=Button("Sheet play",sheet.transform,"OYNA",new Vector2(28,-0),new Vector2(-28,-0),26,true);Bottom((RectTransform)sheetPlay.transform,52,136);VoidToyStyle.AddShine(sheetPlay);
+            sheetWeaponLink=Button("Change weapon",sheet.transform,"Change",new Vector2(380,-284),new Vector2(-16,-244),17);sheetWeaponLink.GetComponent<Image>().color=Color.clear;sheetWeaponLink.GetComponentInChildren<Text>().color=muted;
+            sheetPlay=Button("Sheet play",sheet.transform,"PLAY",new Vector2(28,-0),new Vector2(-28,-0),26,true);Bottom((RectTransform)sheetPlay.transform,52,136);VoidToyStyle.AddShine(sheetPlay);
             levelSheet.SetActive(false);
         }
         // Level path: one biome's ten tiles on a winding line, bottom to top, boss last. Rails sit behind tiles.
@@ -69,11 +69,11 @@ namespace CubeInvasion.Prototype
         }
         void BuildRoad(P2ContentCatalog catalog)
         {
-            var root=pages[1].transform;Heading(root,"Bölüm yolu","Bir düğüme dokun, görevini seç.");BuildMap(root,catalog,false);
+            var root=pages[1].transform;Heading(root,"Chapter path","Tap a node to pick your mission.");BuildMap(root,catalog,false);
             var info=Panel("Selected mission",root,new Vector2(26,-721),new Vector2(-26,-586),panel);
             roadTitle=Label("Selected mission title",info,"",26,new Vector2(18,-46),new Vector2(-18,-8),gold);
             roadDescription=Label("Selected mission description",info,"",16,new Vector2(18,-126),new Vector2(-18,-49),white);
-            roadPlay=Button("Launch selected mission",root,"GÖREVE BAŞLA",new Vector2(75,-810),new Vector2(-75,-737),25,true);Bottom((RectTransform)roadPlay.transform,150,223);Bottom(info,239,374);
+            roadPlay=Button("Launch selected mission",root,"START MISSION",new Vector2(75,-810),new Vector2(-75,-737),25,true);Bottom((RectTransform)roadPlay.transform,150,223);Bottom(info,239,374);
         }
         void BuildMap(Transform root,P2ContentCatalog catalog,bool home)
         {
@@ -107,7 +107,7 @@ namespace CubeInvasion.Prototype
         void BuildArsenal(P2ContentCatalog catalog)
         {
             // Calm Void weapons (Sade UI 03): one weapon at a time on a soft glow, arrows and dots to move,
-            // three thin stats, one shining upgrade. Every upgrade row lives in a sheet behind "Tüm yükseltmeler".
+            // three thin stats, one shining upgrade. Every upgrade row lives in a sheet behind "All upgrades".
             var root=pages[2].transform;
             bool expanded=catalog.weapons.Length>4;int upgradeCount=expanded?5:3,total=catalog.weapons.Length;
             var glow=Image("Weapon glow",root,panel);Top(glow.rectTransform,new Vector2(120,-432),new Vector2(-120,-132));
@@ -118,7 +118,7 @@ namespace CubeInvasion.Prototype
             weaponDescription=Label("Weapon description",root,"",16,new Vector2(48,-546),new Vector2(-48,-498),muted);weaponDescription.alignment=TextAnchor.UpperCenter;
             weaponDots=Rect("Weapon dots",root,new Vector2(0,1),new Vector2(1,1),new Vector2(0,-568),new Vector2(0,-560));
             for(int i=0;i<total;i++) {var dot=Image("Dot "+i,weaponDots,line);dot.rectTransform.anchorMin=dot.rectTransform.anchorMax=new Vector2(.5f,.5f);dot.rectTransform.sizeDelta=new Vector2(8,8);}
-            string[] statNames={"Hasar","Atış hızı","Menzil"};statFills=new Image[3];statValues=new Text[3];
+            string[] statNames={"Damage","Fire rate","Range"};statFills=new Image[3];statValues=new Text[3];
             for(int i=0;i<3;i++)
             {
                 float y=-592-i*30;
@@ -130,15 +130,15 @@ namespace CubeInvasion.Prototype
             weaponStats=Label("Weapon stats",root,"",14,new Vector2(20,-702),new Vector2(-20,-682),muted);weaponStats.alignment=TextAnchor.MiddleCenter;
             primaryUpgrade=Button("Primary upgrade",root,"",new Vector2(32,-790),new Vector2(-32,-714),24,true);VoidToyStyle.AddShine(primaryUpgrade);
             buyWeapon=Button("Buy weapon",root,"",new Vector2(32,-790),new Vector2(-32,-714),24,true);VoidToyStyle.AddShine(buyWeapon);
-            allUpgrades=Button("All upgrades",root,"Tüm yükseltmeler",new Vector2(140,-842),new Vector2(-140,-800),17);allUpgrades.GetComponent<Image>().color=Color.clear;allUpgrades.GetComponentInChildren<Text>().color=muted;
+            allUpgrades=Button("All upgrades",root,"All upgrades",new Vector2(140,-842),new Vector2(-140,-800),17);allUpgrades.GetComponent<Image>().color=Color.clear;allUpgrades.GetComponentInChildren<Text>().color=muted;
             upgradeSheet=Rect("Upgrade sheet",root,Vector2.zero,Vector2.one,Vector2.zero,Vector2.zero).gameObject;
             var dim=Image("Sheet dim",upgradeSheet.transform,VoidToyPalette.WithAlpha(VoidToyPalette.Ink,.6f));Stretch(dim.rectTransform);dim.raycastTarget=true;
             var dimButton=dim.gameObject.AddComponent<UnityEngine.UI.Button>();dimButton.targetGraphic=dim;dimButton.onClick.AddListener(()=>upgradeSheet.SetActive(false));
             float sheetHeight=110+upgradeCount*66;
             var sheet=Image("Sheet panel",upgradeSheet.transform,panel);sheet.sprite=art.casualButton;sheet.type=UnityEngine.UI.Image.Type.Sliced;sheet.pixelsPerUnitMultiplier=4;sheet.raycastTarget=true;
             sheet.rectTransform.anchorMin=Vector2.zero;sheet.rectTransform.anchorMax=new Vector2(1,0);sheet.rectTransform.offsetMin=new Vector2(0,80);sheet.rectTransform.offsetMax=new Vector2(0,80+sheetHeight);
-            Label("Sheet title",sheet.transform,"Yükseltmeler",24,new Vector2(24,-56),new Vector2(-140,-16),white);
-            var close=Button("Close upgrades",sheet.transform,"Kapat",new Vector2(400,-56),new Vector2(-12,-14),17);close.GetComponent<Image>().color=Color.clear;close.GetComponentInChildren<Text>().color=muted;
+            Label("Sheet title",sheet.transform,"Upgrades",24,new Vector2(24,-56),new Vector2(-140,-16),white);
+            var close=Button("Close upgrades",sheet.transform,"Close",new Vector2(400,-56),new Vector2(-12,-14),17);close.GetComponent<Image>().color=Color.clear;close.GetComponentInChildren<Text>().color=muted;
             close.onClick.AddListener(()=>upgradeSheet.SetActive(false));
             weaponUpgrades=new Button[upgradeCount];weaponUpgradeInfo=new Text[upgradeCount];
             for(int i=0;i<upgradeCount;i++)
@@ -163,13 +163,13 @@ namespace CubeInvasion.Prototype
         }
         void BuildPilot()
         {
-            var root=pages[3].transform;Heading(root,"Pilot","Her geliştirme oyunda gerçek bir avantaj.");
+            var root=pages[3].transform;Heading(root,"Pilot","Every upgrade is a real edge in combat.");
             var hero=Panel("Scout card",root,new Vector2(20,-442),new Vector2(-20,-177),panel);
             Icon("Scout portrait",hero,art.scout,new Vector2(30,-246),new Vector2(255,-5));
             Label("Scout name",hero,"Scout Mk-II",30,new Vector2(270,-68),new Vector2(-8,-20),white);
-            Label("Scout role",hero,"Küp avcısı",17,new Vector2(270,-100),new Vector2(-8,-70),muted);
+            Label("Scout role",hero,"Cube hunter",17,new Vector2(270,-100),new Vector2(-8,-70),muted);
             pilotStats=Label("Pilot stats",hero,"",19,new Vector2(270,-236),new Vector2(-12,-122),VoidToyPalette.CyanText);
-            characterNames=new Text[3];characterLevels=new Text[3];characterUpgrades=new Button[3];string[] names={"YAŞAM ÇEKİRDEĞİ","HAREKET SİSTEMİ","TOPLAMA ALANI"};string[] badges={"CAN","HIZ","ALAN"};
+            characterNames=new Text[3];characterLevels=new Text[3];characterUpgrades=new Button[3];string[] names={"LIFE CORE","MOVE SYSTEM","PICKUP RADIUS"};string[] badges={"HP","SPD","AREA"};
             for(int i=0;i<3;i++)
             {
                 float y=-466-i*117;var card=Panel("Character upgrade card "+i,root,new Vector2(20,y-105),new Vector2(-20,y),panel);
@@ -182,14 +182,14 @@ namespace CubeInvasion.Prototype
         }
         void BuildSettings()
         {
-            var root=pages[4].transform;Heading(root,"Ayarlar","Ses, titreşim ve kare hızı.");
+            var root=pages[4].transform;Heading(root,"Settings","Sound, haptics and frame rate.");
             var sound=Panel("Audio settings",root,new Vector2(24,-447),new Vector2(-24,-183),panel);
             Icon("Audio icon",sound,art.settings,new Vector2(12,-53),new Vector2(63,0));
-            Label("Sound section",sound,"SES VE MÜZİK",23,new Vector2(75,-46),new Vector2(-20,-6),gold);
-            musicSlider=Slider("Music",sound,"Müzik",-62,out musicValue);sfxSlider=Slider("SFX",sound,"Efektler",-155,out sfxValue);
-            muteToggle=Toggle("Mute",root,"Sessiz mod","Tüm sesleri kapat",-470);
-            hapticsToggle=Toggle("Haptics",root,"Titreşim","Darbe ve ödül geri bildirimi",-581);
-            frameToggle=Toggle("Frame rate",root,"60 FPS","Kapalı: pil dostu 30 FPS",-692);
+            Label("Sound section",sound,"SOUND & MUSIC",23,new Vector2(75,-46),new Vector2(-20,-6),gold);
+            musicSlider=Slider("Music",sound,"Music",-62,out musicValue);sfxSlider=Slider("SFX",sound,"SFX",-155,out sfxValue);
+            muteToggle=Toggle("Mute",root,"Mute","Turn off all sound",-470);
+            hapticsToggle=Toggle("Haptics",root,"Haptics","Hit and reward feedback",-581);
+            frameToggle=Toggle("Frame rate",root,"60 FPS","Off: battery-friendly 30 FPS",-692);
         }
         void Heading(Transform parent,string title,string subtitle)
         {

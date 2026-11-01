@@ -117,7 +117,7 @@ public static class FrontEndSmokeCheck
                     Call("SetPaused",false);Call("TickOnboarding");var guidance=(Text)Get(game,"onboardingHint");
                     Check(guidance&&guidance.gameObject.activeSelf&&guidance.text.Contains("JOYSTICK"),"First run shows authored joystick guidance");Capture("Onboarding");
                     var actor=(Transform)Get(game,"player");actor.position+=Vector3.right;Call("TickOnboarding");
-                    Check(guidance.text.Contains("YAVAŞLA"),"Movement advances guidance to the one-thumb focus fire rhythm");
+                    Check(guidance.text.Contains("SLOW DOWN"),"Movement advances guidance to the one-thumb focus fire rhythm");
                     float timer=(float)Get(game,"remaining");Call("SetPaused",true);Call("TickOnboarding");
                     Check(!guidance.gameObject.activeSelf&&(float)Get(game,"remaining")==timer,"Pause hides guidance without changing timer");Capture("Pause");Call("SetPaused",false);
                     var log=JsonUtility.FromJson<P4ValidationLog.Report>(File.ReadAllText(Path.Combine(SessionState.GetString(Key+"dir",""),"ci_playtest_v1.json")));

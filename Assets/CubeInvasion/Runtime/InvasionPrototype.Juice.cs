@@ -56,7 +56,7 @@ namespace CubeInvasion.Prototype
             Face(FaceSurprised,.4f,3);
         }
 
-        // KİP's screen-face: a short event expression wins by priority, then it settles back to the
+        // KIP's screen-face: a short event expression wins by priority, then it settles back to the
         // resting face (Pain below a quarter of health, otherwise Neutral).
         const string FaceNeutral="Neutral",FaceDetermined="Determined",FaceSurprised="Surprised",FacePain="Pain",FaceHappy="Happy",FaceDizzy="Dizzy";
         ToyArtLibrary heroFaces;string shownFace;float faceHold;int facePriority;
