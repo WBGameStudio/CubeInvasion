@@ -290,7 +290,17 @@ namespace CubeInvasion.Prototype
             var pulse=content.Find("Path pulse") as RectTransform;
             if(pulse) {pulse.gameObject.SetActive(currentShown);if(currentShown) {pulse.anchoredPosition=Point(current);pulse.sizeDelta=Vector2.one*70;}}
             var scout=content.Find("Path scout") as RectTransform;
-            if(scout) {scout.gameObject.SetActive(currentShown);if(currentShown)scout.anchoredPosition=Point(current)+new Vector2(0,70);scout.SetAsLastSibling();}
+            if(scout)
+            {
+                scout.gameObject.SetActive(currentShown);scout.SetAsLastSibling();
+                if(currentShown)
+                {
+                    HeroPathPreview hero=null;
+                    if(Application.isPlaying) {hero=scout.GetComponent<HeroPathPreview>();if(!hero)hero=scout.gameObject.AddComponent<HeroPathPreview>();hero.Place(current,Point(current)+new Vector2(0,70));}
+                    if(hero&&hero.Ready) {scoutTween?.Kill();scout.localScale=Vector3.one;}
+                    else scout.anchoredPosition=Point(current)+new Vector2(0,70);
+                }
+            }
             int biome=count>=10?first/10:0;
             homeTitle=count>=10?biomeTitles[Mathf.Clamp(biome,0,5)]:"Chapter path";
             if(homeBiome)homeBiome.text=count>=10?$"Biome {biome+1} · chapter {first+1}–{last+1}":$"Chapter 1–{count}";
@@ -375,7 +385,9 @@ namespace CubeInvasion.Prototype
                 pulseTween=DOTween.Sequence().Append(pulse.DOScale(1.45f,1.6f).From(1f).SetEase(Ease.OutCubic)).Join(image.DOFade(0,1.6f).From(.55f)).SetLoops(-1).SetUpdate(true).SetLink(pulse.gameObject);
             }
             var scout=content?content.Find("Path scout") as RectTransform:null;
-            if(scout) {scoutTween?.Kill();scoutTween=scout.DOScale(1.04f,1.2f).From(1f).SetEase(Ease.InOutSine).SetLoops(-1,LoopType.Yoyo).SetUpdate(true).SetLink(scout.gameObject);}
+            // KIP animates itself; the sprite bob is only for the fallback scout.
+            var hero=scout?scout.GetComponent<HeroPathPreview>():null;
+            if(scout&&!(hero&&hero.Ready)) {scoutTween?.Kill();scoutTween=scout.DOScale(1.04f,1.2f).From(1f).SetEase(Ease.InOutSine).SetLoops(-1,LoopType.Yoyo).SetUpdate(true).SetLink(scout.gameObject);}
         }
         public void SyncSettings(float music,float sfx,bool mute,bool haptic,bool highFrames)
         {
