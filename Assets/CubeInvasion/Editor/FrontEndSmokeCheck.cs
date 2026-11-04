@@ -105,7 +105,7 @@ public static class FrontEndSmokeCheck
                     var music=(Slider)Get(menu,"musicSlider");var sfx=(Slider)Get(menu,"sfxSlider");music.value=.35f;sfx.value=.6f;
                     ((Toggle)Get(menu,"muteToggle")).isOn=false;((Toggle)Get(menu,"hapticsToggle")).isOn=true;((Toggle)Get(menu,"frameToggle")).isOn=false;
                     var feedback=(CombatFeedback)Get(game,"feedback");Check(Mathf.Abs(feedback.MusicLevel-.35f)<.001f&&Mathf.Abs(feedback.SfxLevel-.6f)<.001f,"Independent music/effects sliders affect mixer");
-                    Check(Application.targetFrameRate==30&&PlayerPrefs.GetInt("CI.Haptics")==1,"Performance and haptics controls update saved settings");
+                    Check(Application.targetFrameRate==30&&GamePrefs.GetInt("CI.Haptics",0)==1,"Performance and haptics controls update saved settings");
                     Check(music.GetComponent<Image>().raycastTarget&&((Toggle)Get(menu,"muteToggle")).GetComponent<Image>().raycastTarget,"Sliders and toggles have pointer hit surfaces");Capture("Settings");
                     ((Button[])Get(menu,"navigation"))[1].onClick.Invoke();((Button[])Get(menu,"levelNodes"))[0].onClick.Invoke();((Button)Get(menu,"roadPlay")).onClick.Invoke();
                     Check(State=="Combat"&&!menu.gameObject.activeSelf,"Road launch enters combat and hides front end");
@@ -115,9 +115,9 @@ public static class FrontEndSmokeCheck
                     next=now+.4;step=6;break;
                 case 6:
                     Call("SetPaused",false);Call("TickOnboarding");var guidance=(Text)Get(game,"onboardingHint");
-                    Check(guidance&&guidance.gameObject.activeSelf&&guidance.text.Contains("JOYSTICK"),"First run shows authored joystick guidance");Capture("Onboarding");
+                    Check(guidance&&guidance.gameObject.activeSelf&&guidance.text.Contains("MOVE"),"First run shows authored movement guidance");Capture("Onboarding");
                     var actor=(Transform)Get(game,"player");actor.position+=Vector3.right;Call("TickOnboarding");
-                    Check(guidance.text.Contains("SLOW DOWN"),"Movement advances guidance to the one-thumb focus fire rhythm");
+                    Check(guidance.text.Contains("FIRES BY ITSELF"),"Movement advances guidance to auto-fire");
                     float timer=(float)Get(game,"remaining");Call("SetPaused",true);Call("TickOnboarding");
                     Check(!guidance.gameObject.activeSelf&&(float)Get(game,"remaining")==timer,"Pause hides guidance without changing timer");Capture("Pause");Call("SetPaused",false);
                     var log=JsonUtility.FromJson<P4ValidationLog.Report>(File.ReadAllText(Path.Combine(SessionState.GetString(Key+"dir",""),"ci_playtest_v1.json")));

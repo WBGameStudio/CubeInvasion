@@ -10,7 +10,7 @@ namespace CubeInvasion.Prototype
     {
         public CubeRouteDefinition rightRoute, forwardRoute;
         [SerializeField] ToyArtLibrary artLibrary;
-        enum Phase { SaveBlocked, Loadout, Combat, Choice, Transfer, Collapse, Falling, Dying, Failed, Won }
+        enum Phase { SaveBlocked, Loadout, Combat, Choice, Transfer, Collapse, Falling, Dying, Failed, Won, Revive }
         enum FailureKind { Health, EdgeFall, Timeout }
         sealed class Foe
         {
@@ -59,12 +59,17 @@ namespace CubeInvasion.Prototype
         readonly Color danger = new Color(.9f,.29f,.41f);
         const float Half = 4.5f;
 
-        void Start()
+        IEnumerator Start()
         {
-            Screen.orientation = ScreenOrientation.Portrait;
+            // Browsers can't lock orientation; the Playgama draft declares portrait instead.
+            if(!PlaygamaService.IsBridge)Screen.orientation = ScreenOrientation.Portrait;
             Input.multiTouchEnabled = true;
             if(!artLibrary)artLibrary=Resources.Load<ToyArtLibrary>("ToyArtLibrary");
+            // Web: saved state arrives from Bridge Storage before anything reads it. Devices skip the wait.
+            if(!PlaygamaService.Ready)yield return PlaygamaService.Boot();
             BuildWorld();
+            BeginPlatformSession();
+            BeginPlayerSession();
         }
         Material Mat(Color color)
         {
@@ -163,7 +168,7 @@ namespace CubeInvasion.Prototype
         {
             EnsureSceneSetup();
             centre=Vector3.zero; stage=1; health=100; remaining=20;
-            wallet=PlayerPrefs.GetInt("CI.Wallet",0);
+            wallet=GamePrefs.GetInt("CI.Wallet",0);
             platform=Arena(centre,false,cyan);
             // KIP is authored at world scale; the Scout mesh relied on the body's squashed transform.
             bool rogue=artLibrary&&artLibrary.TryGet(HeroKey,out _);
@@ -301,11 +306,13 @@ namespace CubeInvasion.Prototype
                 if(Input.GetMouseButtonUp(0))dragging=false;
                 stick=dragging?Vector2.ClampMagnitude((point-stickOrigin)/(Screen.width*.12f),1):Vector2.zero;
             }
-#if UNITY_EDITOR || UNITY_STANDALONE
+#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_WEBGL
             Vector2 keys=new Vector2(Input.GetAxisRaw("Horizontal"),-Input.GetAxisRaw("Vertical"));
-            if(keys.sqrMagnitude>0)stick=Vector2.ClampMagnitude(keys,1);
+            keyboardMoving=keys.sqrMagnitude>0;
+            if(keyboardMoving)stick=Vector2.ClampMagnitude(keys,1);
 #endif
-            if(Input.GetKeyDown(KeyCode.Escape))SetPaused(!paused);
+            // Browsers reserve Esc for leaving full screen; the web build pauses with P or the on-screen button.
+            if(PlaygamaService.IsBridge?Input.GetKeyDown(KeyCode.P):Input.GetKeyDown(KeyCode.Escape))TogglePauseKey();
         }
         void MovePlayer(Vector2 input, float dt)
         {
@@ -387,11 +394,15 @@ namespace CubeInvasion.Prototype
         }
         void Update()
         {
+            PlaygamaService.Tick();
             ReadInput();
+            TickPlatformFlow();
             if(paused) { ResetCountdownPresentation();return; }
             float dt=Time.deltaTime;
             if(phase==Phase.Combat)
             {
+                // Nothing runs until the player moves: no clock or enemies while they find the controls or return from an ad.
+                if(startHold) { if(stick.sqrMagnitude<.01f) { TickCountdownPresentation(dt);return; } ReleaseStartHold(); }
                 var clock=new CubeCombatClock(remaining,dt);dt=clock.Delta;
                 if(HasMeta)runSeconds+=dt;
                 invulnerability-=dt;
@@ -410,7 +421,12 @@ namespace CubeInvasion.Prototype
                 // Resolve valid damage before timeout, using only the frame's remaining combat time.
                 remaining=clock.Remaining;
                 var outcome=clock.Resolve(ObjectiveComplete);if(outcome==CubeOutcome.Cleared)Clear();
-                else if(outcome==CubeOutcome.Timeout)Fail("Time's up (20 s)",FailureKind.Timeout);
+                else if(outcome==CubeOutcome.Timeout)
+                {
+                    // The first mission teaches; running out of time there grants more time instead of a collapse.
+                    if(OnboardingRun) { remaining=20;extraTimeUntil=Time.unscaledTime+2.5f; }
+                    else Fail("Time's up (20 s)",FailureKind.Timeout);
+                }
             }
             else if(phase==Phase.Choice)
             {
@@ -477,7 +493,7 @@ namespace CubeInvasion.Prototype
             if(stage==CubeCount)RecordValidation("level_completed");
             pendingGold=0;
             damageCubes=Mathf.Max(0,damageCubes-1);
-            if(stage==CubeCount) { phase=Phase.Won; ClearAllRouteBuffs(); return; }
+            if(stage==CubeCount) { phase=Phase.Won; ClearAllRouteBuffs(); feedback.Play(CombatFeedback.Cue.Victory); return; }
             phase=Phase.Choice;
             RevealBranchOffers();
             if(routesReady)OpenExits();
@@ -552,6 +568,11 @@ namespace CubeInvasion.Prototype
         void Fail(string why, FailureKind kind=FailureKind.Health)
         {
             if(phase!=Phase.Combat)return;
+            if(OfferRevive(why,kind))return;
+            FailNow(why,kind);
+        }
+        void FailNow(string why,FailureKind kind)
+        {
             Face(FaceDizzy,3,4);
             RecordValidation("cube_failed",kind.ToString());
             if(activeOffer!=null)RecordBranch("route_fail",activeOffer,kind.ToString());
@@ -633,7 +654,7 @@ namespace CubeInvasion.Prototype
             GUI.DrawTexture(new Rect(knob.x-23,knob.y-23,46,46),joystickDisc);
             GUI.color=Color.white;
         }
-        void OnApplicationFocus(bool focused) { if(!focused) { FlushMenuSettings(true);SetPaused(true); } }
-        void OnDestroy() { Time.timeScale=1;FlushMenuSettings(true);ClearAnimationTweens();foreach(var mat in materials) if(mat) Destroy(mat); if(joystickDisc)Destroy(joystickDisc); }
+        void OnApplicationFocus(bool focused) { PlaygamaService.SetFocus(focused);if(!focused) { TrackHidden(); FlushMenuSettings(true);SetPaused(true); } }
+        void OnDestroy() { CasualButtonMotion.Pressed-=PlayUiClick;EndPlatformSession();Time.timeScale=1;FlushMenuSettings(true);ClearAnimationTweens();foreach(var mat in materials) if(mat) Destroy(mat); if(joystickDisc)Destroy(joystickDisc); }
     }
 }

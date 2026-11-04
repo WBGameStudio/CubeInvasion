@@ -78,7 +78,9 @@ namespace CubeInvasion.Prototype
             virtualCamera.UpdateCameraState(Vector3.up,-1);
             brain.ManualUpdate(); // Start in the correct pose without a first-frame fly-in.
         }
-        void Update() { if(target && virtualCamera) UpdateRig(); }
+        // The scene keeps target/virtual camera serialized; the rig only runs once Follow() wired view and transposer
+        // (the web build waits a few frames for Bridge Storage before the game calls Follow).
+        void Update() { if(target && virtualCamera && view && transposer) UpdateRig(); }
         void UpdateRig()
         {
             var rotation=Quaternion.Euler(tilt,heading,0);

@@ -7,7 +7,7 @@ namespace CubeInvasion.Prototype
         public static void Play(CombatFeedback.Cue cue)
         {
 #if UNITY_ANDROID && !UNITY_EDITOR
-            if(PlayerPrefs.GetInt("CI.Haptics",0)!=1||Time.unscaledTime-last<.08f)return;
+            if(GamePrefs.GetInt("CI.Haptics",0)!=1||Time.unscaledTime-last<.08f)return;
             bool hit=cue==CombatFeedback.Cue.Hit;bool strong=cue==CombatFeedback.Cue.Fail;bool medium=cue==CombatFeedback.Cue.Hurt||cue==CombatFeedback.Cue.Explosion||cue==CombatFeedback.Cue.BossSlam||cue==CombatFeedback.Cue.Unlock||cue==CombatFeedback.Cue.Upgrade;
             if(!hit&&!strong&&!medium)return;last=Time.unscaledTime;
             try

@@ -31,7 +31,9 @@ namespace CubeInvasion.Prototype
             feedback.Initialize();
             if(!hud) { hud=new GameObject("Mobile Combat HUD",typeof(RectTransform)).AddComponent<MobileCombatHud>();hud.transform.SetParent(world,false); }
             hud.Initialize(view,()=>SetPaused(!paused),Retry,()=>feedback.ToggleMute());
+            CasualButtonMotion.Pressed-=PlayUiClick;CasualButtonMotion.Pressed+=PlayUiClick;
         }
+        void PlayUiClick() { if(feedback)feedback.Play(CombatFeedback.Cue.UiClick); }
         void SetPaused(bool value) { if(phase==Phase.SaveBlocked&&!value&&retrySave!=null)return;paused=value;dragging=false;joystickFinger=-1;stick=Vector2.zero;if(hud)hud.ResetJoystick();if(feedback)feedback.SetPaused(value);if(value)ResetCountdownPresentation(); }
         void Retry() { if(HasContent) { StartMission(missionIndex);return; } UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex); }
         void LateUpdate()
@@ -151,6 +153,7 @@ namespace CubeInvasion.Prototype
         {
             if(!foes.Contains(foe))return;
             if(HasMeta)runKills++;
+            NoteFirstKill();
             var at=foe.body.position;
             if(foe.warning)Destroy(foe.warning.gameObject);
             if(!RecycleActor(foe,true)) {AnimateDeath(foe);Destroy(foe.body.gameObject);}foes.Remove(foe);

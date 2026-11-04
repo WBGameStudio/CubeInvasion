@@ -1,17 +1,19 @@
 {
   "dependencies": {
+    "com.coplaydev.unity-mcp": "https://github.com/CoplayDev/unity-mcp.git?path=/MCPForUnity#v10.0.0",
+    "com.playgama.bridge": "https://github.com/playgama/bridge-unity.git#v2.4.0",
     "com.unity.cinemachine": "2.10.4",
-    "com.unity.ugui": "2.0.0",
     "com.unity.modules.ai": "1.0.0",
+    "com.unity.modules.androidjni": "1.0.0",
+    "com.unity.modules.animation": "1.0.0",
     "com.unity.modules.audio": "1.0.0",
     "com.unity.modules.imgui": "1.0.0",
+    "com.unity.modules.particlesystem": "1.0.0",
     "com.unity.modules.physics": "1.0.0",
+    "com.unity.modules.physics2d": "1.0.0",
     "com.unity.modules.ui": "1.0.0",
     "com.unity.modules.uielements": "1.0.0",
-    "com.unity.modules.animation": "1.0.0",
-    "com.unity.modules.particlesystem": "1.0.0",
-    "com.unity.modules.physics2d": "1.0.0",
     "com.unity.render-pipelines.universal": "17.4.0",
-    "com.unity.modules.androidjni": "1.0.0"
+    "com.unity.ugui": "2.0.0"
   }
 }

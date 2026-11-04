@@ -23,59 +23,71 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 8dfcff6d4d8ad46adb68417075c00958, type: 3}
   - {fileID: 21300000, guid: e846c1a10e28c48e7913abdc5f1515d1, type: 3}
   biomeMusic:
-  - {fileID: 8300000, guid: 2ddb23494a8964d3d88aad08b1b91360, type: 3}
-  - {fileID: 8300000, guid: e14eeff8f296d45b89750482420e5cf0, type: 3}
-  - {fileID: 8300000, guid: 114a46508be0f4b65b30b7b28df90ee4, type: 3}
-  - {fileID: 8300000, guid: d1d69d2781fc045c9b038daf563a01c1, type: 3}
-  - {fileID: 8300000, guid: 2c41db7355be04c679042f2c74be218e, type: 3}
-  - {fileID: 8300000, guid: 25ae9a8ee1d5a4b39ab4c887b6a73266, type: 3}
-  - {fileID: 8300000, guid: 4a05fb4961c71415390440eb5ec8aba6, type: 3}
+  - {fileID: 8300000, guid: cfcded5609d08461496ac0ce7502d13e, type: 3}
+  - {fileID: 8300000, guid: 18d1b29b3af5e4be182b994cb55902d2, type: 3}
+  - {fileID: 8300000, guid: a7db0dc643e5049b69fc9dc1cd85463f, type: 3}
+  - {fileID: 8300000, guid: cfcded5609d08461496ac0ce7502d13e, type: 3}
+  - {fileID: 8300000, guid: 18d1b29b3af5e4be182b994cb55902d2, type: 3}
+  - {fileID: 8300000, guid: a7db0dc643e5049b69fc9dc1cd85463f, type: 3}
+  - {fileID: 8300000, guid: 101fbaf1f28934a8cb6653555881f046, type: 3}
   sounds:
   - cue: 19
     variants:
-    - {fileID: 8300000, guid: f36d771e6f9644cc7937b64b1e10458f, type: 3}
-    - {fileID: 8300000, guid: fffa6348aa2594ea8aa1f268015e44c8, type: 3}
+    - {fileID: 8300000, guid: c7a1f5bf63f78433e984fed660999881, type: 3}
+    - {fileID: 8300000, guid: 953fc6be63e1d47a5b987f53394c28fd, type: 3}
+    gain: 0.55
   - cue: 20
     variants:
-    - {fileID: 8300000, guid: dc33d1eacef2b4ac8ace3085f34ee14f, type: 3}
-    - {fileID: 8300000, guid: 6e6bb9d8735664f858b099f374b5d9c1, type: 3}
+    - {fileID: 8300000, guid: 463db4596a6344c56b2101655f889411, type: 3}
+    - {fileID: 8300000, guid: 8f87809844dab46e4959a06717767eac, type: 3}
+    gain: 0.83
   - cue: 21
     variants:
-    - {fileID: 8300000, guid: e27249be770fe43ec83c9098b508d852, type: 3}
-    - {fileID: 8300000, guid: 7d76f8d8691374c069ca5d2242d81d73, type: 3}
+    - {fileID: 8300000, guid: 2ab8b963c480941838594b1f948ce6ab, type: 3}
+    - {fileID: 8300000, guid: f34189d29a52843c586b5c36a8485fb0, type: 3}
+    gain: 0.75
   - cue: 22
     variants:
-    - {fileID: 8300000, guid: f497f081b54964b95a43f3d29c5b0564, type: 3}
-    - {fileID: 8300000, guid: 92255e5573ae74083bddfe88281a64b4, type: 3}
+    - {fileID: 8300000, guid: 11de796c3d733465e8c9ec2bd7365d92, type: 3}
+    - {fileID: 8300000, guid: 6b91b9b30229349c9be80f7cef8db4a5, type: 3}
+    gain: 0.38
   - cue: 23
     variants:
-    - {fileID: 8300000, guid: e19a06fc5d2e24954b100030e857acb6, type: 3}
-    - {fileID: 8300000, guid: b2ac44d0eb7d64c558059df333c67ce5, type: 3}
+    - {fileID: 8300000, guid: bf391b1f40f5e446c98cf75b45ba7dbb, type: 3}
+    - {fileID: 8300000, guid: 3bc4177766962401fbccd2e8aa25c737, type: 3}
+    gain: 0.76
   - cue: 24
     variants:
-    - {fileID: 8300000, guid: 60ac1164339be40edacf515ba2f64d53, type: 3}
-    - {fileID: 8300000, guid: a42387f46985e406ab5ce592aebbbf89, type: 3}
+    - {fileID: 8300000, guid: eb20564b11b454a829a89d44f886bb25, type: 3}
+    - {fileID: 8300000, guid: 42036df64dcf84272837d366338450ba, type: 3}
+    gain: 0.79
   - cue: 25
     variants:
-    - {fileID: 8300000, guid: 1fd24d3a6e5854e338d3108bc30b5db5, type: 3}
-    - {fileID: 8300000, guid: d2c461162c2d94b089c705ec0a7aa1ab, type: 3}
+    - {fileID: 8300000, guid: 4234a6607bbc14ecdb19ca603ea512bf, type: 3}
+    - {fileID: 8300000, guid: 5c48c2b1357554ec2a1b121f38f5d33d, type: 3}
+    gain: 0.7
   - cue: 26
     variants:
-    - {fileID: 8300000, guid: c0d3f0d4b6dd24b019dc5b884adbfdc0, type: 3}
-    - {fileID: 8300000, guid: 0605055e8c5524436a7b94ac56bb4651, type: 3}
+    - {fileID: 8300000, guid: 029fde89f64a74fc28103bdf8d42b7ef, type: 3}
+    - {fileID: 8300000, guid: 04aa091315157451fae326b5013f97a4, type: 3}
+    gain: 0.34
   - cue: 27
     variants:
-    - {fileID: 8300000, guid: 6224cec42b9a64f12aedc9ed09663c53, type: 3}
-    - {fileID: 8300000, guid: db980cee789954f18b44b1998f482316, type: 3}
+    - {fileID: 8300000, guid: 38a7c45e01726488aacfb91c4d7ee198, type: 3}
+    - {fileID: 8300000, guid: 6a884797334be4661905698ad47530c0, type: 3}
+    gain: 0.4
   - cue: 28
     variants:
-    - {fileID: 8300000, guid: 9eaacb3e74a2547f5b27f288dffe66b8, type: 3}
-    - {fileID: 8300000, guid: c7cb6bc7e071340b88b285954f376fd6, type: 3}
+    - {fileID: 8300000, guid: 5ac237e142564434f8c64304f1e55a7a, type: 3}
+    - {fileID: 8300000, guid: 2778f0ce685de453cb010b7836c41474, type: 3}
+    gain: 0.28
   - cue: 29
     variants:
-    - {fileID: 8300000, guid: 6dca82bafcc0840c0b09df67c3a14451, type: 3}
-    - {fileID: 8300000, guid: ee761410ce34f450bbd129ee9c80d5be, type: 3}
+    - {fileID: 8300000, guid: 528761d80e7b44475942bec965525812, type: 3}
+    - {fileID: 8300000, guid: 0e13a8529cb424daaa0620db6a28cb5d, type: 3}
+    gain: 0.8
   - cue: 30
     variants:
-    - {fileID: 8300000, guid: a31b993fbbae34994960deed8b204fd9, type: 3}
-    - {fileID: 8300000, guid: 958d30ecf7ae44024a6be5531912003a, type: 3}
+    - {fileID: 8300000, guid: 52fbc805e98df449c9bc5561d0bbfa64, type: 3}
+    - {fileID: 8300000, guid: b29048e39c8d649878736741059b049e, type: 3}
+    gain: 0.86

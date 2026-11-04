@@ -164,6 +164,23 @@ namespace CubeInvasion.Prototype
             else { var group=pages[(int)page].GetComponent<CanvasGroup>();if(group)group.alpha=1; }
         }
         public void SetObjectiveDescription(string text) {if(roadDescription&&roadDescription.text!=text)roadDescription.text=text;}
+        // Optional rewarded one-run trial of a locked weapon, built from the unlock button so it shares its style.
+        Button weaponTrial;Action weaponTrialAction;Func<bool> weaponTrialAvailable;
+        public void BindWeaponTrial(Action action,Func<bool> available) { weaponTrialAction=action;weaponTrialAvailable=available; }
+        void RefreshWeaponTrial(bool locked)
+        {
+            bool show=locked&&weaponTrialAction!=null&&weaponTrialAvailable!=null&&weaponTrialAvailable();
+            if(show&&!weaponTrial)
+            {
+                weaponTrial=Instantiate(buyWeapon,buyWeapon.transform.parent);weaponTrial.name="Weapon trial";
+                var shine=weaponTrial.transform.Find("Shine");if(shine)Destroy(shine.gameObject);
+                var rect=(RectTransform)weaponTrial.transform;rect.offsetMin+=new Vector2(0,-84);rect.offsetMax+=new Vector2(0,-84);
+                weaponTrial.onClick.RemoveAllListeners();weaponTrial.onClick.AddListener(()=>weaponTrialAction?.Invoke());weaponTrial.interactable=true;
+                weaponTrial.GetComponent<Image>().color=VoidToyPalette.Gold;
+                var label=weaponTrial.GetComponentInChildren<Text>();label.text="WATCH AD: TRY FOR ONE RUN";label.color=VoidToyPalette.Ink;
+            }
+            if(weaponTrial)weaponTrial.gameObject.SetActive(show);
+        }
         public void Refresh(MetaProfile profile,P3MetaSettings rules,P2ContentCatalog content,int mission,int inspected,int equipped,string phase,string message)
         {
             bool visible=phase=="Loadout";
@@ -189,6 +206,7 @@ namespace CubeInvasion.Prototype
             play.GetComponent<Image>().color=playable?VoidToyPalette.Cyan:VoidToyPalette.Panel;homeLaunch.color=playable?VoidToyPalette.Ink:VoidToyPalette.Disabled;
             var shine=play.Find("Shine");if(shine)shine.gameObject.SetActive(playable);
             homeMission.text=content.missions[mission].title;
+            if(levelNodes.Length>0)CenterPortraitColumn(levelNodes[0].transform,516);
             for(int i=0;i<levelNodes.Length;i++)
             {
                 bool open=i<=profile.highestMission,done=profile.completed[i],selected=i==mission;
@@ -226,6 +244,7 @@ namespace CubeInvasion.Prototype
             var resolved=new WeaponRuntimeStats(spec,state,rules);weaponStats.text=$"DPS {resolved.Dps:0.0}   /   RANGE {resolved.Range:0.0} m";
             buyWeapon.gameObject.SetActive(!state.owned);buyWeapon.interactable=profile.gold>=rules.Price(inspected);
             buyWeapon.GetComponentInChildren<Text>().text=$"UNLOCK WEAPON  ·  {rules.Price(inspected)} GOLD";
+            RefreshWeaponTrial(!state.owned);
             for(int i=0;i<weaponUpgrades.Length;i++)
             {
                 var kind=(WeaponUpgrade)i;int level=state.Level(kind),cost=rules.UpgradeCost(kind,level);bool max=level>=rules.Cap(kind);if(content.weapons.Length==12&&inspected==0&&i==0&&level==0&&profile.highestMission>=2)cost=0;
@@ -252,9 +271,19 @@ namespace CubeInvasion.Prototype
         static readonly string[] biomeTitles={"Neon Yard","Factory Rift","Circuit Abyss","Frozen Blocks","Lava Foundry","Void Core"};
         // Sade UI canvas 01: the active biome's ten levels (or a short catalog's levels) climb a winding path,
         // boss last and largest. Done levels are green, the next one cyan with a pulse and the Scout on it.
+        // Wide windows (desktop, landscape, 1:1) keep the path at its portrait width and centre it instead of
+        // hugging the left edge. Phones are exactly the portrait width, so nothing moves there.
+        static void CenterPortraitColumn(Transform node,float width)
+        {
+            var content=node?node.parent as RectTransform:null;var view=content?content.parent as RectTransform:null;if(!view)return;
+            bool wide=view.rect.width>width+1;float x=wide?.5f:0,x2=wide?.5f:1;
+            content.anchorMin=new Vector2(x,content.anchorMin.y);content.anchorMax=new Vector2(x2,content.anchorMax.y);
+            content.sizeDelta=new Vector2(wide?width:0,content.sizeDelta.y);content.anchoredPosition=new Vector2(0,content.anchoredPosition.y);
+        }
         void LayoutHomePath(int mission,int count,MetaProfile profile)
         {
             if(homeNodes==null||homeNodes.Length==0)return;
+            CenterPortraitColumn(homeNodes[0].transform,540);
             int window=count>=10?10:count,first=count>=10?Mathf.Clamp(mission,0,count-1)/10*10:0,last=Mathf.Min(count,first+window)-1;
             int current=Mathf.Clamp(profile.highestMission,0,count-1);
             Vector2 Point(int i)
@@ -401,7 +430,46 @@ namespace CubeInvasion.Prototype
             if(!quiet)settingsChanged?.Invoke(musicSlider.value,sfxSlider.value,muteToggle.isOn,hapticsToggle.isOn,frameToggle.isOn);
         }
         void OnRectTransformDimensionsChange() { if(roadScroll)roadLayoutDirty=true; }
-        void LateUpdate() { if(roadLayoutDirty&&(page==MenuPage.Road||page==MenuPage.Home))ReframeRoad(); }
+        void LateUpdate() { AdaptWideLayout();if(roadLayoutDirty&&(page==MenuPage.Road||page==MenuPage.Home))ReframeRoad(); }
+        // Wide windows (desktop, landscape, 1:1) keep the full-width layout, but the parts authored against the 540-wide
+        // portrait column adapt instead of stretching: the weapon turntable and its disc stay square and centred, and
+        // the three tabs share the bar evenly. On phones the canvas is exactly 540 wide, so nothing moves.
+        const float PortraitWidth=540;
+        float adaptedWidth=-1;
+        readonly System.Collections.Generic.Dictionary<RectTransform,(Vector2 min,Vector2 max,Vector2 size,Vector2 position)> authored=new System.Collections.Generic.Dictionary<RectTransform,(Vector2,Vector2,Vector2,Vector2)>();
+        void AdaptWideLayout()
+        {
+            float width=((RectTransform)transform).rect.width;if(pages==null||Mathf.Approximately(width,adaptedWidth))return;adaptedWidth=width;
+            bool wide=width>PortraitWidth+1;
+            foreach(string name in new[]{"Weapon glow","Weapon hero"})
+                if(pages[2]&&pages[2].transform.Find(name) is RectTransform square)
+                    Adapt(square,wide,(rect,original)=> {rect.anchorMin=new Vector2(.5f,original.min.y);rect.anchorMax=new Vector2(.5f,original.max.y);
+                        rect.sizeDelta=new Vector2(rect.rect.height,original.size.y);rect.anchoredPosition=new Vector2(0,original.position.y);});
+            // The next-weapon arrow is authored as "from x=456 to the right edge"; pin it to the right edge so it mirrors the back arrow.
+            if(nextWeapon)Adapt((RectTransform)nextWeapon.transform,wide,(rect,original)=> {rect.anchorMin=new Vector2(1,original.min.y);rect.anchorMax=new Vector2(1,original.max.y);
+                rect.sizeDelta=new Vector2(PortraitWidth-456-12,original.size.y);rect.anchoredPosition=new Vector2(-12-(PortraitWidth-456-12)*.5f,original.position.y);});
+            int[] tabSlot={0,-1,1,2,-1}; // Road, (Chapters), Weapons, Pilot, (Settings) — as authored in the dock.
+            for(int i=0;navigation!=null&&i<navigation.Length&&i<tabSlot.Length;i++)
+            {
+                if(tabSlot[i]<0||!navigation[i])continue;int slot=tabSlot[i];
+                Adapt((RectTransform)navigation[i].transform,wide,(rect,original)=> {rect.anchorMin=new Vector2(slot/3f,original.min.y);rect.anchorMax=new Vector2((slot+1)/3f,original.max.y);
+                    rect.sizeDelta=new Vector2(0,original.size.y);rect.anchoredPosition=new Vector2(0,original.position.y);});
+                // The selection mark stays a short centred dash instead of growing with the tab.
+                if(navigation[i].transform.Find("Tab dot") is RectTransform dot)
+                    Adapt(dot,wide,(rect,original)=> {float dash=Mathf.Max(8,PortraitWidth/3-160);rect.anchorMin=new Vector2(.5f,original.min.y);rect.anchorMax=new Vector2(.5f,original.max.y);
+                        rect.sizeDelta=new Vector2(dash,original.size.y);rect.anchoredPosition=new Vector2(0,original.position.y);});
+            }
+        }
+        void Adapt(RectTransform rect,bool wide,System.Action<RectTransform,(Vector2 min,Vector2 max,Vector2 size,Vector2 position)> layout)
+        {
+            if(!authored.TryGetValue(rect,out var original))
+            {
+                if(!wide)return; // Never touch the authored phone layout.
+                authored[rect]=original=(rect.anchorMin,rect.anchorMax,rect.sizeDelta,rect.anchoredPosition);
+            }
+            rect.anchorMin=original.min;rect.anchorMax=original.max;rect.sizeDelta=original.size;rect.anchoredPosition=original.position;
+            if(wide)layout(rect,original);
+        }
         public void ReframeRoad()
         {
             var scroll=page==MenuPage.Home?homeScroll:roadScroll;if(!scroll)return;Canvas.ForceUpdateCanvases();scroll.StopMovement();

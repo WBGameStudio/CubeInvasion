@@ -33,7 +33,8 @@ namespace CubeInvasion.Prototype
             missionHud.Initialize(hud.SafeRoot);
             feedback.SetMusic(MissionMode.Combat);
             missionHud.Bind(ChangeMission,ChangeWeapon,()=>StartMission(missionIndex),
-                ()=>StartMission(missionIndex),()=>StartMission(missionIndex+1),OpenMissionMenu);
+                ResultRetry,ResultAdvance,ResultMenu);
+            missionHud.BindDoubleGold(WatchDoubleGold);
             phase=Phase.Loadout;
             InitializeMeta();
             InitializeFrontEnd();
@@ -54,12 +55,14 @@ namespace CubeInvasion.Prototype
             else if(profile.IsOwned(index)) { if(profile.Select(Mathf.Min(missionIndex,profile.Data.highestMission),index))weaponIndex=index;else metaNotice=profile.Message; }
             RefreshContentHud();
         }
-        void OpenMissionMenu() { if(phase==Phase.Combat||phase==Phase.Transfer)return;SetPaused(false);phase=Phase.Loadout;feedback.SetMusic(MissionMode.Combat);RefreshContentHud(); }
+        void OpenMissionMenu() { if(phase==Phase.Combat||phase==Phase.Transfer)return;SetPaused(false);holdNextStart=false;EndWeaponTrial();phase=Phase.Loadout;feedback.SetMusic(MissionMode.Combat);RefreshContentHud(); }
         void StartMission(int index)
         {
             if(!HasContent)return;
             if(HasMeta && phase!=Phase.Loadout&&phase!=Phase.Won&&phase!=Phase.Failed)return;
+            EndWeaponTrial();
             if(!BeginMetaRun(index))return;
+            ApplyWeaponTrial();revivedThisRun=false;startHold=holdNextStart;holdNextStart=false;
             BeginValidationRun(index);bomberSource=null;bomberMission=null;
             StopAllCoroutines();RecycleActiveActors();ClearPickups();ResetExpansionCombat();ClearSupportEffects();ClearDeathCharges();ClearAnimationTweens();ClearPulses();ClearEnemyShots();feedback.ClearMuzzles();
             foreach(Transform child in dynamicRoot)Destroy(child.gameObject);
@@ -101,6 +104,7 @@ namespace CubeInvasion.Prototype
                 }
             }
             var enemies=HasGoldRushVariants?GoldRushVariantSettings.Enemies(GoldVariant,Encounter.enemies):Encounter.enemies;
+            if(OnboardingRun)enemies=OnboardingWave(stage);
             if(enemies!=null)for(int i=0;i<enemies.Length;i++)
             {
                 // Opposing side lanes keep melee and ranged pressure from forming one straight queue.
@@ -155,13 +159,14 @@ namespace CubeInvasion.Prototype
         void RefreshContentHud()
         {
             if(!HasContent||!contentReady||!missionHud)return;
-            string objective=IsGoldRush?GoldObjectiveText:IsBoss?$"FAZ {stage}/{CubeCount} · {Mathf.CeilToInt(bossHealth)} CAN":$"{foes.Count} HEDEF";
+            string objective=IsGoldRush?GoldObjectiveText:IsBoss?$"PHASE {stage}/{CubeCount} · {Mathf.CeilToInt(bossHealth)} HP":$"{foes.Count} TARGETS";
             if(HasCrusherObjectives&&phase==Phase.Combat)objective=CrusherObjective??objective;
             if(Expanded&&phase==Phase.Combat)objective=ExpandedObjectiveText(objective);
             hud.SetMissionInfo(stage,CubeCount,objective,IsBoss&&phase==Phase.Combat);
             missionHud.SetBoss(bossHealth,bossTotal,IsBoss&&phase==Phase.Combat,stage);
-            if(HasExpandedBoss&&phase==Phase.Combat)missionHud.SetBossCaption(Mission.title+" · FAZ "+stage+"/"+CubeCount+" · "+Mathf.CeilToInt(bossHealth)+"/"+bossTotal);
+            if(HasExpandedBoss&&phase==Phase.Combat)missionHud.SetBossCaption(Mission.title+" · PHASE "+stage+"/"+CubeCount+" · "+Mathf.CeilToInt(bossHealth)+"/"+bossTotal);
             missionHud.Refresh(Mission,HasMeta&&phase==Phase.Loadout?content.weapons[inspectedWeapon]:Weapon,missionIndex,content.missions.Length,weaponIndex,phase.ToString(),reason,wallet);
+            missionHud.SetDoubleGold(DoubleGoldOffered,DoubleGoldOffered?profile.Data.lastResult.gold:0);
             if(HasGoldRushVariants&&phase==Phase.Loadout&&(!HasMeta||missionIndex<=profile.Data.highestMission))missionHud.SetObjectiveDescription(GoldMissionDescription);
             RefreshMetaHud();
             RefreshFrontEnd();

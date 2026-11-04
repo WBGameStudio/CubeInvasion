@@ -31,39 +31,7 @@ public static class P3MetaBuilder
         EditorSceneManager.MarkSceneDirty(runtime.gameObject.scene);EditorSceneManager.SaveScene(runtime.gameObject.scene);AssetDatabase.SaveAssets();
         Debug.Log("CUBE_P3_INSTALL_OK: persistent wallet, arsenal upgrades and progression UI saved without resetting scene.");
     }
-    static void InstallSounds()
-    {
-        const string folder="Assets/CubeInvasion/Art/P2/Audio/";
-        var bank=AssetDatabase.LoadAssetAtPath<P2AudioBank>(folder+"P2AudioBank.asset");
-        var entries=new List<P2AudioBank.Entry>(bank.sounds);
-        foreach(var cue in new[]{CombatFeedback.Cue.Unlock,CombatFeedback.Cue.Upgrade,CombatFeedback.Cue.Denied})
-        {
-            if(entries.Exists(entry=>entry.cue==cue))continue;
-            var clips=new AudioClip[2];
-            for(int variation=0;variation<2;variation++)
-            {
-                float duration=cue==CombatFeedback.Cue.Unlock?.48f:cue==CombatFeedback.Cue.Upgrade?.24f:.16f;
-                const int rate=22050;int samples=(int)(duration*rate);var data=new float[samples];float phase=0;
-                for(int i=0;i<samples;i++)
-                {
-                    float t=i/(float)rate,u=t/duration;
-                    float hz=(cue==CombatFeedback.Cue.Denied?190:cue==CombatFeedback.Cue.Unlock?660:880)*(1+variation*.035f);
-                    hz*=cue==CombatFeedback.Cue.Denied?1-u*.3f:Mathf.Pow(2,Mathf.Floor(u*3)*4/12f);
-                    phase+=2*Mathf.PI*hz/rate;
-                    data[i]=(Mathf.Sin(phase)+.15f*Mathf.Sin(phase*2))*Mathf.Min(1,u*25)*Mathf.Pow(1-u,1.7f)*.35f;
-                }
-                string path=folder+"Meta_"+cue+"_"+variation+".wav";
-                using(var writer=new BinaryWriter(File.Create(path)))
-                {
-                    writer.Write(System.Text.Encoding.ASCII.GetBytes("RIFF"));writer.Write(36+samples*2);writer.Write(System.Text.Encoding.ASCII.GetBytes("WAVEfmt "));
-                    writer.Write(16);writer.Write((short)1);writer.Write((short)1);writer.Write(rate);writer.Write(rate*2);writer.Write((short)2);writer.Write((short)16);
-                    writer.Write(System.Text.Encoding.ASCII.GetBytes("data"));writer.Write(samples*2);foreach(float sample in data)writer.Write((short)(sample*32767));
-                }
-                AssetDatabase.ImportAsset(path);clips[variation]=AssetDatabase.LoadAssetAtPath<AudioClip>(path);
-            }
-            entries.Add(new P2AudioBank.Entry {cue=cue,variants=clips});
-        }
-        bank.sounds=entries.ToArray();EditorUtility.SetDirty(bank);
-    }
+    // Unlock/upgrade/denied cues come from recorded CC0 audio (CubeAudioLibrary); nothing is synthesized.
+    static void InstallSounds() { CubeAudioLibrary.Install(); }
     public static void InstallGameplayScene() { EditorSceneManager.OpenScene("Assets/CubeInvasion/CubeInvasionPrototype.unity");Install(); }
 }

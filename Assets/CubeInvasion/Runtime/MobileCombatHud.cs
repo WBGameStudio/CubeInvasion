@@ -121,12 +121,20 @@ namespace CubeInvasion.Prototype
             var button=root.gameObject.AddComponent<Button>();button.targetGraphic=root.GetComponent<Image>();button.onClick.AddListener(()=>action());
             var label=Label(name+" label",root,value,17,TextAnchor.MiddleCenter,Vector2.zero,Vector2.zero);label.rectTransform.anchorMin=Vector2.zero;label.rectTransform.anchorMax=Vector2.one;return label;
         }
+        float bottomInsetCss;
+        public void SetBottomInset(float cssPixels) { if(Mathf.Approximately(bottomInsetCss,cssPixels))return;bottomInsetCss=cssPixels;ApplySafeArea(); }
         void ApplySafeArea()
         {
             var safe=Screen.safeArea;if(Screen.width==0||Screen.height==0)return;
             lastSafe=safe;lastWidth=Screen.width;lastHeight=Screen.height;
-            SafeRoot.anchorMin=new Vector2(safe.xMin/Screen.width,safe.yMin/Screen.height);SafeRoot.anchorMax=new Vector2(safe.xMax/Screen.width,safe.yMax/Screen.height);
+            // A shown platform banner keeps the layout above it (CSS pixels; Screen.dpi tracks the device ratio on web).
+            float bannerInset=bottomInsetCss*(Screen.dpi>0?Screen.dpi/96f:1)/Screen.height;
+            SafeRoot.anchorMin=new Vector2(safe.xMin/Screen.width,safe.yMin/Screen.height+bannerInset);SafeRoot.anchorMax=new Vector2(safe.xMax/Screen.width,safe.yMax/Screen.height);
             SafeRoot.offsetMin=SafeRoot.offsetMax=Vector2.zero;
+            // Browser windows can be wider than the 9:16 reference (desktop, tablet, 1:1); fit by height there
+            // so the portrait layout never runs off the bottom. Phones keep the authored width match.
+            if(PlaygamaService.IsBridge&&TryGetComponent<CanvasScaler>(out var scaler))
+                scaler.matchWidthOrHeight=Screen.width*960f>Screen.height*540f?1:0;
         }
         public void Refresh(float seconds,float hp,int stage,int enemies,int wallet,int pending,int buffCubes,float buff,bool paused,bool muted,string phase,string reason)
         {

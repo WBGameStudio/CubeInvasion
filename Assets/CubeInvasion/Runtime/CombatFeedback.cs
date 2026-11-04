@@ -6,7 +6,7 @@ namespace CubeInvasion.Prototype
     /// <summary>Bounded, reusable visual and audio voices. No time-scale hit stop.</summary>
     public sealed partial class CombatFeedback : MonoBehaviour
     {
-        public enum Cue { Shot, Hit, Hurt, Explosion, Gold, Heal, Clear, Alarm, Fail, Gate, Twin, Scatter, Rapid, Telegraph, BossPhase, BossSlam, Unlock, Upgrade, Denied, Pierce, Ricochet, Arc, Rocket, Flame, Cryo, Drone, Nova, Summon, Teleport, ShieldBlock, Repair }
+        public enum Cue { Shot, Hit, Hurt, Explosion, Gold, Heal, Clear, Alarm, Fail, Gate, Twin, Scatter, Rapid, Telegraph, BossPhase, BossSlam, Unlock, Upgrade, Denied, Pierce, Ricochet, Arc, Rocket, Flame, Cryo, Drone, Nova, Summon, Teleport, ShieldBlock, Repair, Victory, UiClick }
         sealed class Effect { public Transform body; public float age, duration, size; public Vector3 origin, velocity, spin; public bool ring, debris; }
         readonly List<Effect> effects=new List<Effect>();
         readonly Stack<Transform> ringPool=new Stack<Transform>(), sparkPool=new Stack<Transform>(), debrisPool=new Stack<Transform>();
@@ -14,16 +14,15 @@ namespace CubeInvasion.Prototype
         readonly List<Material> materials=new List<Material>();
         readonly Dictionary<Cue,AudioClip> clips=new Dictionary<Cue,AudioClip>();
         [SerializeField] P2AudioBank audioBank;
-        readonly List<AudioClip> ownedClips=new List<AudioClip>();
         AudioSource[] voices;
         AudioSource music,pressureMusic;
         public void SetCampaignMusic(int biome,bool boss,bool gold)
         {
             var bank=Resources.Load<CampaignPresentation>("CampaignPresentation");if(!bank||bank.biomeMusic==null||bank.biomeMusic.Length<7)return;
-            if(!music)SetMusic(MissionMode.Combat);music.clip=bank.biomeMusic[Mathf.Clamp(biome,0,5)];music.pitch=boss?1.08f:gold?1.04f:1;music.Play();
+            if(!music)SetMusic(MissionMode.Combat);var track=bank.biomeMusic[Mathf.Clamp(biome,0,5)];if(music.clip!=track)musicFade=0;music.clip=track;music.pitch=boss?1.08f:gold?1.04f:1;music.Play();
             if(!pressureMusic) {pressureMusic=gameObject.AddComponent<AudioSource>();pressureMusic.loop=true;pressureMusic.playOnAwake=false;pressureMusic.spatialBlend=0;}pressureMusic.clip=bank.biomeMusic[6];pressureMusic.volume=0;pressureMusic.Play();
         }
-        public void SetPressure(float weight) {if(pressureMusic) {pressureMusic.volume=Mathf.Clamp01(weight)*.7f*MusicLevel;pressureMusic.mute=Muted;}}
+        public void SetPressure(float weight) {if(pressureMusic) {pressureMusic.volume=Mathf.Clamp01(weight)*MusicBase*MusicLevel;pressureMusic.mute=Muted;}}
         int variation;
         CampaignPresentation campaignSounds;
         float duck;
@@ -31,11 +30,14 @@ namespace CubeInvasion.Prototype
         public void SetMusic(MissionMode mode)
         {
             if(!audioBank)return;
-            if(!music) { music=gameObject.AddComponent<AudioSource>();music.loop=true;music.playOnAwake=false;music.spatialBlend=0;music.volume=.11f*MusicLevel; }
+            if(!music) { music=gameObject.AddComponent<AudioSource>();music.loop=true;music.playOnAwake=false;music.spatialBlend=0;music.volume=0; }
             var clip=mode==MissionMode.Boss?audioBank.bossLoop:mode==MissionMode.GoldRush?audioBank.goldLoop:audioBank.combatLoop;
             if(music.clip==clip)return;
-            music.clip=clip;music.mute=Muted;if(clip) { music.Play();if(frozen)music.Pause(); }
+            music.clip=clip;music.mute=Muted;musicFade=0;if(clip) { music.Play();if(frozen)music.Pause(); }
         }
+        // Mix level of the music bed; recorded tracks set it in the bank, 0.11 was the old synthesized loops' level.
+        float MusicBase=>audioBank&&audioBank.musicVolume>0?audioBank.musicVolume:.11f;
+        float musicFade=1;
         Material lineMaterial, sparkMaterial;
         bool frozen;
         float lastShotSound;
@@ -44,9 +46,9 @@ namespace CubeInvasion.Prototype
         public void SetLevels(float musicVolume,float effectsVolume,bool mute,bool save=true)
         {
             MusicLevel=Mathf.Clamp01(musicVolume);SfxLevel=Mathf.Clamp01(effectsVolume);Muted=mute;
-            PlayerPrefs.SetFloat("CI.MusicVolume",MusicLevel);PlayerPrefs.SetFloat("CI.SfxVolume",SfxLevel);PlayerPrefs.SetInt("CI.Muted",Muted?1:0);if(save)PlayerPrefs.Save();
+            GamePrefs.SetFloat("CI.MusicVolume",MusicLevel);GamePrefs.SetFloat("CI.SfxVolume",SfxLevel);GamePrefs.SetInt("CI.Muted",Muted?1:0);if(save)GamePrefs.Save();
             if(voices!=null)foreach(var voice in voices)voice.mute=Muted;
-            if(music) { music.mute=Muted;music.volume=.11f*MusicLevel; }
+            if(music) { music.mute=Muted;music.volume=MusicBase*musicFade*MusicLevel; }
         }
         public bool Muted { get; private set; }
         public int ActiveEffects => effects.Count+flashes.Count;
@@ -59,38 +61,18 @@ namespace CubeInvasion.Prototype
             for(int i=0;i<voices.Length;i++) { voices[i]=gameObject.AddComponent<AudioSource>(); voices[i].playOnAwake=false; voices[i].spatialBlend=0; }
             foreach(Cue cue in System.Enum.GetValues(typeof(Cue)))
             {
-                var clip=audioBank?audioBank.Find(cue,0):null;
-                if(!clip) { clip=Synthesize(cue);ownedClips.Add(clip); }
-                clips[cue]=clip;
+                // Recorded clips only (Playgama 3.3.2); a cue without one stays silent.
+                clips[cue]=audioBank?audioBank.Find(cue,0):null;
             }
             campaignSounds=Resources.Load<CampaignPresentation>("CampaignPresentation");
-            Muted=PlayerPrefs.GetInt("CI.Muted",0)==1;
-            MusicLevel=PlayerPrefs.GetFloat("CI.MusicVolume",1);SfxLevel=PlayerPrefs.GetFloat("CI.SfxVolume",1);
-        }
-        AudioClip Synthesize(Cue cue)
-        {
-            const int rate=22050;
-            float seconds=cue==Cue.Explosion?.24f:cue==Cue.Clear?.32f:.1f;
-            var samples=new float[(int)(rate*seconds)];
-            float frequency=cue==Cue.Shot?700:cue==Cue.Gold?1100:cue==Cue.Heal?880:cue==Cue.Clear?660:cue==Cue.Alarm?320:cue==Cue.Hurt?180:240;
-            uint noise=17;
-            for(int i=0;i<samples.Length;i++)
-            {
-                float t=i/(float)rate, phase=t/seconds;
-                noise=noise*1664525+1013904223;
-                float random=((noise>>16)/65535f)*2-1;
-                float pitch=cue==Cue.Clear||cue==Cue.Gate?1+phase:1-phase*.45f;
-                float wave=Mathf.Sin(2*Mathf.PI*frequency*pitch*t);
-                if(cue==Cue.Explosion)wave=wave*.25f+random*.7f;
-                samples[i]=wave*Mathf.Min(1,phase*15)*Mathf.Pow(1-phase,2)*.25f;
-            }
-            var clip=AudioClip.Create("CI "+cue,samples.Length,1,rate,false);clip.SetData(samples,0);return clip;
+            Muted=GamePrefs.GetInt("CI.Muted",0)==1;
+            MusicLevel=GamePrefs.GetFloat("CI.MusicVolume",1);SfxLevel=GamePrefs.GetFloat("CI.SfxVolume",1);
         }
         public void ToggleMute() { SetLevels(MusicLevel,SfxLevel,!Muted); }
         public void Play(Cue cue)
         {
             if(!frozen)MobileHaptics.Play(cue);
-            if(Muted||frozen||voices==null)return;
+            if(Muted||(frozen&&cue!=Cue.UiClick)||voices==null)return;
             if((cue==Cue.Shot||cue==Cue.Rapid||cue==Cue.Twin) && Time.unscaledTime-lastShotSound<.08f)return;
             if(cue==Cue.Shot||cue==Cue.Rapid||cue==Cue.Twin)lastShotSound=Time.unscaledTime;
             int slot=-1;
@@ -102,9 +84,9 @@ namespace CubeInvasion.Prototype
             var variant=audioBank?audioBank.Find(cue,variation++):null;
             if(campaignSounds&&campaignSounds.sounds!=null)foreach(var entry in campaignSounds.sounds)if(entry.cue==cue&&entry.variants.Length>0) {variant=entry.variants[variation%entry.variants.Length];break;}
             // Small pitch spread keeps rapid repeats (shots, hits, coins) from sounding like one looped sample.
-            bool repeated=cue==Cue.Shot||cue==Cue.Rapid||cue==Cue.Twin||cue==Cue.Hit||cue==Cue.Gold;
-            selected.clip=variant?variant:clips[cue];selected.pitch=repeated?Random.Range(.93f,1.07f):1;
-            selected.volume=(cue==Cue.Shot||cue==Cue.Rapid||cue==Cue.Twin||cue>=Cue.Pierce&&cue<=Cue.Nova?.26f:cue==Cue.Telegraph?.42f:.6f)*SfxLevel;selected.Play();
+            bool repeated=cue==Cue.Shot||cue==Cue.Rapid||cue==Cue.Twin||cue==Cue.Hit||cue==Cue.Gold||cue==Cue.UiClick;
+            selected.clip=variant?variant:clips[cue];if(!selected.clip)return;selected.pitch=repeated?Random.Range(.93f,1.07f):1;
+            selected.volume=(cue==Cue.Shot||cue==Cue.Rapid||cue==Cue.Twin||cue>=Cue.Pierce&&cue<=Cue.Nova?.26f:cue==Cue.Telegraph?.42f:.6f)*SfxLevel*(audioBank?audioBank.Gain(cue):1);selected.Play();
 
             if(cue==Cue.Explosion||cue==Cue.BossSlam)duck=.25f;
         }
@@ -166,7 +148,7 @@ namespace CubeInvasion.Prototype
         {
             if(frozen)return;
             TickMuzzles(dt);
-            duck=Mathf.Max(0,duck-dt);if(music)music.volume=(duck>0?.04f:.11f)*MusicLevel;
+            duck=Mathf.Max(0,duck-dt);musicFade=Mathf.MoveTowards(musicFade,1,dt/.8f);if(music)music.volume=MusicBase*(duck>0?.36f:1)*musicFade*MusicLevel;
             for(int i=effects.Count-1;i>=0;i--)
             {
                 var effect=effects[i];effect.age+=dt;float t=Mathf.Clamp01(effect.age/effect.duration);
@@ -185,6 +167,6 @@ namespace CubeInvasion.Prototype
             }
         }
         void Recycle(int i) { var effect=effects[i];effect.body.gameObject.SetActive(false);(effect.debris?debrisPool:effect.ring?ringPool:sparkPool).Push(effect.body);effects.RemoveAt(i); }
-        void OnDestroy() { foreach(var clip in ownedClips)if(clip)Destroy(clip);foreach(var material in materials)if(material)Destroy(material); }
+        void OnDestroy() { foreach(var material in materials)if(material)Destroy(material); }
     }
 }

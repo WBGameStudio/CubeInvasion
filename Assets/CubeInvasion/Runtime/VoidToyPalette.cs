@@ -30,6 +30,7 @@ namespace CubeInvasion.Prototype
         public static Color BiomeEdge(int biome) => biomeEdge[Mathf.Clamp(biome,0,5)];
         static readonly System.Globalization.NumberFormatInfo turkish=new System.Globalization.NumberFormatInfo {NumberGroupSeparator=".",NumberDecimalSeparator=",",NumberGroupSizes=new[]{3}};
         // Gold reads the Turkish way everywhere: 30.645, never 30,645 or 30645.
-        public static string FormatGold(int amount) => amount.ToString("#,0",turkish);
+        // The English-only web release groups thousands the English way (30,645).
+        public static string FormatGold(int amount) => amount.ToString("#,0",PlaygamaService.IsBridge?System.Globalization.CultureInfo.InvariantCulture.NumberFormat:turkish);
     }
 }

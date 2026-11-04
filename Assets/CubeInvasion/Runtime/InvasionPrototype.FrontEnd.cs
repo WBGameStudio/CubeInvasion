@@ -8,7 +8,7 @@ namespace CubeInvasion.Prototype
         [SerializeField] FrontEndArt frontEndArt;
         float settingsSaveAt=-1;
         void FlushMenuSettings(bool force=false)
-        { if(settingsSaveAt>=0&&(force||Time.unscaledTime>=settingsSaveAt)) { PlayerPrefs.Save();settingsSaveAt=-1; } }
+        { if(settingsSaveAt>=0&&(force||Time.unscaledTime>=settingsSaveAt)) { GamePrefs.Save();settingsSaveAt=-1; } }
         void OnApplicationPause(bool value) { if(value) { FlushMenuSettings(true);validationLog?.Flush();SetPaused(true); } }
         public void ConfigureFrontEnd(MenuFrontEnd menu,FrontEndArt graphics) { frontEnd=menu;frontEndArt=graphics; }
         void InitializeFrontEnd()
@@ -17,15 +17,16 @@ namespace CubeInvasion.Prototype
             if(!HasMeta) { frontEnd.gameObject.SetActive(false);return; }
             frontEnd.Initialize(hud.SafeRoot,frontEndArt,content);
             frontEnd.Bind(ChangeWeapon,SelectFrontMission,()=>StartMission(missionIndex),BuyWeapon,UpgradeWeapon,UpgradePilot,ApplyMenuSettings);
+            frontEnd.BindWeaponTrial(WatchWeaponTrial,()=>WeaponTrialOffered);
             missionHud.UseFrontEnd(true);metaHud.UseFrontEnd(true);
-            frontEnd.SyncSettings(feedback.MusicLevel,feedback.SfxLevel,feedback.Muted,PlayerPrefs.GetInt("CI.Haptics",0)==1,PlayerPrefs.GetInt("CI.HighFrames",1)==1);
-            Application.targetFrameRate=PlayerPrefs.GetInt("CI.HighFrames",1)==1?60:30;
+            frontEnd.SyncSettings(feedback.MusicLevel,feedback.SfxLevel,feedback.Muted,GamePrefs.GetInt("CI.Haptics",0)==1,GamePrefs.GetInt("CI.HighFrames",1)==1);
+            Application.targetFrameRate=GamePrefs.GetInt("CI.HighFrames",1)==1?60:30;
             RefreshFrontEnd();
         }
         void RefreshFrontEnd()
         {
             if(!frontEnd||!HasMeta||profile==null)return;
-            if(phase==Phase.Loadout)frontEnd.SyncSettings(feedback.MusicLevel,feedback.SfxLevel,feedback.Muted,PlayerPrefs.GetInt("CI.Haptics",0)==1,PlayerPrefs.GetInt("CI.HighFrames",1)==1);
+            if(phase==Phase.Loadout)frontEnd.SyncSettings(feedback.MusicLevel,feedback.SfxLevel,feedback.Muted,GamePrefs.GetInt("CI.Haptics",0)==1,GamePrefs.GetInt("CI.HighFrames",1)==1);
             frontEnd.Refresh(profile.Data,metaSettings,content,missionIndex,inspectedWeapon,weaponIndex,phase.ToString(),metaNotice);
             if(HasGoldRushVariants&&phase==Phase.Loadout&&missionIndex<=profile.Data.highestMission)frontEnd.SetObjectiveDescription(GoldMissionDescription);
         }
@@ -46,7 +47,7 @@ namespace CubeInvasion.Prototype
         void ApplyMenuSettings(float music,float sfx,bool mute,bool haptic,bool highFrames)
         {
             feedback.SetLevels(music,sfx,mute,false);
-            PlayerPrefs.SetInt("CI.Haptics",haptic?1:0);PlayerPrefs.SetInt("CI.HighFrames",highFrames?1:0);settingsSaveAt=Time.unscaledTime+.35f;
+            GamePrefs.SetInt("CI.Haptics",haptic?1:0);GamePrefs.SetInt("CI.HighFrames",highFrames?1:0);settingsSaveAt=Time.unscaledTime+.35f;
             Application.targetFrameRate=highFrames?60:30;
         }
     }

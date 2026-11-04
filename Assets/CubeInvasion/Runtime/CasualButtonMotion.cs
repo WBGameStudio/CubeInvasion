@@ -10,11 +10,13 @@ namespace CubeInvasion.Prototype
         Tween motion;
         Button button;
         bool pressed;
+        // Menu click sound hook; the game routes it through CombatFeedback so mute and pause still apply.
+        public static event System.Action Pressed;
         void Awake() { button=GetComponent<Button>(); }
         public void OnPointerDown(PointerEventData e)
         {
             if(e.button!=PointerEventData.InputButton.Left||!button||!button.IsInteractable())return;
-            pressed=true;motion?.Kill();motion=transform.DOScale(.95f,.08f).SetEase(Ease.OutQuad).SetUpdate(true);
+            pressed=true;motion?.Kill();motion=transform.DOScale(.95f,.08f).SetEase(Ease.OutQuad).SetUpdate(true);Pressed?.Invoke();
         }
         public void OnPointerUp(PointerEventData e)=>Release();
         public void OnPointerExit(PointerEventData e)=>Release();

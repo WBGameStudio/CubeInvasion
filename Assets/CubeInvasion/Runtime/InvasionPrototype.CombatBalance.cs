@@ -5,10 +5,13 @@ namespace CubeInvasion.Prototype
     {
         [Header("Combat pressure / one-thumb fire rhythm")]
         [SerializeField] CombatBalanceSettings combatBalance;
-        float EnemyMoveMultiplier=>combatBalance?combatBalance.enemyMoveMultiplier:1.2f;
-        float EnemyRecoveryMultiplier=>combatBalance?combatBalance.enemyRecoveryMultiplier:.8f;
-        float EnemyDamageMultiplier=>combatBalance?combatBalance.enemyDamageMultiplier:1.3f;
-        float FireMovementWeight=>Mathf.InverseLerp(combatBalance?combatBalance.focusRadius:.25f,combatBalance?combatBalance.runningRadius:.85f,stick.magnitude);
+        // Missions 1-4 ease in toward the full pressure values, which apply from mission 5.
+        float EarlyRamp=>LiveFlow&&HasContent&&contentReady?Mathf.Clamp01(missionIndex/4f):1;
+        float EnemyMoveMultiplier=>Mathf.Lerp(.7f,combatBalance?combatBalance.enemyMoveMultiplier:1.2f,EarlyRamp);
+        float EnemyRecoveryMultiplier=>Mathf.Lerp(1.3f,combatBalance?combatBalance.enemyRecoveryMultiplier:.8f,EarlyRamp);
+        float EnemyDamageMultiplier=>Mathf.Lerp(.7f,combatBalance?combatBalance.enemyDamageMultiplier:1.3f,EarlyRamp);
+        // Keys have no half-press, so the slow-while-running rule would always apply; only an analog stick has that rhythm.
+        float FireMovementWeight=>keyboardMoving?0:Mathf.InverseLerp(combatBalance?combatBalance.focusRadius:.25f,combatBalance?combatBalance.runningRadius:.85f,stick.magnitude);
         float FireCadenceMultiplier=>Mathf.Lerp(1,combatBalance?combatBalance.runningShotIntervalMultiplier:1.4f,FireMovementWeight);
         void TickAutoFire(float dt)
         {

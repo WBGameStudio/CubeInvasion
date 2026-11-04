@@ -45,7 +45,7 @@ public static class CombatPressureBuilder
                     cube.healOffset=new Vector2(c%2==0?2.7f:-2.7f,1.7f);
                 }
             }
-            catalog.missions[0].description="Fire slowly on the run, fast when you slow down. Find angles around cover.";
+            catalog.missions[0].description="Your gun fires by itself. Keep moving and stay off the edge.";
             catalog.missions[1].description="Cover stops shots from both sides. Juggle close and far threats together.";
             catalog.missions[4].description="Crossfire and melee pressure. Create safe windows to shoot.";
             catalog.pressureRevision=2;EditorUtility.SetDirty(catalog);

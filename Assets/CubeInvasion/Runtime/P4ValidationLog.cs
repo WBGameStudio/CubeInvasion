@@ -25,6 +25,7 @@ namespace CubeInvasion.Prototype
         public P4ValidationLog(string file)
         {
             path=file;
+            if(PlaygamaService.UsesBridgeStorage)return; // Web builds report through Bridge analytics, never browser storage.
             try
             {
                 if(File.Exists(path)&&new FileInfo(path).Length<1024*1024)
@@ -39,11 +40,14 @@ namespace CubeInvasion.Prototype
         public void Record(Event value)
         {
             if(value==null||string.IsNullOrEmpty(value.name))return;
-            value.utc=DateTime.UtcNow.ToString("o");CampaignTelemetryArchive.Append(Path.GetDirectoryName(Path.GetFullPath(path)),value);report.events.Add(value);Trim();Flush();
+            value.utc=DateTime.UtcNow.ToString("o");
+            if(PlaygamaService.UsesBridgeStorage) { report.events.Add(value);Trim();return; }
+            CampaignTelemetryArchive.Append(Path.GetDirectoryName(Path.GetFullPath(path)),value);report.events.Add(value);Trim();Flush();
         }
         void Trim() { if(report.events.Count>Capacity)report.events.RemoveRange(0,report.events.Count-Capacity); }
         public bool Flush()
         {
+            if(PlaygamaService.UsesBridgeStorage)return true;
             try
             {
                 Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(path)));

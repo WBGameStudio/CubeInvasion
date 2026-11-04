@@ -19,40 +19,101 @@ namespace CubeInvasion.Prototype
         public int mission, weapon, cubes, gold, kills;
         public float seconds;
         public bool ended, won;
+        public bool doubled; // The optional rewarded x2 was granted for this run.
     }
     [Serializable] public sealed class MetaProfile
     {
         public int version=2, revision, gold, selectedWeapon, selectedMission, highestMission;
         public int vitality,agility,magnet;
+        public int lastDailyDay,dailyStreak;
         public int CharacterLevel(CharacterUpgrade kind)=>kind==CharacterUpgrade.Vitality?vitality:kind==CharacterUpgrade.Agility?agility:magnet;
         public WeaponProgress[] weapons;
         public bool[] completed;
         public RunRecord run, lastResult;
     }
+    // Where the signed profile envelope lives: files on device, Bridge Storage keys on the web.
+    public interface IProfileBackend
+    {
+        string Name { get; }
+        bool PrimaryExists { get; }
+        bool BackupExists { get; }
+        string Read(bool backup);
+        // Keeps the readable backup and moves it over the unreadable primary.
+        void RestoreBackup();
+        // Replaces the primary and keeps the previous snapshot as the backup.
+        void Write(string envelope);
+    }
+    public sealed class FileProfileBackend : IProfileBackend
+    {
+        readonly string path;
+        public FileProfileBackend(string file) { path=file; }
+        public string Name=>path;
+        public bool PrimaryExists=>File.Exists(path);
+        public bool BackupExists=>File.Exists(path+".bak");
+        public string Read(bool backup) { string file=backup?path+".bak":path;return File.Exists(file)?File.ReadAllText(file):null; }
+        public void RestoreBackup() { if(File.Exists(path))File.Copy(path,path+".corrupt",true);File.Copy(path+".bak",path,true); }
+        public void Write(string envelope)
+        {
+            Directory.CreateDirectory(System.IO.Path.GetDirectoryName(path));
+            File.WriteAllText(path+".tmp",envelope,Encoding.UTF8);
+            // Flush before replacement; recovery always has at least one complete previous snapshot.
+            using(var stream=new FileStream(path+".tmp",FileMode.Open,FileAccess.ReadWrite,FileShare.None))stream.Flush(true);
+            if(File.Exists(path))
+            {
+                try { File.Replace(path+".tmp",path,path+".bak"); }
+                catch(PlatformNotSupportedException) { File.Copy(path,path+".bak",true);File.Delete(path);File.Move(path+".tmp",path); }
+            }
+            else File.Move(path+".tmp",path);
+            // First save also has a recovery snapshot.
+            if(!File.Exists(path+".bak"))File.Copy(path,path+".bak",true);
+        }
+    }
+    // Both keys go to Bridge in one batched write; the session keeps its in-memory copy if the platform write fails.
+    public sealed class BridgeProfileBackend : IProfileBackend
+    {
+        string primary,backup;
+        // An unread platform store is never treated as empty: that would replace real progress with a new profile.
+        readonly bool unreadable;
+        public BridgeProfileBackend()
+        {
+            unreadable=!PlaygamaService.StorageHealthy&&!PlaygamaService.TryGet(PlaygamaService.ProfileKey,out _);
+            if(unreadable)PlaygamaService.Reload();
+            PlaygamaService.TryGet(PlaygamaService.ProfileKey,out primary);
+            PlaygamaService.TryGet(PlaygamaService.ProfileBackupKey,out backup);
+        }
+        public string Name=>"bridge:"+PlaygamaService.ProfileKey;
+        public bool PrimaryExists=>unreadable||!string.IsNullOrEmpty(primary);
+        public bool BackupExists=>!string.IsNullOrEmpty(backup);
+        public string Read(bool fromBackup) { if(unreadable)throw new IOException("Bridge storage unavailable");return fromBackup?backup:primary; }
+        public void RestoreBackup() { primary=backup;Store(); }
+        public void Write(string envelope) { backup=string.IsNullOrEmpty(primary)?envelope:primary;primary=envelope;Store(); }
+        void Store()=>PlaygamaService.Save(new System.Collections.Generic.Dictionary<string,string> {{PlaygamaService.ProfileKey,primary},{PlaygamaService.ProfileBackupKey,backup}});
+    }
     // Commits a copy only after durable writing. A failed purchase never changes memory or gold.
     public sealed class MetaProfileStore
     {
         [Serializable] sealed class Envelope { public int format=1;public string payload, checksum; }
-        readonly string path;
+        readonly IProfileBackend backend;
         readonly P3MetaSettings settings;
         readonly int missionCount;
         bool incompatible;
         public MetaProfile Data { get; private set; }
         public string Message { get; private set; }
         public bool CanWrite { get; private set; }=true;
-        public string PathName=>path;
-        public MetaProfileStore(string file,P3MetaSettings rules,int missions,int legacyGold)
+        public string PathName=>backend.Name;
+        public MetaProfileStore(string file,P3MetaSettings rules,int missions,int legacyGold):this(new FileProfileBackend(file),rules,missions,legacyGold) { }
+        public MetaProfileStore(IProfileBackend storage,P3MetaSettings rules,int missions,int legacyGold)
         {
-            path=file;settings=rules;missionCount=missions;
-            bool primaryExists=File.Exists(path),backupExists=File.Exists(path+".bak");
-            if(TryRead(path,out var profile))Data=profile;
+            backend=storage;settings=rules;missionCount=missions;
+            bool primaryExists=backend.PrimaryExists,backupExists=backend.BackupExists;
+            if(TryRead(false,out var profile))Data=profile;
             else if(incompatible)
             { Data=NewProfile(0);CanWrite=false;Message="Save is from a newer game version. Existing files were kept."; }
-            else if(TryRead(path+".bak",out profile))
+            else if(TryRead(true,out profile))
             {
                 Data=profile;Message="Backup save restored.";
                 // Keep the good backup intact until the next valid primary commit.
-                try { if(primaryExists)File.Copy(path,path+".corrupt",true);File.Copy(path+".bak",path,true); }
+                try { backend.RestoreBackup(); }
                 catch(Exception e) when(e is IOException||e is UnauthorizedAccessException) { CanWrite=false;Message="Save restored; file can't be accessed."; }
             }
             else if(primaryExists||backupExists)
@@ -84,13 +145,14 @@ namespace CubeInvasion.Prototype
         bool ValidRun(RunRecord run)=>!string.IsNullOrEmpty(run.id)&&run.mission>=0&&run.mission<missionCount&&run.weapon>=0&&run.weapon<settings.unlockPrices.Length&&run.cubes>=0&&run.gold>=0&&run.kills>=0&&!float.IsNaN(run.seconds)&&!float.IsInfinity(run.seconds)&&run.seconds>=0;
         static string Hash(string text)
         { using(var hash=SHA256.Create())return Convert.ToBase64String(hash.ComputeHash(Encoding.UTF8.GetBytes(text))); }
-        bool TryRead(string file,out MetaProfile profile)
+        bool TryRead(bool backup,out MetaProfile profile)
         {
             profile=null;
             try
             {
-                if(!File.Exists(file))return false;
-                var record=JsonUtility.FromJson<Envelope>(File.ReadAllText(file));
+                string text=backend.Read(backup);
+                if(string.IsNullOrEmpty(text))return false;
+                var record=JsonUtility.FromJson<Envelope>(text);
                 if(record!=null&&record.format>1) { incompatible=true;return false; }
                 if(record==null||record.format!=1||string.IsNullOrEmpty(record.payload)||record.checksum!=Hash(record.payload))return false;
                 profile=Decode(record.payload);
@@ -115,19 +177,8 @@ namespace CubeInvasion.Prototype
         {
             try
             {
-                Directory.CreateDirectory(System.IO.Path.GetDirectoryName(path));
                 string payload=JsonUtility.ToJson(profile);
-                File.WriteAllText(path+".tmp",JsonUtility.ToJson(new Envelope {payload=payload,checksum=Hash(payload)}),Encoding.UTF8);
-                // Flush before replacement; recovery always has at least one complete previous snapshot.
-                using(var stream=new FileStream(path+".tmp",FileMode.Open,FileAccess.ReadWrite,FileShare.None))stream.Flush(true);
-                if(File.Exists(path))
-                {
-                    try { File.Replace(path+".tmp",path,path+".bak"); }
-                    catch(PlatformNotSupportedException) { File.Copy(path,path+".bak",true);File.Delete(path);File.Move(path+".tmp",path); }
-                }
-                else File.Move(path+".tmp",path);
-                // First save also has a recovery snapshot.
-                if(!File.Exists(path+".bak"))File.Copy(path,path+".bak",true);
+                backend.Write(JsonUtility.ToJson(new Envelope {payload=payload,checksum=Hash(payload)}));
                 return true;
             }
             catch(Exception e) when(e is IOException||e is UnauthorizedAccessException)
@@ -209,6 +260,27 @@ namespace CubeInvasion.Prototype
                 next.lastResult=JsonUtility.FromJson<RunRecord>(JsonUtility.ToJson(next.run));
             }
             return Commit(next);
+        }
+        // Rewarded x2: adds the run's banked gold once more. Idempotent per run, so a repeated
+        // SDK callback or a reload between the ad and the save cannot pay twice.
+        public bool CanDoubleRun(string runId)
+        { var last=Data.lastResult;return last!=null&&last.id==runId&&!last.doubled&&last.gold>0&&Data.gold<=int.MaxValue-last.gold; }
+        public bool DoubleRun(string runId)
+        {
+            if(!CanDoubleRun(runId))return false;
+            var next=Copy();next.gold+=next.lastResult.gold;next.lastResult.doubled=true;
+            if(next.run!=null&&next.run.id==runId)next.run.doubled=true;
+            return Commit(next);
+        }
+        // Returning-player gold, once per calendar day. The first visit only starts the count and writes nothing yet.
+        public int ClaimDaily(int today)
+        {
+            if(Data.lastDailyDay<=0) { Data.lastDailyDay=today;Data.dailyStreak=1;return 0; }
+            if(today<=Data.lastDailyDay)return 0;
+            int streak=today==Data.lastDailyDay+1?Data.dailyStreak+1:1,reward=25*Mathf.Min(streak,7);
+            if(Data.gold>int.MaxValue-reward)return 0;
+            var next=Copy();next.gold+=reward;next.lastDailyDay=today;next.dailyStreak=streak;
+            return Commit(next)?reward:0;
         }
         public bool FailRun(string id,string reason,int kills,float seconds)
         {

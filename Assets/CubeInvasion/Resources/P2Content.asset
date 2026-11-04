@@ -55,7 +55,7 @@ MonoBehaviour:
     color: {r: 0.25, g: 1, b: 0.62, a: 1}
   missions:
   - title: "First Contact"
-    description: "Fire slow on the run, fast when you ease off. Flank around cover."
+    description: "Your gun fires by itself. Keep moving and stay off the edge."
     mode: 0
     accent: {r: 0.1, g: 0.75, b: 0.85, a: 1}
     cubes:

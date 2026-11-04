@@ -104,6 +104,29 @@ namespace CubeInvasion.Prototype
             for(int i=0;i<weapons.Length;i++) { int index=i;Bind(weapons[i],()=>weapon(index)); }
         }
         static void Bind(Button button,Action action) { button.onClick.RemoveAllListeners();button.onClick.AddListener(()=>action()); }
+        // Optional rewarded x2 on a win. Built from the Retry button so it shares the result layout and style.
+        Button doubleGold;Text doubleGoldLabel;Action doubleGoldAction;int doubleGoldShown=-1;
+        public void BindDoubleGold(Action action) { doubleGoldAction=action; }
+        public void SetDoubleGold(bool visible,int amount)
+        {
+            int state=visible?amount:-1;
+            if(state==doubleGoldShown)return;doubleGoldShown=state;
+            if(visible&&!doubleGold&&retry)
+            {
+                doubleGold=Instantiate(retry,retry.transform.parent);doubleGold.name="Double gold";
+                doubleGold.transform.SetSiblingIndex(0);
+                var shine=doubleGold.transform.Find("Shine");if(shine)Destroy(shine.gameObject);
+                Bind(doubleGold,()=>doubleGoldAction?.Invoke());
+                doubleGoldLabel=doubleGold.GetComponentInChildren<Text>(true);
+                var image=doubleGold.GetComponent<Image>();if(image)image.color=VoidToyPalette.Gold;
+                doubleGoldLabel.color=VoidToyPalette.Ink;
+            }
+            if(!doubleGold)return;
+            doubleGold.gameObject.SetActive(visible);
+            if(visible)doubleGoldLabel.text=$"WATCH AD: DOUBLE GOLD (+{VoidToyPalette.FormatGold(amount)})";
+            // One extra row; grow the action stack upward instead of overlapping the summary.
+            if(retry.transform.parent is RectTransform actions&&actions.name=="Result actions")actions.offsetMax=new Vector2(actions.offsetMax.x,visible?342:260);
+        }
         public void SetObjectiveDescription(string text) {if(missionDescription&&missionDescription.text!=text)missionDescription.text=text;}
         public void Refresh(MissionSpec mission,WeaponSpec weapon,int missionIndex,int count,int weaponIndex,string phase,string reason,int wallet)
         {

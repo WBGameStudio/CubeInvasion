@@ -174,68 +174,9 @@ public static class P2ContentBuilder
     static P2AudioBank BuildAudio()
     {
         string path=Root+"/Audio/P2AudioBank.asset";var bank=AssetDatabase.LoadAssetAtPath<P2AudioBank>(path);if(bank)return bank;
-        var entries=new List<P2AudioBank.Entry>();
-        foreach(CombatFeedback.Cue cue in Enum.GetValues(typeof(CombatFeedback.Cue)))
-        {
-            var variants=new AudioClip[2];
-            for(int v=0;v<2;v++)
-            {
-                string clipPath=Root+"/Audio/"+cue+"_"+v+".wav";
-                WriteWave(clipPath,Sound(cue,v));AssetDatabase.ImportAsset(clipPath);
-                var importer=(AudioImporter)AssetImporter.GetAtPath(clipPath);var settings=importer.defaultSampleSettings;settings.loadType=AudioClipLoadType.DecompressOnLoad;settings.compressionFormat=AudioCompressionFormat.PCM;importer.defaultSampleSettings=settings;importer.forceToMono=true;importer.SaveAndReimport();
-                variants[v]=AssetDatabase.LoadAssetAtPath<AudioClip>(clipPath);
-            }
-            entries.Add(new P2AudioBank.Entry {cue=cue,variants=variants});
-        }
-        bank=ScriptableObject.CreateInstance<P2AudioBank>();bank.sounds=entries.ToArray();
-        for(int mode=0;mode<3;mode++)
-        {
-            string clipPath=Root+"/Audio/Loop_"+mode+".wav";WriteWave(clipPath,Music(mode));AssetDatabase.ImportAsset(clipPath);
-            var clip=AssetDatabase.LoadAssetAtPath<AudioClip>(clipPath);if(mode==0)bank.combatLoop=clip;else if(mode==1)bank.bossLoop=clip;else bank.goldLoop=clip;
-        }
-        AssetDatabase.CreateAsset(bank,path);return bank;
-    }
-    static float[] Sound(CombatFeedback.Cue cue,int variant)
-    {
-        const int rate=22050;float duration=cue==CombatFeedback.Cue.BossPhase?.7f:cue==CombatFeedback.Cue.Telegraph?.35f:cue==CombatFeedback.Cue.Clear?.42f:cue==CombatFeedback.Cue.Fail?.6f:cue==CombatFeedback.Cue.BossSlam||cue==CombatFeedback.Cue.Explosion?.35f:.14f;
-        var data=new float[(int)(rate*duration)];uint state=(uint)(123+(int)cue*97+variant);float phase=0;
-        float basePitch=cue==CombatFeedback.Cue.Shot?760:cue==CombatFeedback.Cue.Twin?580:cue==CombatFeedback.Cue.Scatter?140:cue==CombatFeedback.Cue.Rapid?1000:cue==CombatFeedback.Cue.Gold?1150:cue==CombatFeedback.Cue.Heal?660:cue==CombatFeedback.Cue.Alarm?360:cue==CombatFeedback.Cue.Telegraph?520:cue==CombatFeedback.Cue.BossSlam?90:cue==CombatFeedback.Cue.BossPhase?165:cue==CombatFeedback.Cue.Fail?180:440;
-        for(int i=0;i<data.Length;i++)
-        {
-            float t=i/(float)rate,u=t/duration;state=state*1664525+1013904223;float noise=((state>>16)/65535f)*2-1;
-            bool notes=cue==CombatFeedback.Cue.Clear||cue==CombatFeedback.Cue.Heal||cue==CombatFeedback.Cue.Gate||cue==CombatFeedback.Cue.Gold;
-            float pitch=notes?Mathf.Pow(2,Mathf.Floor(u*3)*4/12):cue==CombatFeedback.Cue.Telegraph?1+u*.8f:1-u*.65f;
-            phase+=2*Mathf.PI*basePitch*(variant==0?1:1.055f)*pitch/rate;
-            float wave=Mathf.Sin(phase)+Mathf.Sin(phase*2.01f)*.18f;
-            if(cue==CombatFeedback.Cue.Explosion||cue==CombatFeedback.Cue.Scatter||cue==CombatFeedback.Cue.Hit||cue==CombatFeedback.Cue.BossSlam)wave=wave*.5f+noise*.55f;
-            data[i]=Mathf.Clamp(wave*Mathf.Min(1,u*40)*Mathf.Pow(1-u,2)*.42f,-.9f,.9f);
-        }
-        return data;
-    }
-    static float[] Music(int mode)
-    {
-        const int rate=22050;float beat=60f/112;int length=Mathf.RoundToInt(beat*16*rate);var data=new float[length];
-        int[] notes=mode==1?new[]{0,0,3,1,0,0,6,3}:mode==2?new[]{0,7,12,7,3,10,15,10}:new[]{0,0,7,10,3,3,7,5};
-        uint noise=71;
-        for(int i=0;i<length;i++)
-        {
-            float time=i/(float)rate,step=time/(beat*.5f),local=(step-Mathf.Floor(step))*beat*.5f;
-            int index=(int)step%notes.Length;float hz=82.4069f*Mathf.Pow(2,notes[index]/12f);
-            float bass=(Mathf.Sin(2*Mathf.PI*hz*local)+.18f*Mathf.Sin(4*Mathf.PI*hz*local))*Mathf.Exp(-local*15)*.23f;
-            float kickTime=time%beat;float kick=Mathf.Sin(2*Mathf.PI*(55*kickTime+3*(1-Mathf.Exp(-kickTime*30))))*Mathf.Exp(-kickTime*20)*.28f;
-            noise=noise*1664525+1013904223;float hat=(((noise>>16)/65535f)*2-1)*Mathf.Exp(-local*95)*.06f;
-            float melody=mode==2?Mathf.Sin(2*Mathf.PI*hz*8*local)*Mathf.Exp(-local*19)*.1f:0;
-            data[i]=(bass+kick+hat+melody)*Mathf.Min(1,i/100f)*Mathf.Min(1,(length-i)/100f);
-        }
-        return data;
-    }
-    static void WriteWave(string path,float[] samples)
-    {
-        using(var writer=new BinaryWriter(File.Create(path)))
-        {
-            writer.Write(System.Text.Encoding.ASCII.GetBytes("RIFF"));writer.Write(36+samples.Length*2);writer.Write(System.Text.Encoding.ASCII.GetBytes("WAVEfmt "));
-            writer.Write(16);writer.Write((short)1);writer.Write((short)1);writer.Write(22050);writer.Write(44100);writer.Write((short)2);writer.Write((short)16);
-            writer.Write(System.Text.Encoding.ASCII.GetBytes("data"));writer.Write(samples.Length*2);foreach(float sample in samples)writer.Write((short)(Mathf.Clamp(sample,-1,1)*32767));
-        }
+        // Recorded CC0 clips only (Playgama 3.3.2); CubeAudioLibrary fills the bank.
+        bank=ScriptableObject.CreateInstance<P2AudioBank>();AssetDatabase.CreateAsset(bank,path);
+        if(AssetDatabase.LoadAssetAtPath<CampaignPresentation>("Assets/CubeInvasion/Resources/CampaignPresentation.asset"))CubeAudioLibrary.Install();
+        return bank;
     }
 }

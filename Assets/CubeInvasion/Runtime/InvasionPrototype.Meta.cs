@@ -37,7 +37,10 @@ namespace CubeInvasion.Prototype
         void InitializeMeta()
         {
             if(!HasMeta) { missionHud.SetMetaMode(false);if(metaHud)metaHud.gameObject.SetActive(false);return; }
-            profile=new MetaProfileStore(ProfilePath,metaSettings,content.missions.Length,PlayerPrefs.GetInt("CI.Wallet",0));
+            int legacyGold=GamePrefs.GetInt("CI.Wallet",0);
+            // Web builds keep progress only in Bridge Storage; device builds keep the signed local file.
+            profile=PlaygamaService.UsesBridgeStorage?new MetaProfileStore(new BridgeProfileBackend(),metaSettings,content.missions.Length,legacyGold)
+                :new MetaProfileStore(ProfilePath,metaSettings,content.missions.Length,legacyGold);
             wallet=profile.Data.gold;weaponIndex=profile.Data.selectedWeapon;missionIndex=profile.Data.selectedMission;inspectedWeapon=weaponIndex;
             if(!metaHud)metaHud=new GameObject("P3 Meta HUD",typeof(RectTransform)).AddComponent<P3MetaHud>();
             metaHud.gameObject.SetActive(true);metaHud.Initialize(hud.SafeRoot);
@@ -79,7 +82,7 @@ namespace CubeInvasion.Prototype
         bool BankMetaCube(int amount)
         {
             if(!HasMeta)
-            { wallet+=amount;PlayerPrefs.SetInt("CI.Wallet",wallet);PlayerPrefs.Save();return true; }
+            { wallet+=amount;GamePrefs.SetInt("CI.Wallet",wallet);GamePrefs.Save();return true; }
             if(!profile.BankCube(runId,stage,amount,runKills,runSeconds,stage==CubeCount))
             { BlockSave(()=> { phase=Phase.Combat;Clear(); });return false; }
             wallet=profile.Data.gold;return true;
@@ -87,7 +90,7 @@ namespace CubeInvasion.Prototype
         void CompleteFailure()
         {
             if(HasMeta&&!profile.FailRun(runId,reason,runKills,runSeconds)) { BlockSave(CompleteFailure);return; }
-            phase=Phase.Failed;ClearAllRouteBuffs();
+            phase=Phase.Failed;ClearAllRouteBuffs();PlaygamaService.Level("level_failed",missionIndex);
         }
         void BuyWeapon()
         {
