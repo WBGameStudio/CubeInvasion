@@ -114,16 +114,22 @@ namespace CubeInvasion.Prototype
         }
         // Called from the game loop; only retries a failed write, never writes on its own.
         public static void Tick() { if(retryAt>=0&&Time.realtimeSinceStartup>=retryAt) { retryAt=-1;Flush(); } }
+        public static bool GameReadySent=>gameReadySent;
+        static readonly List<KeyValuePair<string,int>> deferredLevels=new List<KeyValuePair<string,int>>();
         public static void SendGameReady()
         {
             if(gameReadySent)return;gameReadySent=true;
 #if UNITY_WEBGL
             Bridge.platform.SendMessage(PlatformMessage.GameReady);
+            foreach(var level in deferredLevels)Level(level.Key,level.Value);
+            deferredLevels.Clear();
 #endif
         }
         public static void Level(string message,int mission)
         {
 #if UNITY_WEBGL
+            // The first session starts its mission before the first frame; the platform hears game_ready first.
+            if(!gameReadySent) { deferredLevels.Add(new KeyValuePair<string,int>(message,mission));return; }
             var kind=message=="level_completed"?PlatformMessage.LevelCompleted:message=="level_failed"?PlatformMessage.LevelFailed:PlatformMessage.LevelStarted;
             Bridge.platform.SendMessage(kind);
             Analytics(message,new Dictionary<string,object> {{"mission",mission+1}});

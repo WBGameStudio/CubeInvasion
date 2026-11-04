@@ -12,7 +12,7 @@ namespace CubeInvasion.Prototype
         const int FreeRetries=3;
         const string StartPromptNew="PRESS WASD / ARROWS OR DRAG TO MOVE\nYOUR GUN FIRES BY ITSELF",StartPromptTouch="DRAG ANYWHERE TO MOVE\nYOUR GUN FIRES BY ITSELF",StartPromptBack="MOVE TO START";
         bool adFlow,holdNextStart,startHold,revivedThisRun,trialActive,firstKillSent,firstInputSent,keyboardMoving;
-        int retriesWithoutAd,pendingTrial=-1;
+        int retriesWithoutAd,pendingTrial=-1,gameReadyFrames;
         float adRequestedAt,extraTimeUntil,hiddenSentAt=-100;
         string pendingFailWhy;FailureKind pendingFailKind;
         Phase trackedPhase=Phase.SaveBlocked;
@@ -41,14 +41,14 @@ namespace CubeInvasion.Prototype
         void BeginPlatformSession()
         {
             PlaygamaService.ExternalPauseChanged+=OnExternalPause;
-            StartCoroutine(SignalGameReady());
+            gameReadyFrames=2;
         }
         void EndPlatformSession() { PlaygamaService.ExternalPauseChanged-=OnExternalPause; }
-        IEnumerator SignalGameReady()
+        // The first frame must be on screen and accepting input, not just built. Counted in Update rather than a
+        // coroutine: StartMission stops every coroutine, and the first-session flow starts a mission right away.
+        void TickGameReady()
         {
-            // The first menu frame must be on screen and accepting input, not just built.
-            yield return null;
-            yield return new WaitForEndOfFrame();
+            if(gameReadyFrames<=0||--gameReadyFrames>0)return;
             PlaygamaService.SendGameReady();
         }
         // Players who have not finished mission 1 skip the menu and land in it, waiting for their first move.
@@ -76,7 +76,8 @@ namespace CubeInvasion.Prototype
         void OnExternalPause(bool external)
         {
             // Tab hidden or a full-screen ad: freeze any live cube; the player resumes from the pause menu.
-            if(external&&(phase==Phase.Combat||phase==Phase.Choice||phase==Phase.Transfer||phase==Phase.Collapse||phase==Phase.Falling||phase==Phase.Dying))SetPaused(true);
+            // A cube still waiting for the first move is already frozen, and a pause screen would hide its prompt.
+            if(external&&!startHold&&(phase==Phase.Combat||phase==Phase.Choice||phase==Phase.Transfer||phase==Phase.Collapse||phase==Phase.Falling||phase==Phase.Dying))SetPaused(true);
             if(external&&!PlaygamaService.AdOpen)TrackHidden();
         }
         void TickPlatformFlow()

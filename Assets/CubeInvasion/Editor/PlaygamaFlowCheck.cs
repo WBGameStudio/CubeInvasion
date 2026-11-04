@@ -56,7 +56,9 @@ public static class PlaygamaFlowCheck
                     Check((bool)Get("startHold")&&((IList)Get("foes")).Count==2,"First cube holds for the first move and has two enemies");
                     step=1;next=now+.5;return;
                 case 1:
+                    Check(PlaygamaService.GameReadySent,"game_ready is sent although the session opens straight into a mission");
                     Check(Mathf.Approximately((float)Get("remaining"),20),"Clock stays at 20 s until the player moves");
+                    Call("OnApplicationFocus",false);Check(!(bool)Get("paused"),"Losing focus while waiting for the first move keeps the start prompt");Call("OnApplicationFocus",true);
                     Call("ReleaseStartHold");Set("remaining",.01f);step=2;next=now+.3;return;
                 case 2:
                     Check(State=="Combat"&&(float)Get("remaining")>15,"First mission grants extra time instead of a collapse");

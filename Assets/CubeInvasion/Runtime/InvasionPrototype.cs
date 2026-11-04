@@ -395,6 +395,7 @@ namespace CubeInvasion.Prototype
         void Update()
         {
             PlaygamaService.Tick();
+            TickGameReady();
             ReadInput();
             TickPlatformFlow();
             if(paused) { ResetCountdownPresentation();return; }
@@ -654,7 +655,7 @@ namespace CubeInvasion.Prototype
             GUI.DrawTexture(new Rect(knob.x-23,knob.y-23,46,46),joystickDisc);
             GUI.color=Color.white;
         }
-        void OnApplicationFocus(bool focused) { PlaygamaService.SetFocus(focused);if(!focused) { TrackHidden(); FlushMenuSettings(true);SetPaused(true); } }
+        void OnApplicationFocus(bool focused) { PlaygamaService.SetFocus(focused);if(!focused) { TrackHidden(); FlushMenuSettings(true);if(!startHold)SetPaused(true); } }
         void OnDestroy() { CasualButtonMotion.Pressed-=PlayUiClick;EndPlatformSession();Time.timeScale=1;FlushMenuSettings(true);ClearAnimationTweens();foreach(var mat in materials) if(mat) Destroy(mat); if(joystickDisc)Destroy(joystickDisc); }
     }
 }

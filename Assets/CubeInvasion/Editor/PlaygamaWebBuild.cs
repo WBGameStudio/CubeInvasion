@@ -10,7 +10,7 @@ using UnityEngine;
 // Playgama WebGL release: only the WebGL player settings change; Android/iOS settings are untouched.
 public static class PlaygamaWebBuild
 {
-    public const string Version="1.0";
+    public const string Version="1.2";
     const string Scene="Assets/CubeInvasion/CubeInvasionPrototype.unity";
     static string Root=>Path.GetFullPath(Path.Combine(Application.dataPath,"..","Builds","Playgama"));
     public static string Output=>Path.Combine(Root,"WebGL");
